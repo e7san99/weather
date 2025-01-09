@@ -19,7 +19,8 @@ class SingleOrderModel {
       'cod': cod,
       'message': message,
       'cnt': cnt,
-      'list': list,
+      // 'list': list,
+      'list': list.map((x) => x.toMap()).toList(),
       'city': city.toMap(),
     };
   }
@@ -29,7 +30,8 @@ class SingleOrderModel {
       cod: map['cod'] as String,
       message: map['message'] as int,
       cnt: map['cnt'] as int,
-      list: map['list'] as List<ListElement>,
+      // list: map['list'] as List<ListElement>,
+      list: List<ListElement>.from(map['list'].map((x) => ListElement.fromMap(x))),
       city: City.fromMap(map['city'] as Map<String, dynamic>),
     );
   }
@@ -66,7 +68,7 @@ class ListElement {
 }
 
 class Main {
-  String temp;
+  double temp;
   Main({
     required this.temp,
   });
@@ -79,7 +81,7 @@ class Main {
 
   factory Main.fromMap(Map<String, dynamic> map) {
     return Main(
-      temp: map['temp'] as String,
+      temp: map['temp'] as double,
     );
   }
 
