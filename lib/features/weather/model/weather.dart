@@ -31,7 +31,8 @@ class SingleOrderModel {
       message: map['message'] as int,
       cnt: map['cnt'] as int,
       // list: map['list'] as List<ListElement>,
-      list: List<ListElement>.from(map['list'].map((x) => ListElement.fromMap(x))),
+      list: List<ListElement>.from(
+          map['list'].map((x) => ListElement.fromMap(x))),
       city: City.fromMap(map['city'] as Map<String, dynamic>),
     );
   }
@@ -80,8 +81,9 @@ class Main {
   }
 
   factory Main.fromMap(Map<String, dynamic> map) {
-    return Main(
-      temp: map['temp'] as double,
+   return Main(
+      // Check if the value is an int, then cast it to double.
+      temp: (map['temp'] is int) ? (map['temp'] as int).toDouble() : map['temp'] as double,
     );
   }
 
@@ -115,7 +117,8 @@ class City {
 
   String toJson() => json.encode(toMap());
 
-  factory City.fromJson(String source) => City.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory City.fromJson(String source) =>
+      City.fromMap(json.decode(source) as Map<String, dynamic>);
 }
 
 
