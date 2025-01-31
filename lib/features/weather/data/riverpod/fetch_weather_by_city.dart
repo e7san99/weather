@@ -9,3 +9,6 @@ final weatherProvider = FutureProvider.family<SingleOrderModel, String>((ref,cit
   final weatherRepository = ref.read(weatherRepositoryProvider);
   return await weatherRepository.fetchWeatherByCity(city);
 });
+
+// String city = '';
+final cityProvider = StateProvider<String>((ref) => '');

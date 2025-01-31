@@ -10,7 +10,8 @@ class DisplayWeatherCity extends StatefulWidget {
 }
 
 class _DisplayWeatherCityState extends State<DisplayWeatherCity> {
-  String city = 'London';
+
+  final TextEditingController controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -20,75 +21,85 @@ class _DisplayWeatherCityState extends State<DisplayWeatherCity> {
         title: const Text('Weather'),
         centerTitle: true,
       ),
-      body: Center(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: TextField(
-                onChanged: (value) => setState(() => city = value),
-                decoration: const InputDecoration(
-                  disabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                    color: Colors.blue,
-                  )),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.blue,
+      body: Consumer(
+        builder: (context, ref, child) {
+          return Center(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: TextField(
+                    controller: controller,
+                    decoration: const InputDecoration(
+                      disabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                        color: Colors.blue,
+                      )),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.blue,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                        color: Colors.blue,
+                      )),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.blue,
+                        ),
+                      ),
+                      labelText: 'City',
                     ),
                   ),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                    color: Colors.blue,
-                  )),
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.blue,
+                ),
+                TextButton(
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.all(Colors.blue),
+                  ),
+                  onPressed: () {
+                    ref.read(cityProvider.notifier).state = controller.text;
+                  },
+                  child: Text(
+                    'Search',
+                    style: TextStyle(
+                      color: Colors.white,
                     ),
                   ),
-                  labelText: 'City',
                 ),
-              ),
-            ),
-            TextButton(
-              style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.all(Colors.blue),
-              ),
-              onPressed: () {},
-              child: Text(
-                'Search',
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            Consumer(
-              builder: (context, ref, child) {
-                final weather = ref.watch(
-                    weatherProvider(city)); // Update with fetched location
-                return weather.when(
-                  data: (data) {
-                    double tempCelsius = data.list[0].main.temp - 273.15;
-                    return Column(
-                      children: [
-                        Text(
-                            '${data.city.name} ${tempCelsius.toStringAsFixed(2)}°C'),
-                        // Text( "${(myState.weatherModel!.mainObjectModel.temp).toStringAsFixed(2)} C°",),
-                      ],
+                Consumer(
+                  builder: (context, ref, child) {
+                    final city = ref.watch(cityProvider);
+                    if (city.isEmpty) {
+                      return const Text('Please enter a city');
+                    }
+
+                    final weather = ref.watch(weatherProvider(city)); // Update with fetched location
+                    return weather.when(
+                      data: (data) {
+                        double tempCelsius = data.list[0].main.temp - 273.15;
+                        return Column(
+                          children: [
+                            Text(
+                                '${data.city.name} ${tempCelsius.toStringAsFixed(2)}°C'),
+                            // Text( "${(myState.weatherModel!.mainObjectModel.temp).toStringAsFixed(2)} C°",),
+                          ],
+                        );
+                      },
+                      error: (error, stackTrace) => Text(
+                        error.toString().contains('City not found')
+                            ? 'City not found. Please try again.'
+                            : 'An error occurred. Please try again.',
+                        style: TextStyle(color: Colors.purple),
+                      ),
+                      loading: () => const CircularProgressIndicator(),
                     );
                   },
-                  error: (error, stackTrace) => Text(
-                    error.toString().contains('City not found')
-                        ? 'City not found. Please try again.'
-                        : 'An error occurred. Please try again.',
-                    style: TextStyle(color: Colors.purple),
-                  ),
-                  loading: () => const CircularProgressIndicator(),
-                );
-              },
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
