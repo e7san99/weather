@@ -10,7 +10,6 @@ class DisplayWeatherCity extends StatefulWidget {
 }
 
 class _DisplayWeatherCityState extends State<DisplayWeatherCity> {
-
   final TextEditingController controller = TextEditingController();
 
   @override
@@ -74,7 +73,8 @@ class _DisplayWeatherCityState extends State<DisplayWeatherCity> {
                       return const Text('Please enter a city');
                     }
 
-                    final weather = ref.watch(weatherProvider(city)); // Update with fetched location
+                    final weather = ref.watch(
+                        weatherProvider(city)); // Update with fetched location
                     return weather.when(
                       data: (data) {
                         double tempCelsius = data.list[0].main.temp - 273.15;
@@ -82,7 +82,8 @@ class _DisplayWeatherCityState extends State<DisplayWeatherCity> {
                           children: [
                             Text(
                                 '${data.city.name} ${tempCelsius.toStringAsFixed(2)}°C'),
-                            // Text( "${(myState.weatherModel!.mainObjectModel.temp).toStringAsFixed(2)} C°",),
+                            Image.network(
+                                'https://openweathermap.org/img/wn/${data.list[0].weather[0].icon}@2x.png'),
                           ],
                         );
                       },

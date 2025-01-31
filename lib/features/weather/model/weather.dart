@@ -45,20 +45,25 @@ class SingleOrderModel {
 
 class ListElement {
   Main main;
+  List<Weather> weather;
 
   ListElement({
     required this.main,
+    required this.weather,
   });
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'main': main.toMap(),
+      'weather': weather.map((x) => x.toMap()).toList(),
     };
   }
 
   factory ListElement.fromMap(Map<String, dynamic> map) {
     return ListElement(
       main: Main.fromMap(map['main'] as Map<String, dynamic>),
+      weather: List<Weather>.from(
+          map['weather'].map((x) => Weather.fromMap(x))),
     );
   }
 
@@ -94,6 +99,29 @@ class Main {
 }
 
 
+class Weather{
+  String icon;
+  Weather({ 
+    required this.icon,
+  });
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{ 
+      'icon': icon,
+    };
+  }
+
+  factory Weather.fromMap(Map<String, dynamic> map) {
+    return Weather(
+      icon: map['icon'] as String,
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory Weather.fromJson(String source) =>  
+      Weather.fromMap(json.decode(source) as Map<String, dynamic>);
+}
 
 class City {
   int id;
