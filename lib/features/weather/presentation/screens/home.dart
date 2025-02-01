@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weather_pod/features/weather/data/riverpod/fetch_weather_by_city.dart';
+import 'package:geolocator/geolocator.dart';
 
 class DisplayWeatherCity extends StatefulWidget {
   const DisplayWeatherCity({super.key});
@@ -11,6 +12,37 @@ class DisplayWeatherCity extends StatefulWidget {
 
 class _DisplayWeatherCityState extends State<DisplayWeatherCity> {
   final TextEditingController controller = TextEditingController();
+  Position? _currentPosition;
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentLocation();
+  }
+
+  Future<void> _getCurrentLocation() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return;
+    }
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return;
+    }
+
+    Position position = await Geolocator.getCurrentPosition();
+    setState(() {
+      _currentPosition = position;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,32 +101,51 @@ class _DisplayWeatherCityState extends State<DisplayWeatherCity> {
                 Consumer(
                   builder: (context, ref, child) {
                     final city = ref.watch(cityProvider);
-                    if (city.isEmpty) {
+                    if (city.isEmpty && _currentPosition == null) {
                       return const Text('Please enter a city');
                     }
 
-                    final weather = ref.watch(
-                        weatherProvider(city)); // Update with fetched location
-                    return weather.when(
-                      data: (data) {
-                        double tempCelsius = data.list[0].main.temp - 273.15;
-                        return Column(
-                          children: [
-                            Text(
-                                '${data.city.name} ${tempCelsius.toStringAsFixed(2)}°C'),
-                            Image.network(
-                                'https://openweathermap.org/img/wn/${data.list[0].weather[0].icon}@2x.png'),
-                          ],
-                        );
-                      },
-                      error: (error, stackTrace) => Text(
-                        error.toString().contains('City not found')
-                            ? 'City not found. Please try again.'
-                            : 'An error occurred. Please try again.',
-                        style: TextStyle(color: Colors.purple),
-                      ),
-                      loading: () => const CircularProgressIndicator(),
-                    );
+                    if (city.isEmpty) {
+                      final weather = ref.watch(locationWeatherProvider(_currentPosition!));
+                      return weather.when(
+                        data: (data) {
+                          double tempCelsius = data.list[0].main.temp - 273.15;
+                          return Column(
+                            children: [
+                              Text('${data.city.name} ${tempCelsius.toStringAsFixed(2)}°C'),
+                              Image.network('https://openweathermap.org/img/wn/${data.list[0].weather[0].icon}@2x.png'),
+                            ],
+                          );
+                        },
+                        error: (error, stackTrace) => Text(
+                          error.toString().contains('City not found')
+                              ? 'City not found. Please try again.'
+                              : 'An error occurred. Please try again.',
+                          style: TextStyle(color: Colors.purple),
+                        ),
+                        loading: () => const CircularProgressIndicator(),
+                      );
+                    } else {
+                      final weather = ref.watch(weatherProvider(city));
+                      return weather.when(
+                        data: (data) {
+                          double tempCelsius = data.list[0].main.temp - 273.15;
+                          return Column(
+                            children: [
+                              Text('${data.city.name} ${tempCelsius.toStringAsFixed(2)}°C'),
+                              Image.network('https://openweathermap.org/img/wn/${data.list[0].weather[0].icon}@2x.png'),
+                            ],
+                          );
+                        },
+                        error: (error, stackTrace) => Text(
+                          error.toString().contains('City not found')
+                              ? 'City not found. Please try again.'
+                              : 'An error occurred. Please try again.',
+                          style: TextStyle(color: Colors.purple),
+                        ),
+                        loading: () => const CircularProgressIndicator(),
+                      );
+                    }
                   },
                 ),
               ],

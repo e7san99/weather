@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:weather_pod/features/weather/data/repositories/weather_implements.dart';
 import 'package:weather_pod/features/weather/data/repositories/weather_repository.dart';
 import 'package:weather_pod/features/weather/model/weather.dart';
@@ -12,3 +13,8 @@ final weatherProvider = FutureProvider.family<SingleOrderModel, String>((ref,cit
 
 // String city = '';
 final cityProvider = StateProvider<String>((ref) => '');
+
+final locationWeatherProvider = FutureProvider.family<SingleOrderModel, Position>((ref, position) async {
+   final weatherRepository = ref.read(weatherRepositoryProvider);
+  return await weatherRepository.fetchWeatherByLocation(position.latitude, position.longitude);
+});
