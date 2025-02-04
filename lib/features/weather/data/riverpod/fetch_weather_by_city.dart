@@ -18,3 +18,8 @@ final locationWeatherProvider = FutureProvider.family<SingleOrderModel, Position
    final weatherRepository = ref.read(weatherRepositoryProvider);
   return await weatherRepository.fetchWeatherByLocation(position.latitude, position.longitude);
 });
+
+final thirtyDayWeatherProvider = FutureProvider.family<SingleOrderModel, String>((ref, city) async {
+  final weatherRepository = ref.read(weatherRepositoryProvider);
+  return await weatherRepository.fetchWeatherByCity(city);
+});

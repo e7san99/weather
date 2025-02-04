@@ -46,6 +46,46 @@ class _DisplayWeatherCityState extends State<DisplayWeatherCity> {
 
   @override
   Widget build(BuildContext context) {
+
+    void displayThirtyDayWeather(BuildContext context, String city) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('30-Day Weather Forecast for $city'),
+        ),
+        body: Consumer(
+          builder: (context, ref, child) {
+            final thirtyDayWeather = ref.watch(thirtyDayWeatherProvider(city));
+            return thirtyDayWeather.when(
+              data: (data) {
+                return ListView.builder(
+                  itemCount: data.list.length,
+                  itemBuilder: (context, index) {
+                    double tempCelsius = data.list[index].main.temp - 273.15;
+                    return ListTile(
+                      title: Text('${data.city.name} - Day ${index + 1}'),
+                      subtitle: Text('${tempCelsius.toStringAsFixed(2)}°C'),
+                      leading: Image.network('https://openweathermap.org/img/wn/${data.list[index].weather[0].icon}@2x.png'),
+                    );
+                  },
+                );
+              },
+              error: (error, stackTrace) => Text(
+                error.toString().contains('City not found')
+                    ? 'City not found. Please try again.'
+                    : 'An error occurred. Please try again.',
+                style: TextStyle(color: Colors.purple),
+              ),
+              loading: () => const CircularProgressIndicator(),
+            );
+          },
+        ),
+      );
+    }),
+  );
+}
     return Scaffold(
       backgroundColor: Colors.grey[400],
       appBar: AppBar(
@@ -148,6 +188,23 @@ class _DisplayWeatherCityState extends State<DisplayWeatherCity> {
                     }
                   },
                 ),
+                SizedBox(height: 20,),
+
+                TextButton(
+  style: ButtonStyle(
+    backgroundColor: WidgetStateProperty.all(Colors.blue),
+  ),
+  onPressed: () {
+    ref.read(cityProvider.notifier).state = controller.text;
+    displayThirtyDayWeather(context, controller.text);
+  },
+  child: Text(
+    'Search',
+    style: TextStyle(
+      color: Colors.white,
+    ),
+  ),
+)
               ],
             ),
           );
