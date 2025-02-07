@@ -46,16 +46,19 @@ class SingleOrderModel {
 class ListElement {
   Main main;
   List<Weather> weather;
+  String dt_txt;
 
   ListElement({
     required this.main,
     required this.weather,
+    required this.dt_txt,
   });
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'main': main.toMap(),
       'weather': weather.map((x) => x.toMap()).toList(),
+      'dt_txt': dt_txt,
     };
   }
 
@@ -64,6 +67,7 @@ class ListElement {
       main: Main.fromMap(map['main'] as Map<String, dynamic>),
       weather: List<Weather>.from(
           map['weather'].map((x) => Weather.fromMap(x))),
+      dt_txt: map['dt_txt'] as String,
     );
   }
 

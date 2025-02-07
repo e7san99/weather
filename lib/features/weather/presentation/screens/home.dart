@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:weather_pod/features/weather/data/riverpod/fetch_weather_by_city.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -47,13 +48,15 @@ class _DisplayWeatherCityState extends State<DisplayWeatherCity> {
   @override
   Widget build(BuildContext context) {
 
+    
+
     void displayThirtyDayWeather(BuildContext context, String city) {
   Navigator.push(
     context,
     MaterialPageRoute(builder: (context) {
       return Scaffold(
         appBar: AppBar(
-          title: Text('30-Day Weather Forecast for $city'),
+          title: Text('Weather Forecast for $city'),
         ),
         body: Consumer(
           builder: (context, ref, child) {
@@ -64,10 +67,13 @@ class _DisplayWeatherCityState extends State<DisplayWeatherCity> {
                   itemCount: data.list.length,
                   itemBuilder: (context, index) {
                     double tempCelsius = data.list[index].main.temp - 273.15;
+                     DateTime dateTime = DateTime.parse(data.list[index].dt_txt);
+                      String formattedTime = DateFormat.jm().format(dateTime); // Formats time as 9:00 PM
                     return ListTile(
                       title: Text('${data.city.name} - Day ${index + 1}'),
                       subtitle: Text('${tempCelsius.toStringAsFixed(2)}°C'),
                       leading: Image.network('https://openweathermap.org/img/wn/${data.list[index].weather[0].icon}@2x.png'),
+                      trailing: Text(formattedTime),
                     );
                   },
                 );
