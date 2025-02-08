@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:weather_pod/features/weather/data/riverpod/fetch_weather_by_city.dart';
-import 'package:geolocator/geolocator.dart';
 
 class DisplayWeatherCity extends StatefulWidget {
   const DisplayWeatherCity({super.key});
@@ -47,51 +47,103 @@ class _DisplayWeatherCityState extends State<DisplayWeatherCity> {
 
   @override
   Widget build(BuildContext context) {
-
-    
-
     void displayThirtyDayWeather(BuildContext context, String city) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) {
-      return Scaffold(
-        appBar: AppBar(
-          title: Text('Weather Forecast for $city'),
-        ),
-        body: Consumer(
-          builder: (context, ref, child) {
-            final thirtyDayWeather = ref.watch(thirtyDayWeatherProvider(city));
-            return thirtyDayWeather.when(
-              data: (data) {
-                return ListView.builder(
-                  itemCount: data.list.length,
-                  itemBuilder: (context, index) {
-                    double tempCelsius = data.list[index].main.temp - 273.15;
-                     DateTime dateTime = DateTime.parse(data.list[index].dt_txt);
-                      String formattedTime = DateFormat.jm().format(dateTime); // Formats time as 9:00 PM
-                    return ListTile(
-                      title: Text('${data.city.name} - Day ${index + 1}'),
-                      subtitle: Text('${tempCelsius.toStringAsFixed(2)}°C'),
-                      leading: Image.network('https://openweathermap.org/img/wn/${data.list[index].weather[0].icon}@2x.png'),
-                      trailing: Text(formattedTime),
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Weather Forecast for $city'),
+            ),
+            body: Consumer(
+              builder: (context, ref, child) {
+                final thirtyDayWeather =
+                    ref.watch(thirtyDayWeatherProvider(city));
+                return thirtyDayWeather.when(
+                  data: (data) {
+                    return ListView.builder(
+                      itemCount: data.list.length,
+                      itemBuilder: (context, index) {
+                        String iconCode = data.list[index].weather[0].icon;
+                        String imageUrl;
+
+                        switch (iconCode) {
+                          case '01d':
+                            imageUrl = 'assets/icons/01d.png';
+                            break;
+                          case '02d':
+                           imageUrl = 'assets/icons/02d.png';
+                            break;
+                          case '03d':
+                            imageUrl = 'assets/icons/03d.png';
+                            break;
+                          case '04d':
+                            imageUrl = 'assets/icons/04d.png';
+                            break;
+                          case '09d':
+                            imageUrl = 'assets/icons/09d.png';
+                            break;
+                          case '10d':
+                            imageUrl = 'assets/icons/10d.png';
+                            break;
+                          case '11d':
+                            imageUrl = 'assets/icons/11d.png';
+                            break;
+                          case '13d':
+                            imageUrl = 'assets/icons/13d.png';
+                            break;
+                          case '50d':
+                            imageUrl = 'assets/icons/50d.png';
+                            break;
+                            case '6':
+                            imageUrl = 'assets/icons/6.png';
+                            break;
+                          case '7':
+                            imageUrl = 'assets/icons/7.png';
+                            break;
+                          case '39':
+                            imageUrl = 'assets/icons/39.png';
+                            break;
+                          default:
+                            imageUrl = 'assets/icons/01d.png';
+                            break;
+                        }
+                        double tempCelsius =
+                            data.list[index].main.temp - 273.15;
+                        DateTime dateTime =
+                            DateTime.parse(data.list[index].dt_txt);
+                        String formattedTime = DateFormat.yMd()
+                            .add_jm()
+                            .format(dateTime); // Formats time as 9:00 PM
+                        return ListTile(
+                          // title: Text('${data.city.name} - Day ${index + 1}'),
+                          title: Text('${tempCelsius.toStringAsFixed(2)}°C'),
+                          leading: Image.asset(
+                            imageUrl,
+                            height: 35,
+                            fit: BoxFit.fill,
+                            // color: whiteColor,
+                          ),
+                          trailing: Text(formattedTime),
+                        );
+                      },
                     );
                   },
+                  error: (error, stackTrace) => Text(
+                    error.toString().contains('City not found')
+                        ? 'City not found. Please try again.'
+                        : 'An error occurred. Please try again.',
+                    style: TextStyle(color: Colors.purple),
+                  ),
+                  loading: () => const CircularProgressIndicator(),
                 );
               },
-              error: (error, stackTrace) => Text(
-                error.toString().contains('City not found')
-                    ? 'City not found. Please try again.'
-                    : 'An error occurred. Please try again.',
-                style: TextStyle(color: Colors.purple),
-              ),
-              loading: () => const CircularProgressIndicator(),
-            );
-          },
-        ),
+            ),
+          );
+        }),
       );
-    }),
-  );
-}
+    }
+
     return Scaffold(
       backgroundColor: Colors.grey[400],
       appBar: AppBar(
@@ -152,14 +204,17 @@ class _DisplayWeatherCityState extends State<DisplayWeatherCity> {
                     }
 
                     if (city.isEmpty) {
-                      final weather = ref.watch(locationWeatherProvider(_currentPosition!));
+                      final weather =
+                          ref.watch(locationWeatherProvider(_currentPosition!));
                       return weather.when(
                         data: (data) {
                           double tempCelsius = data.list[0].main.temp - 273.15;
                           return Column(
                             children: [
-                              Text('${data.city.name} ${tempCelsius.toStringAsFixed(2)}°C'),
-                              Image.network('https://openweathermap.org/img/wn/${data.list[0].weather[0].icon}@2x.png'),
+                              Text(
+                                  '${data.city.name} ${tempCelsius.toStringAsFixed(2)}°C'),
+                              Image.network(
+                                  'https://openweathermap.org/img/wn/${data.list[0].weather[0].icon}@2x.png'),
                             ],
                           );
                         },
@@ -178,8 +233,10 @@ class _DisplayWeatherCityState extends State<DisplayWeatherCity> {
                           double tempCelsius = data.list[0].main.temp - 273.15;
                           return Column(
                             children: [
-                              Text('${data.city.name} ${tempCelsius.toStringAsFixed(2)}°C'),
-                              Image.network('https://openweathermap.org/img/wn/${data.list[0].weather[0].icon}@2x.png'),
+                              Text(
+                                  '${data.city.name} ${tempCelsius.toStringAsFixed(2)}°C'),
+                              Image.network(
+                                  'https://openweathermap.org/img/wn/${data.list[0].weather[0].icon}@2x.png'),
                             ],
                           );
                         },
@@ -194,23 +251,24 @@ class _DisplayWeatherCityState extends State<DisplayWeatherCity> {
                     }
                   },
                 ),
-                SizedBox(height: 20,),
-
+                SizedBox(
+                  height: 20,
+                ),
                 TextButton(
-  style: ButtonStyle(
-    backgroundColor: WidgetStateProperty.all(Colors.blue),
-  ),
-  onPressed: () {
-    ref.read(cityProvider.notifier).state = controller.text;
-    displayThirtyDayWeather(context, controller.text);
-  },
-  child: Text(
-    'Search',
-    style: TextStyle(
-      color: Colors.white,
-    ),
-  ),
-)
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.all(Colors.blue),
+                  ),
+                  onPressed: () {
+                    ref.read(cityProvider.notifier).state = controller.text;
+                    displayThirtyDayWeather(context, controller.text);
+                  },
+                  child: Text(
+                    'Search',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                )
               ],
             ),
           );
