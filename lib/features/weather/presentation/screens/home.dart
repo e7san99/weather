@@ -68,6 +68,7 @@ class _DisplayWeatherCityState extends State<DisplayWeatherCity> {
                         String imageUrl;
 
                         switch (iconCode) {
+                          //days
                           case '01d':
                             imageUrl = 'assets/icons/01d.png';
                             break;
@@ -95,19 +96,39 @@ class _DisplayWeatherCityState extends State<DisplayWeatherCity> {
                           case '50d':
                             imageUrl = 'assets/icons/50d.png';
                             break;
-                            case '6':
-                            imageUrl = 'assets/icons/6.png';
+                            //nights
+                          case '01n':
+                            imageUrl = 'assets/icons/01n.png';
                             break;
-                          case '7':
-                            imageUrl = 'assets/icons/7.png';
+                          case '02n':
+                            imageUrl = 'assets/icons/02n.png';
                             break;
-                          case '39':
-                            imageUrl = 'assets/icons/39.png';
+                          case '03n':
+                            imageUrl = 'assets/icons/03n.png';
+                            break;
+                          case '04n':
+                            imageUrl = 'assets/icons/04n.png';
+                            break;
+                          case '09n':
+                            imageUrl = 'assets/icons/09n.png';
+                            break;
+                          case '10n':
+                            imageUrl = 'assets/icons/10n.png';
+                            break;
+                          case '11n':
+                            imageUrl = 'assets/icons/11n.png';
+                            break;
+                          case '13n':
+                            imageUrl = 'assets/icons/13n.png';
+                            break;
+                          case '50n':
+                            imageUrl = 'assets/icons/50n.png';
                             break;
                           default:
-                            imageUrl = 'assets/icons/01d.png';
+                            imageUrl = 'assets/icons/moon.png';
                             break;
                         }
+                        
                         double tempCelsius =
                             data.list[index].main.temp - 273.15;
                         DateTime dateTime =
