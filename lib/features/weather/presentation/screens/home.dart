@@ -73,7 +73,7 @@ class _DisplayWeatherCityState extends State<DisplayWeatherCity> {
                             imageUrl = 'assets/icons/01d.png';
                             break;
                           case '02d':
-                           imageUrl = 'assets/icons/02d.png';
+                            imageUrl = 'assets/icons/02d.png';
                             break;
                           case '03d':
                             imageUrl = 'assets/icons/03d.png';
@@ -96,7 +96,7 @@ class _DisplayWeatherCityState extends State<DisplayWeatherCity> {
                           case '50d':
                             imageUrl = 'assets/icons/50d.png';
                             break;
-                            //nights
+                          //nights
                           case '01n':
                             imageUrl = 'assets/icons/01n.png';
                             break;
@@ -128,14 +128,14 @@ class _DisplayWeatherCityState extends State<DisplayWeatherCity> {
                             imageUrl = 'assets/icons/moon.png';
                             break;
                         }
-                        
+
                         double tempCelsius =
                             data.list[index].main.temp - 273.15;
                         DateTime dateTime =
                             DateTime.parse(data.list[index].dt_txt);
-                        String formattedTime = DateFormat.yMd()
-                            .add_jm()
-                            .format(dateTime); // Formats time as 9:00 PM
+                        String formattedTime =
+                            DateFormat.yMd().add_jm().format(dateTime);
+
                         return ListTile(
                           // title: Text('${data.city.name} - Day ${index + 1}'),
                           title: Text('${tempCelsius.toStringAsFixed(2)}°C'),
