@@ -65,8 +65,8 @@ class ListElement {
   factory ListElement.fromMap(Map<String, dynamic> map) {
     return ListElement(
       main: Main.fromMap(map['main'] as Map<String, dynamic>),
-      weather: List<Weather>.from(
-          map['weather'].map((x) => Weather.fromMap(x))),
+      weather:
+          List<Weather>.from(map['weather'].map((x) => Weather.fromMap(x))),
       dt_txt: map['dt_txt'] as String,
     );
   }
@@ -90,9 +90,11 @@ class Main {
   }
 
   factory Main.fromMap(Map<String, dynamic> map) {
-   return Main(
+    return Main(
       // Check if the value is an int, then cast it to double.
-      temp: (map['temp'] is int) ? (map['temp'] as int).toDouble() : map['temp'] as double,
+      temp: (map['temp'] is int)
+          ? (map['temp'] as int).toDouble()
+          : map['temp'] as double,
     );
   }
 
@@ -102,28 +104,31 @@ class Main {
       Main.fromMap(json.decode(source) as Map<String, dynamic>);
 }
 
-
-class Weather{
+class Weather {
   String icon;
-  Weather({ 
+  String description;
+  Weather({
     required this.icon,
+    required this.description,
   });
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{ 
+    return <String, dynamic>{
       'icon': icon,
+      'description': description,
     };
   }
 
   factory Weather.fromMap(Map<String, dynamic> map) {
     return Weather(
       icon: map['icon'] as String,
+      description: map['description'] as String,
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory Weather.fromJson(String source) =>  
+  factory Weather.fromJson(String source) =>
       Weather.fromMap(json.decode(source) as Map<String, dynamic>);
 }
 
