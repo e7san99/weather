@@ -465,6 +465,162 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                       ))),
                         ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10.0),
+                          child: Row(
+                            children: [
+                              Text(
+                                'Next Days',
+                                style: GoogleFonts.amaranth(
+                                  textStyle: TextStyle(
+                                    color: Colors.deepOrange,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          height: 200,
+                          margin: EdgeInsets.all(8),
+                          width: MediaQuery.sizeOf(context).width,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              tileMode: TileMode.mirror,
+                              colors: [
+                                Colors.orange,
+                                Colors.deepOrange,
+                                Colors.deepOrangeAccent,
+                              ],
+                            ),
+                          ),
+                          child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: weather.when(
+                                  data: (data) {
+                                    // Filter data to include only today and tomorrow
+                                    // Filter data to show only 12:00 PM (noon) entries
+                                    final filteredList =
+                                        data.list.where((entry) {
+                                      DateTime entryDateTime =
+                                          DateTime.parse(entry.dt_txt);
+                                      return entryDateTime.hour ==
+                                          12; // Select only entries at 12 PM
+                                    }).toList();
+
+                                    return ListView.builder(
+                                      // scrollDirection: Axis.horizontal,
+                                      itemCount: filteredList.length,
+                                      itemBuilder: (context, index) {
+                                        final tempCelsius =
+                                            filteredList[index].main.temp -
+                                                273.15;
+                                        DateTime dateTime = DateTime.parse(
+                                            filteredList[index].dt_txt);
+
+                                        // Format the date as "Sat 2/15/2025 12:00 PM"
+                                        String formattedDate =
+                                            DateFormat('E').format(dateTime);
+
+                                        String iconCodee =
+                                            data.list[index].weather[0].icon;
+                                        String imageUrlll;
+                                        switch (iconCodee) {
+                                          //days
+                                          case '01d':
+                                            imageUrlll = 'assets/icons/01d.png';
+                                            break;
+                                          case '02d':
+                                            imageUrlll = 'assets/icons/02d.png';
+                                            break;
+                                          case '03d':
+                                            imageUrlll = 'assets/icons/03d.png';
+                                            break;
+                                          case '04d':
+                                            imageUrlll = 'assets/icons/04d.png';
+                                            break;
+                                          case '09d':
+                                            imageUrlll = 'assets/icons/09d.png';
+                                            break;
+                                          case '10d':
+                                            imageUrlll = 'assets/icons/10d.png';
+                                            break;
+                                          case '11d':
+                                            imageUrlll = 'assets/icons/11d.png';
+                                            break;
+                                          case '13d':
+                                            imageUrlll = 'assets/icons/13d.png';
+                                            break;
+                                          case '50d':
+                                            imageUrlll = 'assets/icons/50d.png';
+                                            break;
+                                          default:
+                                            // imageUrl = 'assets/icons/moon.png';
+                                            imageUrlll = 'assets/icons/03d.png';
+                                            break;
+                                        }
+
+                                        return Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                formattedDate,
+                                                style: GoogleFonts.amaranth(
+                                                  textStyle: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 14,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Image.asset(
+                                              imageUrlll,
+                                              height: 40,
+                                              fit: BoxFit.fill,
+                                              // color: whiteColor,
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                '${tempCelsius.round()}°',
+                                                style: GoogleFonts.amaranth(
+                                                  textStyle: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 14,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                  error: (error, stackTrace) => Text(
+                                        error
+                                                .toString()
+                                                .contains('City not found')
+                                            ? 'City not found. Please try again.'
+                                            : 'An error occurred. Please try again.',
+                                        style: TextStyle(color: Colors.orange),
+                                      ),
+                                  loading: () => Center(
+                                        child: CircularProgressIndicator(
+                                          color: Colors.blue,
+                                        ),
+                                      ))),
+                        ),
                       ],
                     ),
                   ),
