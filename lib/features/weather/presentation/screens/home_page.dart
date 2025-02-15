@@ -152,7 +152,6 @@ class _HomePageState extends State<HomePage> {
 
                 String iconCode = data.list[0].weather[0].icon;
                 String imageUrl;
-
                 switch (iconCode) {
                   //days
                   case '01d':
@@ -338,110 +337,133 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              children: [
-                                Column(
-                                  children: [
-                                    Text(
-                                      'Mon',
-                                      style: GoogleFonts.lato(
-                                        textStyle: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14,
-                                        ),
+                              padding: const EdgeInsets.all(8.0),
+                              child: weather.when(
+                                  data: (data) {
+                                    DateTime now = DateTime.now();
+                                    DateTime today =
+                                        DateTime(now.year, now.month, now.day);
+                                    DateTime tomorrow =
+                                        today.add(Duration(days: 1));
+
+                                    // Filter data to include only today and tomorrow
+                                    final filteredList =
+                                        data.list.where((entry) {
+                                      DateTime entryDate =
+                                          DateTime.parse(entry.dt_txt);
+                                      return entryDate.isAfter(today.subtract(
+                                              Duration(seconds: 1))) &&
+                                          entryDate.isBefore(
+                                              tomorrow.add(Duration(days: 1)));
+                                    }).toList();
+
+                                    return ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: filteredList.length,
+                                      itemBuilder: (context, index) {
+                                        final tempCelsiuss =
+                                            data.list[index].main.temp - 273.15;
+
+                                        DateTime dateTimee = DateTime.parse(
+                                            filteredList[index].dt_txt);
+
+                                        String formattedDate =
+                                            DateFormat.jm().format(dateTimee);
+
+                                        String iconCodee =
+                                            data.list[index].weather[0].icon;
+                                        String imageUrll;
+                                        switch (iconCodee) {
+                                          //days
+                                          case '01d':
+                                            imageUrll = 'assets/icons/01d.png';
+                                            break;
+                                          case '02d':
+                                            imageUrll = 'assets/icons/02d.png';
+                                            break;
+                                          case '03d':
+                                            imageUrll = 'assets/icons/03d.png';
+                                            break;
+                                          case '04d':
+                                            imageUrll = 'assets/icons/04d.png';
+                                            break;
+                                          case '09d':
+                                            imageUrll = 'assets/icons/09d.png';
+                                            break;
+                                          case '10d':
+                                            imageUrll = 'assets/icons/10d.png';
+                                            break;
+                                          case '11d':
+                                            imageUrll = 'assets/icons/11d.png';
+                                            break;
+                                          case '13d':
+                                            imageUrll = 'assets/icons/13d.png';
+                                            break;
+                                          case '50d':
+                                            imageUrll = 'assets/icons/50d.png';
+                                            break;
+                                          default:
+                                            // imageUrl = 'assets/icons/moon.png';
+                                            imageUrll = 'assets/icons/03d.png';
+                                            break;
+                                        }
+
+                                        return Column(
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                formattedDate,
+                                                style: GoogleFonts.amaranth(
+                                                  textStyle: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 14,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Image.asset(
+                                              imageUrll,
+                                              height: 60,
+                                              fit: BoxFit.fill,
+                                              // color: whiteColor,
+                                            ),
+                                            Row(
+                                              children: [
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Text(
+                                                    '${tempCelsiuss.round()}°',
+                                                    style: GoogleFonts.amaranth(
+                                                      textStyle: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 18,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                  error: (error, stackTrace) => Text(
+                                        error
+                                                .toString()
+                                                .contains('City not found')
+                                            ? 'City not found. Please try again.'
+                                            : 'An error occurred. Please try again.',
+                                        style: TextStyle(color: Colors.orange),
                                       ),
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      '9:00 AM',
-                                      style: GoogleFonts.lato(
-                                        textStyle: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14,
+                                  loading: () => Center(
+                                        child: CircularProgressIndicator(
+                                          color: Colors.blue,
                                         ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Image.asset(
-                                      'assets/icons/01d.png',
-                                      height: 50,
-                                      fit: BoxFit.fill,
-                                      // color: whiteColor,
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      '26 °',
-                                      style: GoogleFonts.lato(
-                                        textStyle: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  width: 20,
-                                ),
-                                Column(
-                                  children: [
-                                    Text(
-                                      'Mon',
-                                      style: GoogleFonts.lato(
-                                        textStyle: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      '7:00 AM',
-                                      style: GoogleFonts.lato(
-                                        textStyle: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Image.asset(
-                                      'assets/icons/02d.png',
-                                      height: 50,
-                                      fit: BoxFit.fill,
-                                      // color: whiteColor,
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      '22 °',
-                                      style: GoogleFonts.lato(
-                                        textStyle: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  width: 20,
-                                ),
-                              ],
-                            ),
-                          ),
+                                      ))),
                         ),
                       ],
                     ),
