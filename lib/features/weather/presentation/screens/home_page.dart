@@ -276,15 +276,6 @@ class _HomePageState extends State<HomePage> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceAround,
                                 children: [
-                                  Text(
-                                    description,
-                                    style: GoogleFonts.amaranth(
-                                      textStyle: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 25,
-                                      ),
-                                    ),
-                                  ),
                                   //'Monday, 12 Feb'
                                   Text(
                                     formattedDate,
@@ -295,6 +286,24 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                     ),
                                   ),
+                                  Text(
+                                    description,
+                                    style: GoogleFonts.amaranth(
+                                      textStyle: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 25,
+                                      ),
+                                    ),
+                                  ),
+                                  //      Text(
+                                  //   '${data.list[0].wind.speed} m/s',
+                                  //   style: GoogleFonts.amaranth(
+                                  //     textStyle: TextStyle(
+                                  //       color: Colors.white,
+                                  //       fontSize: 12,
+                                  //     ),
+                                  //   ),
+                                  // ),
                                 ],
                               ),
                             ],

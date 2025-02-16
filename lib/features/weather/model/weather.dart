@@ -47,11 +47,13 @@ class ListElement {
   Main main;
   List<Weather> weather;
   String dt_txt;
+  Wind wind;
 
   ListElement({
     required this.main,
     required this.weather,
     required this.dt_txt,
+    required this.wind,
   });
 
   Map<String, dynamic> toMap() {
@@ -59,6 +61,7 @@ class ListElement {
       'main': main.toMap(),
       'weather': weather.map((x) => x.toMap()).toList(),
       'dt_txt': dt_txt,
+      'wind': wind.toMap(),
     };
   }
 
@@ -68,6 +71,7 @@ class ListElement {
       weather:
           List<Weather>.from(map['weather'].map((x) => Weather.fromMap(x))),
       dt_txt: map['dt_txt'] as String,
+      wind: Wind.fromMap(map['wind'] as Map<String, dynamic>),
     );
   }
 
@@ -130,6 +134,33 @@ class Weather {
 
   factory Weather.fromJson(String source) =>
       Weather.fromMap(json.decode(source) as Map<String, dynamic>);
+}
+
+class Wind{
+  double speed;
+  Wind({
+    required this.speed,
+  });
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'speed': speed,
+    };
+  }
+
+  factory Wind.fromMap(Map<String, dynamic> map) {
+    return Wind(
+      // Check if the value is an int, then cast it to double.
+      speed: (map['speed'] is int)
+          ? (map['speed'] as int).toDouble()
+          : map['speed'] as double,
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory Wind.fromJson(String source) =>
+      Wind.fromMap(json.decode(source) as Map<String, dynamic>);
 }
 
 class City {
