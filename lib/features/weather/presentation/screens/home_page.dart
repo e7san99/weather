@@ -529,7 +529,7 @@ class _HomePageState extends State<HomePage> {
                                             DateFormat('E').format(dateTime);
 
                                         String iconCodee =
-                                            data.list[index].weather[0].icon;
+                                            filteredList[index].weather[0].icon;
                                         String imageUrlll;
                                         switch (iconCodee) {
                                           //days
