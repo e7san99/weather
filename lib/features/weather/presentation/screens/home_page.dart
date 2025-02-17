@@ -78,8 +78,8 @@ class _HomePageState extends State<HomePage> {
                 String description = listElement.weather[0].description;
                 String capitalizedDescription =
                     description[0].toUpperCase() + description.substring(1);
-                
-                  //wind speed
+
+                //wind speed
                 double windSpeed = listElement.wind.speed;
 
                 String iconCode = listElement.weather[0].icon;
@@ -103,35 +103,46 @@ class _HomePageState extends State<HomePage> {
                       12; // Select only entries at 12 PM
                 }).toList();
 
-                return SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      CurrentWeatherCard(
-                        tempCelsius: tempCelsius(listElement.main.temp.toCelsius),
-                        description: capitalizedDescription,
-                        imageUrl: imageUrl,
-                        formattedDate: formattedDate(dateTime),
-                        tempMinCelsius: tempCelsius(listElement.main.temp_min.toCelsius),
-                        tempMaxCelsius: tempCelsius(listElement.main.temp_max.toCelsius),
-                        windSpeed: windSpeed,
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      TitleCards(title: 'Next Hours'),
-                      //next times Container
-                      NextHoursForecast(
-                          nextHoursfilteredList: nextHoursfilteredList),
+                return RefreshIndicator(
+                  color: Colors.deepOrange,
+                  onRefresh: () async {
+                    await Future.wait([
+                      _getCurrentLocation(),
+                    ]);
+                  },
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        CurrentWeatherCard(
+                          tempCelsius:
+                              tempCelsius(listElement.main.temp.toCelsius),
+                          description: capitalizedDescription,
+                          imageUrl: imageUrl,
+                          formattedDate: formattedDate(dateTime),
+                          tempMinCelsius:
+                              tempCelsius(listElement.main.temp_min.toCelsius),
+                          tempMaxCelsius:
+                              tempCelsius(listElement.main.temp_max.toCelsius),
+                          windSpeed: windSpeed,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        TitleCards(title: 'Next Hours'),
+                        //next times Container
+                        NextHoursForecast(
+                            nextHoursfilteredList: nextHoursfilteredList),
 
-                      SizedBox(
-                        height: 10,
-                      ),
-                      TitleCards(title: 'Five Day Forecast'),
-                      // Next Days
-                      FiveDayForecast(
-                        fiveDayForecastAt12PM: fiveDayForecastAt12PM,
-                      ),
-                    ],
+                        SizedBox(
+                          height: 10,
+                        ),
+                        TitleCards(title: 'Five Day Forecast'),
+                        // Next Days
+                        FiveDayForecast(
+                          fiveDayForecastAt12PM: fiveDayForecastAt12PM,
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },
