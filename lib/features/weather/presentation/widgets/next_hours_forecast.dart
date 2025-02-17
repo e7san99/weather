@@ -37,10 +37,16 @@ class NextHoursForecast extends StatelessWidget {
                   formattedDate,
                   style: textStyle(16),
                 ),
+                SizedBox(
+                  height: 8,
+                ),
                 Image.asset(getWeatherIcons(item.weather[0].icon), height: 60),
+                SizedBox(
+                  height: 8,
+                ),
                 Text(
                   '${tempCelsiuss.toCelsius.round()}°',
-                  style: textStyle(16),
+                  style: textStyle(18),
                 ),
               ],
             ),

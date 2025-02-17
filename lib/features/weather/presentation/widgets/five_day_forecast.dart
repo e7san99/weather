@@ -27,11 +27,10 @@ class FiveDayForecast extends StatelessWidget {
           itemCount: fiveDayForecastAt12PM.length,
           itemBuilder: (context, index) {
             final tempCelsius = fiveDayForecastAt12PM[index].main.temp;
-            DateTime dateTimee =
+            DateTime dateTime =
                 DateTime.parse(fiveDayForecastAt12PM[index].dt_txt);
 
-            // Format the date as "Sat"
-            String formattedDate = DateFormat('E').format(dateTimee);
+            String formattedDate = DateFormat('E ~ d MMM').format(dateTime);
 
             String iconCode = fiveDayForecastAt12PM[index].weather[0].icon;
             final imageUrl = getWeatherIcons(iconCode);
@@ -56,7 +55,7 @@ class FiveDayForecast extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
                     '${tempCelsius.toCelsius.round()}°',
-                    style: textStyle(14),
+                    style: textStyle(16),
                   ),
                 ),
               ],

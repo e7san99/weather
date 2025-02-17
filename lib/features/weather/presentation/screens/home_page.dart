@@ -96,9 +96,6 @@ class _HomePageState extends State<HomePage> {
                 String iconCode = data.list[0].weather[0].icon;
                 String imageUrl = getWeatherIcons(iconCode);
 
-                final double width = MediaQuery.sizeOf(context).width;
-                final double height = MediaQuery.sizeOf(context).height;
-
                 //use next times Container
                 DateTime now = DateTime.now();
                 DateTime today = DateTime(now.year, now.month, now.day);
