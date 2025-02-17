@@ -35,22 +35,3 @@
     }
     return imageUrl;
   }
-
-
-List getFilteredList(List dataList) {
-  DateTime now = DateTime.now();
-  DateTime today = DateTime(now.year, now.month, now.day);
-  DateTime tomorrow = today.add(Duration(days: 1));
-
-  return dataList.where((entry) {
-    DateTime entryDate = DateTime.parse(entry.dt_txt);
-    return entryDate.isAfter(today) && entryDate.isBefore(tomorrow);
-  }).toList();
-}
-
-List getFilteredListForNextDays(List dataList) {
-  return dataList.where((entry) {
-    DateTime entryDate = DateTime.parse(entry.dt_txt);
-    return entryDate.hour == 12;
-  }).toList();
-}

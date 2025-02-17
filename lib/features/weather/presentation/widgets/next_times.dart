@@ -15,7 +15,7 @@ class NextTimesContainer extends StatelessWidget {
     final double width = MediaQuery.sizeOf(context).width;
     final double height = MediaQuery.sizeOf(context).height;
     return CustomContainer(
-      height: height,
+      height: height * 0.8,
       width: width,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
@@ -28,18 +28,22 @@ class NextTimesContainer extends StatelessWidget {
 
           String formattedDate = DateFormat.jm().format(dateTimee);
 
-          return Column(
-            children: [
-              Text(
-                formattedDate,
-                style: textStyle(16),
-              ),
-              Image.asset(getWeatherIcons(item.weather[0].icon), height: 60),
-              Text(
-                '${tempCelsiuss.toCelsius.round()}°',
-                style: textStyle(16),
-              ),
-            ],
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  formattedDate,
+                  style: textStyle(16),
+                ),
+                Image.asset(getWeatherIcons(item.weather[0].icon), height: 60),
+                Text(
+                  '${tempCelsiuss.toCelsius.round()}°',
+                  style: textStyle(16),
+                ),
+              ],
+            ),
           );
         },
       ),

@@ -7,6 +7,7 @@ import 'package:weather_pod/features/weather/data/riverpod/fetch_weather_by_city
 import 'package:weather_pod/features/weather/presentation/widgets/container.dart';
 import 'package:weather_pod/features/weather/presentation/widgets/next_times.dart';
 import 'package:weather_pod/features/weather/presentation/widgets/weather_details.dart';
+import 'package:weather_pod/features/weather/utils/constants/constant.dart';
 import 'package:weather_pod/features/weather/utils/extention/extention.dart';
 
 class HomePage extends StatefulWidget {
@@ -90,7 +91,7 @@ class _HomePageState extends State<HomePage> {
                 double windSpeed = data.list[0].wind.speed;
 
                 String iconCode = data.list[0].weather[0].icon;
-                String imageUrl = _weatherIcons(iconCode);
+                String imageUrl = getWeatherIcons(iconCode);
 
                 final double width = MediaQuery.sizeOf(context).width;
                 final double height = MediaQuery.sizeOf(context).height;
@@ -149,7 +150,6 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       //next times Container
-
                       NextTimesContainer(
                           nextTimefilteredList: nextTimefilteredList),
 
@@ -196,7 +196,7 @@ class _HomePageState extends State<HomePage> {
                               String iconCode = filteredListForNextDays[index]
                                   .weather[0]
                                   .icon;
-                              final imageUrl = _weatherIcons(iconCode);
+                              final imageUrl = getWeatherIcons(iconCode);
 
                               return Row(
                                 mainAxisAlignment:
@@ -333,41 +333,5 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  String _weatherIcons(String iconCode) {
-    String imageUrl;
-    switch (iconCode) {
-      //days
-      case '01d':
-        imageUrl = 'assets/icons/01d.png';
-        break;
-      case '02d':
-        imageUrl = 'assets/icons/02d.png';
-        break;
-      case '03d':
-        imageUrl = 'assets/icons/03d.png';
-        break;
-      case '04d':
-        imageUrl = 'assets/icons/04d.png';
-        break;
-      case '09d':
-        imageUrl = 'assets/icons/09d.png';
-        break;
-      case '10d':
-        imageUrl = 'assets/icons/10d.png';
-        break;
-      case '11d':
-        imageUrl = 'assets/icons/11d.png';
-        break;
-      case '13d':
-        imageUrl = 'assets/icons/13d.png';
-        break;
-      case '50d':
-        imageUrl = 'assets/icons/50d.png';
-        break;
-      default:
-        imageUrl = 'assets/icons/03d.png';
-        break;
-    }
-    return imageUrl;
-  }
+
 }
