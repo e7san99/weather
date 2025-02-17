@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:weather_pod/features/weather/presentation/widgets/weather_card_container.dart';
-import 'package:weather_pod/features/weather/utils/constants/style.dart';
+import 'package:weather_pod/features/weather/utils/style.dart';
 
 class CurrentWeatherCard extends StatelessWidget {
   final double tempCelsius;

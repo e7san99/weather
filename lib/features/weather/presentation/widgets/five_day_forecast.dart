@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:weather_pod/features/weather/model/weather.dart';
 import 'package:weather_pod/features/weather/presentation/widgets/weather_card_container.dart';
-import 'package:weather_pod/features/weather/utils/constants/constant.dart';
-import 'package:weather_pod/features/weather/utils/constants/style.dart';
-import 'package:weather_pod/features/weather/utils/extention/extention.dart';
+import 'package:weather_pod/features/weather/utils/constant.dart';
+import 'package:weather_pod/features/weather/utils/style.dart';
+import 'package:weather_pod/features/weather/utils/extention.dart';
 
 class FiveDayForecast extends StatelessWidget {
   final List<ListElement> fiveDayForecastAt12PM;

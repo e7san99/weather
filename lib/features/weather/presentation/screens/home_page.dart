@@ -4,14 +4,15 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:weather_pod/features/weather/data/riverpod/fetch_weather_by_city.dart';
+import 'package:weather_pod/features/weather/data/riverpod/fetch_weather.dart';
 import 'package:weather_pod/features/weather/presentation/widgets/current_weather_card.dart';
 import 'package:weather_pod/features/weather/presentation/widgets/five_day_forecast.dart';
 import 'package:weather_pod/features/weather/presentation/widgets/next_hours_forecast.dart';
 import 'package:weather_pod/features/weather/presentation/widgets/title_cards.dart';
-import 'package:weather_pod/features/weather/utils/constants/constant.dart';
-import 'package:weather_pod/features/weather/utils/extention/extention.dart';
-import 'package:weather_pod/features/weather/utils/shimmer/shimmer.dart';
+import 'package:weather_pod/features/weather/utils/constant.dart';
+import 'package:weather_pod/features/weather/utils/extention.dart';
+import 'package:weather_pod/features/weather/utils/shimmers/shimmering_appbar.dart';
+import 'package:weather_pod/features/weather/utils/shimmers/shimmering_weather_cards.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -168,7 +169,7 @@ class _HomePageState extends State<HomePage> {
                 );
               },
               loading: () {
-                return ShimmerContainer();
+                return ShimmeringWeatherCards();
               },
             );
           },
@@ -214,25 +215,7 @@ class _HomePageState extends State<HomePage> {
                     style: TextStyle(color: Colors.orange),
                   ),
                   loading: () {
-                    return Row(
-                      children: [
-                        Container(
-                          margin: EdgeInsets.symmetric(horizontal: 16),
-                          child: Shimmer.fromColors(
-                            baseColor: Colors.deepOrange,
-                            highlightColor: Colors.orange,
-                            child: Container(
-                              height: 20,
-                              width: 150,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
+                    return ShimmeringAppbar();
                   },
                 );
               }

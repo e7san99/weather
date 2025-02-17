@@ -1,18 +1,16 @@
 import 'package:dio/dio.dart';
 import 'package:weather_pod/features/weather/data/repositories/weather_repository.dart';
 import 'package:weather_pod/features/weather/model/weather.dart';
+import 'package:weather_pod/features/weather/utils/constant.dart';
 
 class WeatherImplements extends WeatherRepository {
-  static const String _apiKey = '2374fcc35708ce98a9a9c84993a40723';
-  static const String _baseUrl =
-      'https://api.openweathermap.org/data/2.5/forecast';
 
   @override
   Future<WeatherModel> fetchWeatherByCity(String? city) async {
     final dio = Dio();
     try {
       var response = await dio.get(
-        '$_baseUrl?q=$city&appid=$_apiKey',
+        '$baseUrl?q=$city&appid=$apiKey',
         options: Options(
           method: 'GET',
         ),
@@ -38,7 +36,7 @@ class WeatherImplements extends WeatherRepository {
     final dio = Dio();
     try {
       var response = await dio.get(
-        '$_baseUrl?lat=$lat&lon=$lon&appid=$_apiKey',
+        '$baseUrl?lat=$lat&lon=$lon&appid=$apiKey',
         options: Options(
           method: 'GET',
         ),

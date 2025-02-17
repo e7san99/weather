@@ -1,7 +1,11 @@
+   const String apiKey = '2374fcc35708ce98a9a9c84993a40723';
+   const String baseUrl =
+      'https://api.openweathermap.org/data/2.5/forecast';
+
   String getWeatherIcons(String iconCode) {
     String imageUrl;
     switch (iconCode) {
-      //days
+      //icon of the day
       case '01d':
         imageUrl = 'assets/icons/01d.png';
         break;

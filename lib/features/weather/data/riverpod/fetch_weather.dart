@@ -23,7 +23,8 @@ final locationWeatherProvider =
       position.latitude, position.longitude);
 });
 
-final thirtyDayWeatherProvider =
+//jare amam wastandwa : pause
+final nextDaysWeatherProvider =
     FutureProvider.family<WeatherModel, String>((ref, city) async {
   final weatherRepository = ref.read(weatherRepositoryProvider);
   return await weatherRepository.fetchWeatherByCity(city);

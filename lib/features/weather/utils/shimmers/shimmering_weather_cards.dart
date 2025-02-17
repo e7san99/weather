@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
-class ShimmerContainer extends StatelessWidget {
-  const ShimmerContainer({super.key});
+class ShimmeringWeatherCards extends StatelessWidget {
+  const ShimmeringWeatherCards({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,8 +18,8 @@ class ShimmerContainer extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: Shimmer.fromColors(
-                baseColor: Colors.deepOrange,
-                highlightColor: Colors.orange,
+                baseColor: Colors.grey[300]!,
+                highlightColor: Colors.grey[100]!,
                 child: Container(
                   height: height * 0.27,
                   width: width,
@@ -39,8 +39,8 @@ class ShimmerContainer extends StatelessWidget {
               Container(
                 margin: EdgeInsets.symmetric(horizontal: 16),
                 child: Shimmer.fromColors(
-                 baseColor: Colors.deepOrange,
-                    highlightColor: Colors.orange,
+                  baseColor: Colors.grey[300]!,
+                  highlightColor: Colors.grey[100]!,
                   child: Container(
                     height: 20,
                     width: 150,
@@ -61,8 +61,8 @@ class ShimmerContainer extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: Shimmer.fromColors(
-                baseColor: Colors.deepOrange,
-                highlightColor: Colors.orange,
+                baseColor: Colors.grey[300]!,
+                highlightColor: Colors.grey[100]!,
                 child: Container(
                   height: height * 0.16,
                   width: width,
@@ -82,8 +82,8 @@ class ShimmerContainer extends StatelessWidget {
               Container(
                 margin: EdgeInsets.symmetric(horizontal: 16),
                 child: Shimmer.fromColors(
-                  baseColor: Colors.deepOrange,
-                    highlightColor: Colors.orange,
+                  baseColor: Colors.grey[300]!,
+                  highlightColor: Colors.grey[100]!,
                   child: Container(
                     height: 20,
                     width: 150,
@@ -104,8 +104,8 @@ class ShimmerContainer extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: Shimmer.fromColors(
-               baseColor: Colors.deepOrange,
-                highlightColor: Colors.orange,
+                baseColor: Colors.grey[300]!,
+                highlightColor: Colors.grey[100]!,
                 child: Container(
                   height: height * 0.25,
                   width: width,
