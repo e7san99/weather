@@ -5,7 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:weather_pod/features/weather/data/riverpod/fetch_weather_by_city.dart';
 import 'package:weather_pod/features/weather/presentation/widgets/container.dart';
-import 'package:weather_pod/features/weather/utils/extention.dart';
+import 'package:weather_pod/features/weather/presentation/widgets/weather_details.dart';
+import 'package:weather_pod/features/weather/utils/extention/extention.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -116,188 +117,14 @@ class _HomePageState extends State<HomePage> {
                 return SingleChildScrollView(
                   child: Column(
                     children: [
-                      CustomContainer(
-                        height: height,
-                        width: width,
-                        child: Stack(
-                          children: [
-                            //Base Icon
-                            Positioned(
-                              top: height * 0.02,
-                              left: width * 0.07,
-                              child: Image.asset(
-                                imageUrl,
-                                height: 100,
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                            //Description
-                            Positioned(
-                              top: height * 0.166,
-                              left: width * 0.07,
-                              child: ShaderMask(
-                                shaderCallback: (Rect bounds) {
-                                  return LinearGradient(
-                                    colors: [
-                                      Colors.white,
-                                      Colors.white,
-                                      Colors.grey,
-                                    ],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomLeft,
-                                  ).createShader(bounds);
-                                },
-                                child: Text(
-                                  description,
-                                  style: GoogleFonts.amaranth(
-                                    textStyle: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 25,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            //date
-                            Positioned(
-                              top: height * 0.22,
-                              left: width * 0.07,
-                              child: Text(
-                                formattedDate,
-                                style: GoogleFonts.amaranth(
-                                  textStyle: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            //Base Temperature
-                            Positioned(
-                              top: height * 0.013,
-                              right: width * 0.14,
-                              child: ShaderMask(
-                                shaderCallback: (Rect bounds) {
-                                  return LinearGradient(
-                                    colors: [
-                                      Colors.white,
-                                      Colors.white,
-                                      Colors.grey,
-                                    ],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomLeft,
-                                  ).createShader(bounds);
-                                },
-                                child: Text.rich(
-                                  TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: tempCelsius.toStringAsFixed(0),
-                                        style: GoogleFonts.amaranth(
-                                          textStyle: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 72,
-                                          ),
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: 'C',
-                                        style: GoogleFonts.amaranth(
-                                          textStyle: TextStyle(
-                                            color: Colors.white,
-                                            fontSize:
-                                                60, // Smaller font size for 'C°'
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            //temp dgree °
-                            Positioned(
-                              top: height * 0.02,
-                              right: width * 0.14,
-                              child: ShaderMask(
-                                shaderCallback: (Rect bounds) {
-                                  return LinearGradient(
-                                    colors: [
-                                      Colors.white,
-                                      Colors.white,
-                                      Colors.grey,
-                                    ],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomLeft,
-                                  ).createShader(bounds);
-                                },
-                                child: Text(
-                                  '°',
-                                  style: GoogleFonts.amaranth(
-                                    textStyle: TextStyle(
-                                      color: Colors
-                                          .white, // This color is required but will be overridden by the gradient
-                                      fontSize: 47,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            //min max temp
-                            Positioned(
-                              top: height * 0.17,
-                              right: width * 0.16,
-                              child: Row(
-                                children: [
-                                  Image.asset(
-                                    'assets/icons/down-arrow.png',
-                                    scale: 18,
-                                    color: const Color(0xE7F1E9E9),
-                                  ),
-                                  Text(
-                                    '${tempMinCelsius.toStringAsFixed(0)}° / ${tempMaxCelsius.toStringAsFixed(0)}°',
-                                    style: GoogleFonts.amaranth(
-                                      textStyle: TextStyle(
-                                        color: Color(0xE7F1E9E9),
-                                        fontSize: 20,
-                                      ),
-                                    ),
-                                  ),
-                                  Image.asset(
-                                    'assets/icons/up-arrow.png',
-                                    scale: 25,
-                                    color: Color(0xE7F1E9E9),
-                                  )
-                                ],
-                              ),
-                            ),
-                            //wind speed
-                            Positioned(
-                              top: height * 0.22,
-                              right: width * 0.07,
-                              child: Text(
-                                'Wind speed: ${data.list[0].wind.speed} m/s',
-                                style: GoogleFonts.amaranth(
-                                  textStyle: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            //vertical line
-                            Positioned(
-                              top: height * 0.21,
-                              left: width * 0.42,
-                              child: Container(
-                                height: 30, // Adjust the height as needed
-                                width:
-                                    2, // Adjust the width of the vertical line
-                                color: Color(0xE7F1E9E9),
-                              ),
-                            ),
-                          ],
-                        ),
+                      WeatherDetails(
+                        tempCelsius: tempCelsius,
+                        description: description,
+                        imageUrl: imageUrl,
+                        formattedDate: formattedDate,
+                        tempMinCelsius: tempMinCelsius,
+                        tempMaxCelsius: tempMaxCelsius,
+                        windSpeed: data.list[0].wind.speed,
                       ),
                       SizedBox(
                         height: 10,
