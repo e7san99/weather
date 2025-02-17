@@ -96,7 +96,7 @@ class CurrentWeatherCard extends StatelessWidget {
           //min max temp
           Positioned(
             top: height * 0.17,
-            right: width * 0.16,
+            right: width * 0.06,
             child: Row(
               children: [
                 Image.asset(

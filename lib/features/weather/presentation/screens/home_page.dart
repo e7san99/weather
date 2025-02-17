@@ -104,7 +104,7 @@ class _HomePageState extends State<HomePage> {
                 }).toList();
 
                 return RefreshIndicator(
-                  color: Colors.deepOrange,
+                  color: Colors.blue,
                   onRefresh: () async {
                     await Future.wait([
                       _getCurrentLocation(),
@@ -154,7 +154,7 @@ class _HomePageState extends State<HomePage> {
                         : 'An error occurred. Please try again.',
                     style: GoogleFonts.amaranth(
                       textStyle: TextStyle(
-                        color: Colors.deepOrange,
+                        color: Colors.blue,
                         fontSize: 18,
                       ),
                     ),
@@ -194,6 +194,7 @@ class _HomePageState extends State<HomePage> {
           Image.asset(
             'assets/icons/appbar/location.png',
             scale: 14,
+            color: Colors.blue,
           ),
           SizedBox(
             width: 5,
@@ -211,7 +212,7 @@ class _HomePageState extends State<HomePage> {
                       data.city.name,
                       style: GoogleFonts.amaranth(
                         textStyle: TextStyle(
-                          color: Colors.deepOrange,
+                          color: Colors.blue,
                           fontSize: 23,
                         ),
                       ),
@@ -221,7 +222,7 @@ class _HomePageState extends State<HomePage> {
                     error.toString().contains('City not found')
                         ? 'City not found. Please try again.'
                         : 'An error occurred. Please try again.',
-                    style: TextStyle(color: Colors.orange),
+                    style: TextStyle(color: Colors.blue),
                   ),
                   loading: () {
                     return ShimmeringAppbar();

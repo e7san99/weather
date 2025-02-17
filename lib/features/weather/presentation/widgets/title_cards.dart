@@ -15,7 +15,7 @@ class TitleCards extends StatelessWidget {
             title,
             style: GoogleFonts.amaranth(
               textStyle: TextStyle(
-                color: Colors.deepOrange,
+                color: Colors.blue,
                 fontSize: 20,
               ),
             ),
