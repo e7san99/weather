@@ -1,41 +1,53 @@
-   const String apiKey = '2374fcc35708ce98a9a9c84993a40723';
-   const String baseUrl =
-      'https://api.openweathermap.org/data/2.5/forecast';
+import 'package:intl/intl.dart';
+const String apiKey = '2374fcc35708ce98a9a9c84993a40723';
+const String baseUrl = 'https://api.openweathermap.org/data/2.5/forecast';
 
-  String getWeatherIcons(String iconCode) {
-    String imageUrl;
-    switch (iconCode) {
-      //icon of the day
-      case '01d':
-        imageUrl = 'assets/icons/01d.png';
-        break;
-      case '02d':
-        imageUrl = 'assets/icons/02d.png';
-        break;
-      case '03d':
-        imageUrl = 'assets/icons/03d.png';
-        break;
-      case '04d':
-        imageUrl = 'assets/icons/04d.png';
-        break;
-      case '09d':
-        imageUrl = 'assets/icons/09d.png';
-        break;
-      case '10d':
-        imageUrl = 'assets/icons/10d.png';
-        break;
-      case '11d':
-        imageUrl = 'assets/icons/11d.png';
-        break;
-      case '13d':
-        imageUrl = 'assets/icons/13d.png';
-        break;
-      case '50d':
-        imageUrl = 'assets/icons/50d.png';
-        break;
-      default:
-        imageUrl = 'assets/icons/03d.png';
-        break;
-    }
-    return imageUrl;
+double tempCelsius(double temp) {
+  return temp;
+}
+
+String formattedDate(DateTime dateTime) {
+  return DateFormat('EEEE, d MMM').format(dateTime);
+}
+
+DateTime now = DateTime.now();
+DateTime today = DateTime(now.year, now.month, now.day);
+DateTime tomorrow = today.add(Duration(days: 1));
+
+String getWeatherIcons(String iconCode) {
+  String imageUrl;
+  switch (iconCode) {
+    //icon of the day
+    case '01d':
+      imageUrl = 'assets/icons/01d.png';
+      break;
+    case '02d':
+      imageUrl = 'assets/icons/02d.png';
+      break;
+    case '03d':
+      imageUrl = 'assets/icons/03d.png';
+      break;
+    case '04d':
+      imageUrl = 'assets/icons/04d.png';
+      break;
+    case '09d':
+      imageUrl = 'assets/icons/09d.png';
+      break;
+    case '10d':
+      imageUrl = 'assets/icons/10d.png';
+      break;
+    case '11d':
+      imageUrl = 'assets/icons/11d.png';
+      break;
+    case '13d':
+      imageUrl = 'assets/icons/13d.png';
+      break;
+    case '50d':
+      imageUrl = 'assets/icons/50d.png';
+      break;
+    default:
+      imageUrl = 'assets/icons/03d.png';
+      break;
   }
+  return imageUrl;
+}

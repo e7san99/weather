@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:weather_pod/features/weather/data/riverpod/fetch_weather.dart';
 import 'package:weather_pod/features/weather/presentation/widgets/current_weather_card.dart';
 import 'package:weather_pod/features/weather/presentation/widgets/five_day_forecast.dart';
@@ -62,48 +60,32 @@ class _HomePageState extends State<HomePage> {
         appBar: _appBar(),
         body: Consumer(
           builder: (context, ref, child) {
-            final weather =
-                ref.watch(locationWeatherProvider(_currentPosition ??
-                    Position(
-                      latitude: 0,
-                      longitude: 0,
-                      accuracy: 0,
-                      altitude: 0,
-                      heading: 0,
-                      speed: 0,
-                      timestamp: DateTime.now(),
-                      altitudeAccuracy: 0,
-                      headingAccuracy: 0,
-                      speedAccuracy: 0,
-                      floor: 0,
-                    )));
+            final weather = ref.watch(
+              locationWeatherProvider(
+                _currentPosition ?? _defaultPosition(),
+              ),
+            );
 
             return weather.when(
               data: (data) {
                 //use in base container
                 //tempCelsius
-                double tempCelsius = data.list[0].main.temp.toCelsius;
-                double tempMinCelsius = data.list[0].main.temp_min.toCelsius;
-                double tempMaxCelsius = data.list[0].main.temp_max.toCelsius;
-                //date
-                DateTime dateTime = DateTime.parse(data.list[0].dt_txt);
-                String formattedDate =
-                    DateFormat('EEEE, d MMM').format(dateTime);
+                final listElement = data.list[0];
 
+                //date
+                DateTime dateTime = DateTime.parse(listElement.dt_txt);
                 //description
-                String description = data.list[0].weather[0].description;
+                String description = listElement.weather[0].description;
                 String capitalizedDescription =
                     description[0].toUpperCase() + description.substring(1);
-                double windSpeed = data.list[0].wind.speed;
+                
+                  //wind speed
+                double windSpeed = listElement.wind.speed;
 
-                String iconCode = data.list[0].weather[0].icon;
+                String iconCode = listElement.weather[0].icon;
                 String imageUrl = getWeatherIcons(iconCode);
 
                 //use next times Container
-                DateTime now = DateTime.now();
-                DateTime today = DateTime(now.year, now.month, now.day);
-                DateTime tomorrow = today.add(Duration(days: 1));
-
                 // Filter data to include only today and tomorrow
                 final nextHoursfilteredList = data.list.where((entry) {
                   DateTime entryDate = DateTime.parse(entry.dt_txt);
@@ -125,12 +107,12 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     children: [
                       CurrentWeatherCard(
-                        tempCelsius: tempCelsius,
+                        tempCelsius: tempCelsius(listElement.main.temp.toCelsius),
                         description: capitalizedDescription,
                         imageUrl: imageUrl,
-                        formattedDate: formattedDate,
-                        tempMinCelsius: tempMinCelsius,
-                        tempMaxCelsius: tempMaxCelsius,
+                        formattedDate: formattedDate(dateTime),
+                        tempMinCelsius: tempCelsius(listElement.main.temp_min.toCelsius),
+                        tempMaxCelsius: tempCelsius(listElement.main.temp_max.toCelsius),
                         windSpeed: windSpeed,
                       ),
                       SizedBox(
@@ -174,6 +156,22 @@ class _HomePageState extends State<HomePage> {
             );
           },
         ));
+  }
+
+  Position _defaultPosition() {
+    return Position(
+      latitude: 0,
+      longitude: 0,
+      accuracy: 0,
+      altitude: 0,
+      heading: 0,
+      speed: 0,
+      timestamp: DateTime.now(),
+      altitudeAccuracy: 0,
+      headingAccuracy: 0,
+      speedAccuracy: 0,
+      floor: 0,
+    );
   }
 
   AppBar _appBar() {
