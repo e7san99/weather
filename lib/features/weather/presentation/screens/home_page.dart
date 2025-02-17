@@ -4,7 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:weather_pod/features/weather/data/riverpod/fetch_weather_by_city.dart';
-import 'package:weather_pod/features/weather/presentation/widgets/container.dart';
+import 'package:weather_pod/features/weather/presentation/widgets/next_days.dart';
 import 'package:weather_pod/features/weather/presentation/widgets/next_times.dart';
 import 'package:weather_pod/features/weather/presentation/widgets/weather_details.dart';
 import 'package:weather_pod/features/weather/utils/constants/constant.dart';
@@ -88,6 +88,8 @@ class _HomePageState extends State<HomePage> {
 
                 //description
                 String description = data.list[0].weather[0].description;
+                String capitalizedDescription =
+                    description[0].toUpperCase() + description.substring(1);
                 double windSpeed = data.list[0].wind.speed;
 
                 String iconCode = data.list[0].weather[0].icon;
@@ -112,7 +114,7 @@ class _HomePageState extends State<HomePage> {
                 //use in next days container
                 // Filter data to include only today and tomorrow
                 // Filter data to show only 12:00 PM (noon) entries
-                final filteredListForNextDays = data.list.where((entry) {
+                final filteredListFor12PmNextDays = data.list.where((entry) {
                   DateTime entryDateTimee = DateTime.parse(entry.dt_txt);
                   return entryDateTimee.hour ==
                       12; // Select only entries at 12 PM
@@ -123,7 +125,7 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       WeatherDetails(
                         tempCelsius: tempCelsius,
-                        description: description,
+                        description: capitalizedDescription,
                         imageUrl: imageUrl,
                         formattedDate: formattedDate,
                         tempMinCelsius: tempMinCelsius,
@@ -138,7 +140,7 @@ class _HomePageState extends State<HomePage> {
                         child: Row(
                           children: [
                             Text(
-                              'Next Times',
+                              'Next times',
                               style: GoogleFonts.amaranth(
                                 textStyle: TextStyle(
                                   color: Colors.deepOrange,
@@ -161,7 +163,7 @@ class _HomePageState extends State<HomePage> {
                         child: Row(
                           children: [
                             Text(
-                              'Next Days',
+                              '5 Days forcast',
                               style: GoogleFonts.amaranth(
                                 textStyle: TextStyle(
                                   color: Colors.deepOrange,
@@ -172,71 +174,10 @@ class _HomePageState extends State<HomePage> {
                           ],
                         ),
                       ),
-                      CustomContainer(
-                        height: height,
-                        width: width,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: ListView.builder(
-                            // scrollDirection: Axis.horizontal,
-                            itemCount: filteredListForNextDays.length,
-                            itemBuilder: (context, index) {
-                              final tempCelsius = filteredListForNextDays[index]
-                                  .main
-                                  .temp
-                                  .toCelsius;
-
-                              DateTime dateTimee = DateTime.parse(
-                                  filteredListForNextDays[index].dt_txt);
-
-                              // Format the date as "Sat"
-                              String formattedDate =
-                                  DateFormat('E').format(dateTimee);
-
-                              String iconCode = filteredListForNextDays[index]
-                                  .weather[0]
-                                  .icon;
-                              final imageUrl = getWeatherIcons(iconCode);
-
-                              return Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      formattedDate,
-                                      style: GoogleFonts.amaranth(
-                                        textStyle: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Image.asset(
-                                    imageUrl,
-                                    height: 40,
-                                    fit: BoxFit.fill,
-                                    // color: whiteColor,
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      '${tempCelsius.round()}°',
-                                      style: GoogleFonts.amaranth(
-                                        textStyle: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
-                        ),
+                      // Next Days
+                      NextDays(
+                        filteredListFor12PmNextDays:
+                            filteredListFor12PmNextDays,
                       ),
                     ],
                   ),
@@ -332,6 +273,4 @@ class _HomePageState extends State<HomePage> {
       elevation: 0,
     );
   }
-
-
 }
