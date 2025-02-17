@@ -1,0 +1,48 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:weather_pod/features/weather/presentation/widgets/container.dart';
+import 'package:weather_pod/features/weather/utils/constants/constant.dart';
+import 'package:weather_pod/features/weather/utils/constants/style.dart';
+import 'package:weather_pod/features/weather/utils/extention/extention.dart';
+
+class NextTimesContainer extends StatelessWidget {
+  final List nextTimefilteredList;
+
+  const NextTimesContainer({super.key, required this.nextTimefilteredList});
+
+  @override
+  Widget build(BuildContext context) {
+    final double width = MediaQuery.sizeOf(context).width;
+    final double height = MediaQuery.sizeOf(context).height;
+    return CustomContainer(
+      height: height,
+      width: width,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: nextTimefilteredList.length,
+        itemBuilder: (context, index) {
+          final item = nextTimefilteredList[index];
+          final double tempCelsiuss = nextTimefilteredList[index].main.temp;
+          DateTime dateTimee =
+              DateTime.parse(nextTimefilteredList[index].dt_txt);
+
+          String formattedDate = DateFormat.jm().format(dateTimee);
+
+          return Column(
+            children: [
+              Text(
+                formattedDate,
+                style: textStyle(16),
+              ),
+              Image.asset(getWeatherIcons(item.weather[0].icon), height: 60),
+              Text(
+                '${tempCelsiuss.toCelsius.round()}°',
+                style: textStyle(16),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}

@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:weather_pod/features/weather/data/riverpod/fetch_weather_by_city.dart';
 import 'package:weather_pod/features/weather/presentation/widgets/container.dart';
+import 'package:weather_pod/features/weather/presentation/widgets/next_times.dart';
 import 'package:weather_pod/features/weather/presentation/widgets/weather_details.dart';
 import 'package:weather_pod/features/weather/utils/extention/extention.dart';
 
@@ -83,8 +84,10 @@ class _HomePageState extends State<HomePage> {
                 DateTime dateTime = DateTime.parse(data.list[0].dt_txt);
                 String formattedDate =
                     DateFormat('EEEE, d MMM').format(dateTime);
+
                 //description
                 String description = data.list[0].weather[0].description;
+                double windSpeed = data.list[0].wind.speed;
 
                 String iconCode = data.list[0].weather[0].icon;
                 String imageUrl = _weatherIcons(iconCode);
@@ -98,7 +101,7 @@ class _HomePageState extends State<HomePage> {
                 DateTime tomorrow = today.add(Duration(days: 1));
 
                 // Filter data to include only today and tomorrow
-                final filteredList = data.list.where((entry) {
+                final nextTimefilteredList = data.list.where((entry) {
                   DateTime entryDate = DateTime.parse(entry.dt_txt);
                   return entryDate
                           .isAfter(today.subtract(Duration(seconds: 1))) &&
@@ -124,7 +127,7 @@ class _HomePageState extends State<HomePage> {
                         formattedDate: formattedDate,
                         tempMinCelsius: tempMinCelsius,
                         tempMaxCelsius: tempMaxCelsius,
-                        windSpeed: data.list[0].wind.speed,
+                        windSpeed: windSpeed,
                       ),
                       SizedBox(
                         height: 10,
@@ -146,70 +149,10 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       //next times Container
-                      CustomContainer(
-                        height: height,
-                        width: width,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: filteredList.length,
-                            itemBuilder: (context, index) {
-                              final tempCelsiuss =
-                                  data.list[index].main.temp.toCelsius;
 
-                              DateTime dateTimee =
-                                  DateTime.parse(filteredList[index].dt_txt);
+                      NextTimesContainer(
+                          nextTimefilteredList: nextTimefilteredList),
 
-                              String formattedDate =
-                                  DateFormat.jm().format(dateTimee);
-
-                              String iconCode =
-                                  data.list[index].weather[0].icon;
-                              final imageUrl = _weatherIcons(iconCode);
-
-                              return Column(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      formattedDate,
-                                      style: GoogleFonts.amaranth(
-                                        textStyle: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Image.asset(
-                                    imageUrl,
-                                    height: 60,
-                                    fit: BoxFit.fill,
-                                    // color: whiteColor,
-                                  ),
-                                  Row(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                          '${tempCelsiuss.round()}°',
-                                          style: GoogleFonts.amaranth(
-                                            textStyle: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 18,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
-                        ),
-                      ),
                       SizedBox(
                         height: 10,
                       ),

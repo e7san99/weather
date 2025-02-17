@@ -26,3 +26,4 @@ ShaderMask shadeMask({required Widget widget}) {
     child: widget,
   );
 }
+
