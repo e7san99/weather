@@ -132,6 +132,7 @@ class _HomePageState extends State<HomePage> {
 
             return weather.when(
               data: (data) {
+                //use in base container
                 //tempCelsius
                 double tempCelsius = data.list[0].main.temp.toCelsius;
                 double tempMinCelsius = data.list[0].main.temp_min.toCelsius;
@@ -148,6 +149,19 @@ class _HomePageState extends State<HomePage> {
 
                 final double width = MediaQuery.sizeOf(context).width;
                 final double height = MediaQuery.sizeOf(context).height;
+
+                //use next times Container
+                DateTime now = DateTime.now();
+                DateTime today = DateTime(now.year, now.month, now.day);
+                DateTime tomorrow = today.add(Duration(days: 1));
+
+                // Filter data to include only today and tomorrow
+                final filteredList = data.list.where((entry) {
+                  DateTime entryDate = DateTime.parse(entry.dt_txt);
+                  return entryDate
+                          .isAfter(today.subtract(Duration(seconds: 1))) &&
+                      entryDate.isBefore(tomorrow.add(Duration(days: 1)));
+                }).toList();
 
                 return SingleChildScrollView(
                   child: Column(
@@ -354,152 +368,73 @@ class _HomePageState extends State<HomePage> {
                           ],
                         ),
                       ),
-                      //second Container
-                      Container(
-                        height: 200,
-                        margin: EdgeInsets.all(8),
-                        width: MediaQuery.sizeOf(context).width,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          gradient: LinearGradient(
-                            end: Alignment.topLeft,
-                            tileMode: TileMode.mirror,
-                            colors: [
-                              Colors.orange,
-                              Colors.deepOrange,
-                              Colors.deepOrangeAccent,
-                            ],
-                          ),
-                        ),
+                      //next times Container
+                      CustomContainer(
+                        height: height,
+                        width: width,
                         child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: weather.when(
-                                data: (data) {
-                                  DateTime now = DateTime.now();
-                                  DateTime today =
-                                      DateTime(now.year, now.month, now.day);
-                                  DateTime tomorrow =
-                                      today.add(Duration(days: 1));
+                          padding: const EdgeInsets.all(8.0),
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: filteredList.length,
+                            itemBuilder: (context, index) {
+                              final tempCelsiuss =
+                                  data.list[index].main.temp.toCelsius;
 
-                                  // Filter data to include only today and tomorrow
-                                  final filteredList = data.list.where((entry) {
-                                    DateTime entryDate =
-                                        DateTime.parse(entry.dt_txt);
-                                    return entryDate.isAfter(today
-                                            .subtract(Duration(seconds: 1))) &&
-                                        entryDate.isBefore(
-                                            tomorrow.add(Duration(days: 1)));
-                                  }).toList();
+                              DateTime dateTimee =
+                                  DateTime.parse(filteredList[index].dt_txt);
 
-                                  return ListView.builder(
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: filteredList.length,
-                                    itemBuilder: (context, index) {
-                                      final tempCelsiuss =
-                                          data.list[index].main.temp - 273.15;
+                              String formattedDate =
+                                  DateFormat.jm().format(dateTimee);
 
-                                      DateTime dateTimee = DateTime.parse(
-                                          filteredList[index].dt_txt);
+                              String iconCode =
+                                  data.list[index].weather[0].icon;
+                              final imageUrl = _weatherIcons(iconCode);
 
-                                      String formattedDate =
-                                          DateFormat.jm().format(dateTimee);
-
-                                      String iconCodee =
-                                          data.list[index].weather[0].icon;
-                                      String imageUrll;
-                                      switch (iconCodee) {
-                                        //days
-                                        case '01d':
-                                          imageUrll = 'assets/icons/01d.png';
-                                          break;
-                                        case '02d':
-                                          imageUrll = 'assets/icons/02d.png';
-                                          break;
-                                        case '03d':
-                                          imageUrll = 'assets/icons/03d.png';
-                                          break;
-                                        case '04d':
-                                          imageUrll = 'assets/icons/04d.png';
-                                          break;
-                                        case '09d':
-                                          imageUrll = 'assets/icons/09d.png';
-                                          break;
-                                        case '10d':
-                                          imageUrll = 'assets/icons/10d.png';
-                                          break;
-                                        case '11d':
-                                          imageUrll = 'assets/icons/11d.png';
-                                          break;
-                                        case '13d':
-                                          imageUrll = 'assets/icons/13d.png';
-                                          break;
-                                        case '50d':
-                                          imageUrll = 'assets/icons/50d.png';
-                                          break;
-                                        default:
-                                          // imageUrl = 'assets/icons/moon.png';
-                                          imageUrll = 'assets/icons/03d.png';
-                                          break;
-                                      }
-
-                                      return Column(
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              formattedDate,
-                                              style: GoogleFonts.amaranth(
-                                                textStyle: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 14,
-                                                ),
-                                              ),
+                              return Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      formattedDate,
+                                      style: GoogleFonts.amaranth(
+                                        textStyle: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Image.asset(
+                                    imageUrl,
+                                    height: 60,
+                                    fit: BoxFit.fill,
+                                    // color: whiteColor,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          '${tempCelsiuss.round()}°',
+                                          style: GoogleFonts.amaranth(
+                                            textStyle: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 18,
                                             ),
                                           ),
-                                          Image.asset(
-                                            imageUrll,
-                                            height: 60,
-                                            fit: BoxFit.fill,
-                                            // color: whiteColor,
-                                          ),
-                                          Row(
-                                            children: [
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Text(
-                                                  '${tempCelsiuss.round()}°',
-                                                  style: GoogleFonts.amaranth(
-                                                    textStyle: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 18,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                },
-                                error: (error, stackTrace) => Text(
-                                      error
-                                              .toString()
-                                              .contains('City not found')
-                                          ? 'City not found. Please try again.'
-                                          : 'An error occurred. Please try again.',
-                                      style: TextStyle(color: Colors.orange),
-                                    ),
-                                loading: () => Center(
-                                      child: CircularProgressIndicator(
-                                        color: Colors.blue,
+                                        ),
                                       ),
-                                    ))),
+                                    ],
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ),
                       ),
                       SizedBox(
-                        height: 20,
+                        height: 10,
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 10.0),
