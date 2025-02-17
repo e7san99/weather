@@ -4,9 +4,10 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:weather_pod/features/weather/data/riverpod/fetch_weather_by_city.dart';
-import 'package:weather_pod/features/weather/presentation/widgets/next_days.dart';
-import 'package:weather_pod/features/weather/presentation/widgets/next_times.dart';
-import 'package:weather_pod/features/weather/presentation/widgets/weather_details.dart';
+import 'package:weather_pod/features/weather/presentation/widgets/current_weather_card.dart';
+import 'package:weather_pod/features/weather/presentation/widgets/five_day_forecast.dart';
+import 'package:weather_pod/features/weather/presentation/widgets/next_hours_forecast.dart';
+import 'package:weather_pod/features/weather/presentation/widgets/title_cards.dart';
 import 'package:weather_pod/features/weather/utils/constants/constant.dart';
 import 'package:weather_pod/features/weather/utils/extention/extention.dart';
 
@@ -104,7 +105,7 @@ class _HomePageState extends State<HomePage> {
                 DateTime tomorrow = today.add(Duration(days: 1));
 
                 // Filter data to include only today and tomorrow
-                final nextTimefilteredList = data.list.where((entry) {
+                final nextHoursfilteredList = data.list.where((entry) {
                   DateTime entryDate = DateTime.parse(entry.dt_txt);
                   return entryDate
                           .isAfter(today.subtract(Duration(seconds: 1))) &&
@@ -114,7 +115,7 @@ class _HomePageState extends State<HomePage> {
                 //use in next days container
                 // Filter data to include only today and tomorrow
                 // Filter data to show only 12:00 PM (noon) entries
-                final filteredListFor12PmNextDays = data.list.where((entry) {
+                final fiveDayForecastAt12PM = data.list.where((entry) {
                   DateTime entryDateTimee = DateTime.parse(entry.dt_txt);
                   return entryDateTimee.hour ==
                       12; // Select only entries at 12 PM
@@ -123,7 +124,7 @@ class _HomePageState extends State<HomePage> {
                 return SingleChildScrollView(
                   child: Column(
                     children: [
-                      WeatherDetails(
+                      CurrentWeatherCard(
                         tempCelsius: tempCelsius,
                         description: capitalizedDescription,
                         imageUrl: imageUrl,
@@ -135,49 +136,18 @@ class _HomePageState extends State<HomePage> {
                       SizedBox(
                         height: 10,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10.0),
-                        child: Row(
-                          children: [
-                            Text(
-                              'Next times',
-                              style: GoogleFonts.amaranth(
-                                textStyle: TextStyle(
-                                  color: Colors.deepOrange,
-                                  fontSize: 20,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      TitleCards(title: 'Next Hours'),
                       //next times Container
-                      NextTimesContainer(
-                          nextTimefilteredList: nextTimefilteredList),
+                      NextHoursForecast(
+                          nextHoursfilteredList: nextHoursfilteredList),
 
                       SizedBox(
                         height: 10,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10.0),
-                        child: Row(
-                          children: [
-                            Text(
-                              '5 Days forcast',
-                              style: GoogleFonts.amaranth(
-                                textStyle: TextStyle(
-                                  color: Colors.deepOrange,
-                                  fontSize: 20,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      TitleCards(title: 'Five Day Forecast'),
                       // Next Days
-                      NextDays(
-                        filteredListFor12PmNextDays:
-                            filteredListFor12PmNextDays,
+                      FiveDayForecast(
+                        fiveDayForecastAt12PM: fiveDayForecastAt12PM,
                       ),
                     ],
                   ),

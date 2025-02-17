@@ -1,11 +1,11 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 
-class CustomContainer extends StatelessWidget {
+class WeatherCardContainer extends StatelessWidget {
   final double height;
   final double width;
   final Widget? child;
-  const CustomContainer({
+  const WeatherCardContainer({
     super.key,
     required this.height,
     required this.width,
@@ -30,7 +30,7 @@ class CustomContainer extends StatelessWidget {
           ],
         ),
       ),
-      child:child,
+      child: child,
     );
   }
 }

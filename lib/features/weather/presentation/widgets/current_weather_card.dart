@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:weather_pod/features/weather/presentation/widgets/container.dart';
+import 'package:weather_pod/features/weather/presentation/widgets/weather_card_container.dart';
 import 'package:weather_pod/features/weather/utils/constants/style.dart';
 
-class WeatherDetails extends StatelessWidget {
+class CurrentWeatherCard extends StatelessWidget {
   final double tempCelsius;
   final String description;
   final String imageUrl;
@@ -12,7 +12,7 @@ class WeatherDetails extends StatelessWidget {
   final double tempMaxCelsius;
   final double windSpeed;
 
-  const WeatherDetails({
+  const CurrentWeatherCard({
     super.key,
     required this.tempCelsius,
     required this.description,
@@ -27,7 +27,7 @@ class WeatherDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     final double width = MediaQuery.sizeOf(context).width;
     final double height = MediaQuery.sizeOf(context).height;
-    return CustomContainer(
+    return WeatherCardContainer(
       height: height,
       width: width,
       child: Stack(

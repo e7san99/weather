@@ -1,30 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:weather_pod/features/weather/presentation/widgets/container.dart';
+import 'package:weather_pod/features/weather/presentation/widgets/weather_card_container.dart';
 import 'package:weather_pod/features/weather/utils/constants/constant.dart';
 import 'package:weather_pod/features/weather/utils/constants/style.dart';
 import 'package:weather_pod/features/weather/utils/extention/extention.dart';
 
-class NextTimesContainer extends StatelessWidget {
-  final List nextTimefilteredList;
+class NextHoursForecast extends StatelessWidget {
+  final List nextHoursfilteredList;
 
-  const NextTimesContainer({super.key, required this.nextTimefilteredList});
+  const NextHoursForecast({super.key, required this.nextHoursfilteredList});
 
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.sizeOf(context).width;
     final double height = MediaQuery.sizeOf(context).height;
-    return CustomContainer(
+    return WeatherCardContainer(
       height: height * 0.8,
       width: width,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: nextTimefilteredList.length,
+        itemCount: nextHoursfilteredList.length,
         itemBuilder: (context, index) {
-          final item = nextTimefilteredList[index];
-          final double tempCelsiuss = nextTimefilteredList[index].main.temp;
+          final item = nextHoursfilteredList[index];
+          final double tempCelsiuss = nextHoursfilteredList[index].main.temp;
           DateTime dateTimee =
-              DateTime.parse(nextTimefilteredList[index].dt_txt);
+              DateTime.parse(nextHoursfilteredList[index].dt_txt);
 
           String formattedDate = DateFormat.jm().format(dateTimee);
 
