@@ -27,6 +27,7 @@ class CurrentWeatherCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final double width = MediaQuery.sizeOf(context).width;
     final double height = MediaQuery.sizeOf(context).height;
+
     return WeatherCardContainer(
       height: height,
       width: width,
@@ -71,7 +72,7 @@ class CurrentWeatherCard extends StatelessWidget {
                   TextSpan(
                     children: [
                       TextSpan(
-                        text: tempCelsius.toStringAsFixed(0),
+                        text: '${tempCelsius.round()}',
                         style: textStyle(72),
                       ),
                       TextSpan(
@@ -105,7 +106,7 @@ class CurrentWeatherCard extends StatelessWidget {
                   color: const Color(0xE7F1E9E9),
                 ),
                 Text(
-                  '${tempMinCelsius.toStringAsFixed(0)}° / ${tempMaxCelsius.toStringAsFixed(0)}°',
+                  '${tempMinCelsius.round()}° / ${tempMaxCelsius.round()}°',
                   style: GoogleFonts.amaranth(
                     textStyle: TextStyle(
                       color: Color(0xE7F1E9E9),

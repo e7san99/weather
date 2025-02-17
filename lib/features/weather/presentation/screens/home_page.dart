@@ -110,6 +110,7 @@ class _HomePageState extends State<HomePage> {
               );
             }
 
+
             final weather = ref.watch(
               locationWeatherProvider(
                 _currentPosition ?? _defaultPosition(),
