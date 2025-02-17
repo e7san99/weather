@@ -1,12 +1,12 @@
 import 'dart:convert';
 
-class SingleOrderModel {
+class WeatherModel {
   String cod;
   int message;
   int cnt;
   List<ListElement> list;
   City city;
-  SingleOrderModel({
+  WeatherModel({
     required this.cod,
     required this.message,
     required this.cnt,
@@ -25,8 +25,8 @@ class SingleOrderModel {
     };
   }
 
-  factory SingleOrderModel.fromMap(Map<String, dynamic> map) {
-    return SingleOrderModel(
+  factory WeatherModel.fromMap(Map<String, dynamic> map) {
+    return WeatherModel(
       cod: map['cod'] as String,
       message: map['message'] as int,
       cnt: map['cnt'] as int,
@@ -39,8 +39,8 @@ class SingleOrderModel {
 
   String toJson() => json.encode(toMap());
 
-  factory SingleOrderModel.fromJson(String source) =>
-      SingleOrderModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory WeatherModel.fromJson(String source) =>
+      WeatherModel.fromMap(json.decode(source) as Map<String, dynamic>);
 }
 
 class ListElement {

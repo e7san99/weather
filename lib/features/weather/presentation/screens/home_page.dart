@@ -402,22 +402,9 @@ class _HomePageState extends State<HomePage> {
                           ],
                         ),
                       ),
-                      Container(
-                        height: 200,
-                        margin: EdgeInsets.all(8),
-                        width: MediaQuery.sizeOf(context).width,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            tileMode: TileMode.mirror,
-                            colors: [
-                              Colors.orange,
-                              Colors.deepOrange,
-                              Colors.deepOrangeAccent,
-                            ],
-                          ),
-                        ),
+                      CustomContainer(
+                        height: height,
+                        width: width,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: ListView.builder(
@@ -514,65 +501,66 @@ class _HomePageState extends State<HomePage> {
 
   AppBar _appBar() {
     return AppBar(
-        backgroundColor: Color(0xF5F5F5F5),
-        title: Row(
-          children: [
-            Image.asset(
-              'assets/icons/appbar/location.png',
+      scrolledUnderElevation: 0,
+      backgroundColor: Color(0xF5F5F5F5),
+      title: Row(
+        children: [
+          Image.asset(
+            'assets/icons/appbar/location.png',
+            scale: 14,
+          ),
+          SizedBox(
+            width: 5,
+          ),
+          Consumer(
+            builder: (context, ref, child) {
+              if (_currentPosition == null) {
+                return SizedBox();
+              } else {
+                final weather =
+                    ref.watch(locationWeatherProvider(_currentPosition!));
+                return weather.when(
+                  data: (data) {
+                    return Text(
+                      data.city.name,
+                      style: GoogleFonts.amaranth(
+                        textStyle: TextStyle(
+                          color: Colors.deepOrange,
+                          fontSize: 23,
+                        ),
+                      ),
+                    );
+                  },
+                  error: (error, stackTrace) => Text(
+                    error.toString().contains('City not found')
+                        ? 'City not found. Please try again.'
+                        : 'An error occurred. Please try again.',
+                    style: TextStyle(color: Colors.orange),
+                  ),
+                  loading: () {
+                    return SizedBox();
+                  },
+                );
+              }
+            },
+          )
+        ],
+      ),
+      centerTitle: true,
+      actions: [
+        InkWell(
+          onTap: () {},
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Image.asset(
+              'assets/icons/appbar/search.png',
               scale: 14,
             ),
-            SizedBox(
-              width: 5,
-            ),
-            Consumer(
-              builder: (context, ref, child) {
-                if (_currentPosition == null) {
-                  return SizedBox();
-                } else {
-                  final weather =
-                      ref.watch(locationWeatherProvider(_currentPosition!));
-                  return weather.when(
-                    data: (data) {
-                      return Text(
-                        data.city.name,
-                        style: GoogleFonts.amaranth(
-                          textStyle: TextStyle(
-                            color: Colors.deepOrange,
-                            fontSize: 23,
-                          ),
-                        ),
-                      );
-                    },
-                    error: (error, stackTrace) => Text(
-                      error.toString().contains('City not found')
-                          ? 'City not found. Please try again.'
-                          : 'An error occurred. Please try again.',
-                      style: TextStyle(color: Colors.orange),
-                    ),
-                    loading: () {
-                      return SizedBox();
-                    },
-                  );
-                }
-              },
-            )
-          ],
-        ),
-        centerTitle: true,
-        actions: [
-          InkWell(
-            onTap: () {},
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Image.asset(
-                'assets/icons/appbar/search.png',
-                scale: 14,
-              ),
-            ),
           ),
-        ],
-        elevation: 0,
-      );
+        ),
+      ],
+      elevation: 0,
+    );
   }
 
   String _weatherIcons(String iconCode) {

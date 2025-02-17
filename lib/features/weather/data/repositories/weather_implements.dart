@@ -8,7 +8,7 @@ class WeatherImplements extends WeatherRepository {
       'https://api.openweathermap.org/data/2.5/forecast';
 
   @override
-  Future<SingleOrderModel> fetchWeatherByCity(String? city) async {
+  Future<WeatherModel> fetchWeatherByCity(String? city) async {
     final dio = Dio();
     try {
       var response = await dio.get(
@@ -20,7 +20,7 @@ class WeatherImplements extends WeatherRepository {
 
       if (response.statusCode == 200) {
         final data = response.data as Map<String, dynamic>;
-        return SingleOrderModel.fromMap(data);
+        return WeatherModel.fromMap(data);
       } else {
         throw Exception('Failed to load data: ${response.statusMessage}');
       }
@@ -34,7 +34,7 @@ class WeatherImplements extends WeatherRepository {
   }
 
   @override
-  Future<SingleOrderModel> fetchWeatherByLocation(double lat, double lon) async {
+  Future<WeatherModel> fetchWeatherByLocation(double lat, double lon) async {
     final dio = Dio();
     try {
       var response = await dio.get(
@@ -46,7 +46,7 @@ class WeatherImplements extends WeatherRepository {
 
       if (response.statusCode == 200) {
         final data = response.data as Map<String, dynamic>;
-        return SingleOrderModel.fromMap(data);
+        return WeatherModel.fromMap(data);
       } else {
         throw Exception('Failed to load data: ${response.statusMessage}');
       }
