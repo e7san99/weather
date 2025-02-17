@@ -52,66 +52,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Color(0xF5F5F5F5),
-        appBar: AppBar(
-          backgroundColor: Color(0xF5F5F5F5),
-          title: Row(
-            children: [
-              Image.asset(
-                'assets/icons/appbar/location.png',
-                scale: 14,
-              ),
-              SizedBox(
-                width: 5,
-              ),
-              Consumer(
-                builder: (context, ref, child) {
-                  if (_currentPosition == null) {
-                    return SizedBox();
-                  } else {
-                    final weather =
-                        ref.watch(locationWeatherProvider(_currentPosition!));
-                    return weather.when(
-                      data: (data) {
-                        return Text(
-                          data.city.name,
-                          style: GoogleFonts.amaranth(
-                            textStyle: TextStyle(
-                              color: Colors.deepOrange,
-                              fontSize: 23,
-                            ),
-                          ),
-                        );
-                      },
-                      error: (error, stackTrace) => Text(
-                        error.toString().contains('City not found')
-                            ? 'City not found. Please try again.'
-                            : 'An error occurred. Please try again.',
-                        style: TextStyle(color: Colors.orange),
-                      ),
-                      loading: () {
-                        return SizedBox();
-                      },
-                    );
-                  }
-                },
-              )
-            ],
-          ),
-          centerTitle: true,
-          actions: [
-            InkWell(
-              onTap: () {},
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Image.asset(
-                  'assets/icons/appbar/search.png',
-                  scale: 14,
-                ),
-              ),
-            ),
-          ],
-          elevation: 0,
-        ),
+        appBar: _appBar(),
         body: Consumer(
           builder: (context, ref, child) {
             final weather =
@@ -161,6 +102,15 @@ class _HomePageState extends State<HomePage> {
                   return entryDate
                           .isAfter(today.subtract(Duration(seconds: 1))) &&
                       entryDate.isBefore(tomorrow.add(Duration(days: 1)));
+                }).toList();
+
+                //use in next days container
+                // Filter data to include only today and tomorrow
+                // Filter data to show only 12:00 PM (noon) entries
+                final filteredListForNextDays = data.list.where((entry) {
+                  DateTime entryDateTimee = DateTime.parse(entry.dt_txt);
+                  return entryDateTimee.hour ==
+                      12; // Select only entries at 12 PM
                 }).toList();
 
                 return SingleChildScrollView(
@@ -469,122 +419,67 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: weather.when(
-                                data: (data) {
-                                  // Filter data to include only today and tomorrow
-                                  // Filter data to show only 12:00 PM (noon) entries
-                                  final filteredList = data.list.where((entry) {
-                                    DateTime entryDateTime =
-                                        DateTime.parse(entry.dt_txt);
-                                    return entryDateTime.hour ==
-                                        12; // Select only entries at 12 PM
-                                  }).toList();
+                          padding: const EdgeInsets.all(8.0),
+                          child: ListView.builder(
+                            // scrollDirection: Axis.horizontal,
+                            itemCount: filteredListForNextDays.length,
+                            itemBuilder: (context, index) {
+                              final tempCelsius = filteredListForNextDays[index]
+                                  .main
+                                  .temp
+                                  .toCelsius;
 
-                                  return ListView.builder(
-                                    // scrollDirection: Axis.horizontal,
-                                    itemCount: filteredList.length,
-                                    itemBuilder: (context, index) {
-                                      final tempCelsius =
-                                          filteredList[index].main.temp -
-                                              273.15;
-                                      DateTime dateTime = DateTime.parse(
-                                          filteredList[index].dt_txt);
+                              DateTime dateTimee = DateTime.parse(
+                                  filteredListForNextDays[index].dt_txt);
 
-                                      // Format the date as "Sat 2/15/2025 12:00 PM"
-                                      String formattedDate =
-                                          DateFormat('E').format(dateTime);
+                              // Format the date as "Sat"
+                              String formattedDate =
+                                  DateFormat('E').format(dateTimee);
 
-                                      String iconCodee =
-                                          filteredList[index].weather[0].icon;
-                                      String imageUrlll;
-                                      switch (iconCodee) {
-                                        //days
-                                        case '01d':
-                                          imageUrlll = 'assets/icons/01d.png';
-                                          break;
-                                        case '02d':
-                                          imageUrlll = 'assets/icons/02d.png';
-                                          break;
-                                        case '03d':
-                                          imageUrlll = 'assets/icons/03d.png';
-                                          break;
-                                        case '04d':
-                                          imageUrlll = 'assets/icons/04d.png';
-                                          break;
-                                        case '09d':
-                                          imageUrlll = 'assets/icons/09d.png';
-                                          break;
-                                        case '10d':
-                                          imageUrlll = 'assets/icons/10d.png';
-                                          break;
-                                        case '11d':
-                                          imageUrlll = 'assets/icons/11d.png';
-                                          break;
-                                        case '13d':
-                                          imageUrlll = 'assets/icons/13d.png';
-                                          break;
-                                        case '50d':
-                                          imageUrlll = 'assets/icons/50d.png';
-                                          break;
-                                        default:
-                                          // imageUrl = 'assets/icons/moon.png';
-                                          imageUrlll = 'assets/icons/03d.png';
-                                          break;
-                                      }
+                              String iconCode = filteredListForNextDays[index]
+                                  .weather[0]
+                                  .icon;
+                              final imageUrl = _weatherIcons(iconCode);
 
-                                      return Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              formattedDate,
-                                              style: GoogleFonts.amaranth(
-                                                textStyle: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 14,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Image.asset(
-                                            imageUrlll,
-                                            height: 40,
-                                            fit: BoxFit.fill,
-                                            // color: whiteColor,
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              '${tempCelsius.round()}°',
-                                              style: GoogleFonts.amaranth(
-                                                textStyle: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 14,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                },
-                                error: (error, stackTrace) => Text(
-                                      error
-                                              .toString()
-                                              .contains('City not found')
-                                          ? 'City not found. Please try again.'
-                                          : 'An error occurred. Please try again.',
-                                      style: TextStyle(color: Colors.orange),
-                                    ),
-                                loading: () => Center(
-                                      child: CircularProgressIndicator(
-                                        color: Colors.blue,
+                              return Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      formattedDate,
+                                      style: GoogleFonts.amaranth(
+                                        textStyle: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 14,
+                                        ),
                                       ),
-                                    ))),
+                                    ),
+                                  ),
+                                  Image.asset(
+                                    imageUrl,
+                                    height: 40,
+                                    fit: BoxFit.fill,
+                                    // color: whiteColor,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      '${tempCelsius.round()}°',
+                                      style: GoogleFonts.amaranth(
+                                        textStyle: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -615,6 +510,69 @@ class _HomePageState extends State<HomePage> {
             );
           },
         ));
+  }
+
+  AppBar _appBar() {
+    return AppBar(
+        backgroundColor: Color(0xF5F5F5F5),
+        title: Row(
+          children: [
+            Image.asset(
+              'assets/icons/appbar/location.png',
+              scale: 14,
+            ),
+            SizedBox(
+              width: 5,
+            ),
+            Consumer(
+              builder: (context, ref, child) {
+                if (_currentPosition == null) {
+                  return SizedBox();
+                } else {
+                  final weather =
+                      ref.watch(locationWeatherProvider(_currentPosition!));
+                  return weather.when(
+                    data: (data) {
+                      return Text(
+                        data.city.name,
+                        style: GoogleFonts.amaranth(
+                          textStyle: TextStyle(
+                            color: Colors.deepOrange,
+                            fontSize: 23,
+                          ),
+                        ),
+                      );
+                    },
+                    error: (error, stackTrace) => Text(
+                      error.toString().contains('City not found')
+                          ? 'City not found. Please try again.'
+                          : 'An error occurred. Please try again.',
+                      style: TextStyle(color: Colors.orange),
+                    ),
+                    loading: () {
+                      return SizedBox();
+                    },
+                  );
+                }
+              },
+            )
+          ],
+        ),
+        centerTitle: true,
+        actions: [
+          InkWell(
+            onTap: () {},
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Image.asset(
+                'assets/icons/appbar/search.png',
+                scale: 14,
+              ),
+            ),
+          ),
+        ],
+        elevation: 0,
+      );
   }
 
   String _weatherIcons(String iconCode) {
