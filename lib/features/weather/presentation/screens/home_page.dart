@@ -34,9 +34,10 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _getCurrentLocation({WidgetRef? ref}) async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    
+
     if (!serviceEnabled) {
-      ref?.read(isLocationServiceEnabledProvider.notifier).state = false; // Update state
+      ref?.read(isLocationServiceEnabledProvider.notifier).state =
+          false; // Update state
       return;
     }
 
@@ -73,43 +74,8 @@ class _HomePageState extends State<HomePage> {
                 ref.watch(isLocationServiceEnabledProvider);
 
             if (!isLocationServiceEnabled) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Location services are disabled.',
-                      style: GoogleFonts.amaranth(
-                        textStyle: TextStyle(
-                          color: Colors.blue,
-                          fontSize: 18,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed: () async {
-                        bool serviceEnabled =
-                            await Geolocator.isLocationServiceEnabled();
-                        if (!serviceEnabled) {
-                          // Open location settings
-                          Geolocator.openLocationSettings();
-                        }
-                        _getCurrentLocation(ref: ref); // Retry getting location
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                      ),
-                      child: Text(
-                        'Enable Location Services',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
-              );
+              return _locationServiceDisable(ref);
             }
-
 
             final weather = ref.watch(
               locationWeatherProvider(
@@ -216,6 +182,58 @@ class _HomePageState extends State<HomePage> {
             );
           },
         ));
+  }
+
+  RefreshIndicator _locationServiceDisable(WidgetRef ref) {
+    return RefreshIndicator(
+              color: Colors.blue,
+              onRefresh: () async => _getCurrentLocation(ref: ref),
+              child: SingleChildScrollView(
+                // Add this
+                physics:
+                    AlwaysScrollableScrollPhysics(), // Ensure it's always scrollable
+                child: Center(
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 50,
+                      ),
+                      Image.asset(
+                        'assets/icons/map.png',
+                        scale: 3,
+                      ),
+                      Text(
+                        'Location services are disabled.',
+                        style: GoogleFonts.amaranth(
+                          textStyle: TextStyle(
+                            color: Colors.red,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 80),
+                      ElevatedButton(
+                        onPressed: () async {
+                          bool serviceEnabled =
+                              await Geolocator.isLocationServiceEnabled();
+                          if (!serviceEnabled) {
+                            Geolocator.openLocationSettings();
+                          }
+                          await _getCurrentLocation(ref: ref);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                        ),
+                        child: Text(
+                          'Enable Location Services',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
   }
 
   Position _defaultPosition() {
