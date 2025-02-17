@@ -29,3 +29,5 @@ final nextDaysWeatherProvider =
   final weatherRepository = ref.read(weatherRepositoryProvider);
   return await weatherRepository.fetchWeatherByCity(city);
 });
+
+final isLocationServiceEnabledProvider = StateProvider<bool>((ref) => true);

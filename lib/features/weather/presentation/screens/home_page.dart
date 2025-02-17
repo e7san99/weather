@@ -26,14 +26,22 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _getCurrentLocation();
+    // Use `WidgetsBinding.instance.addPostFrameCallback` to access `ref` after the widget is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _getCurrentLocation(); // Pass `ref` to the method
+    });
   }
 
-  Future<void> _getCurrentLocation() async {
+  Future<void> _getCurrentLocation({WidgetRef? ref}) async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    
     if (!serviceEnabled) {
+      ref?.read(isLocationServiceEnabledProvider.notifier).state = false; // Update state
       return;
     }
+
+    ref?.read(isLocationServiceEnabledProvider.notifier).state =
+        true; // Update state
 
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
@@ -60,6 +68,48 @@ class _HomePageState extends State<HomePage> {
         appBar: _appBar(),
         body: Consumer(
           builder: (context, ref, child) {
+            // Use `ref` here as needed
+            final isLocationServiceEnabled =
+                ref.watch(isLocationServiceEnabledProvider);
+
+            if (!isLocationServiceEnabled) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Location services are disabled.',
+                      style: GoogleFonts.amaranth(
+                        textStyle: TextStyle(
+                          color: Colors.blue,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: () async {
+                        bool serviceEnabled =
+                            await Geolocator.isLocationServiceEnabled();
+                        if (!serviceEnabled) {
+                          // Open location settings
+                          Geolocator.openLocationSettings();
+                        }
+                        _getCurrentLocation(ref: ref); // Retry getting location
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                      ),
+                      child: Text(
+                        'Enable Location Services',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+
             final weather = ref.watch(
               locationWeatherProvider(
                 _currentPosition ?? _defaultPosition(),
@@ -106,9 +156,7 @@ class _HomePageState extends State<HomePage> {
                 return RefreshIndicator(
                   color: Colors.blue,
                   onRefresh: () async {
-                    await Future.wait([
-                      _getCurrentLocation(),
-                    ]);
+                    await Future.wait([_getCurrentLocation(ref: ref)]);
                   },
                   child: SingleChildScrollView(
                     child: Column(
