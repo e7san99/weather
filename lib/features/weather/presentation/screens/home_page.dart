@@ -143,6 +143,9 @@ class _HomePageState extends State<HomePage> {
               data: (data) {
                 //tempCelsius
                 double tempCelsius = data.list[0].main.temp - 273.15;
+                double tempMinCelsius = data.list[0].main.temp_min - 273.15;
+                double tempMaxCelsius = data.list[0].main.temp_max - 273.15;
+
                 //date
                 DateTime dateTime = DateTime.parse(data.list[0].dt_txt);
                 String formattedDate =
@@ -233,60 +236,157 @@ class _HomePageState extends State<HomePage> {
                                     Colors.deepOrange,
                                     Colors.deepOrangeAccent,
                                   ])),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          child: Stack(
+                            // crossAxisAlignment: CrossAxisAlignment.start,
+                            // mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  Image.asset(
-                                    imageUrl,
-                                    height: 100,
-                                    fit: BoxFit.fill,
-                                    // color: whiteColor,
+                              Positioned(
+                                top: 20,
+                                left: 20,
+                                child: Image.asset(
+                                  imageUrl,
+                                  height: 100,
+                                  fit: BoxFit.fill,
+                                  // color: whiteColor,
+                                ),
+                              ),
+                              Positioned(
+                                top: 10,
+                                right: 50,
+                                child: ShaderMask(
+                                  shaderCallback: (Rect bounds) {
+                                    return LinearGradient(
+                                      colors: [
+                                        Colors.white,
+                                        Colors.white,
+                                        Colors.grey,
+                                      ],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomLeft,
+                                    ).createShader(bounds);
+                                  },
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        '${tempCelsius.toStringAsFixed(0)}°',
+                                        style: GoogleFonts.amaranth(
+                                          textStyle: TextStyle(
+                                            color: Colors
+                                                .white, // This color is required but will be overridden by the gradient
+                                            fontSize: 72,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  ShaderMask(
-                                    shaderCallback: (Rect bounds) {
-                                      return LinearGradient(
-                                        colors: [
-                                          Colors.white,
-                                          Colors.white,
-                                          Colors.grey,
-                                        ],
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomLeft,
-                                      ).createShader(bounds);
-                                    },
-                                    child: Text(
-                                      '${tempCelsius.toStringAsFixed(0)}°',
+                                ),
+                              ),
+                              Positioned(
+                                top: 38,
+                                right: 48,
+                                child: ShaderMask(
+                                  shaderCallback: (Rect bounds) {
+                                    return LinearGradient(
+                                      colors: [
+                                        Colors.white,
+                                        Colors.white,
+                                        Colors.grey,
+                                      ],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomLeft,
+                                    ).createShader(bounds);
+                                  },
+                                  child: Text(
+                                    'C',
+                                    style: GoogleFonts.amaranth(
+                                      textStyle: TextStyle(
+                                        color: Colors
+                                            .white, // This color is required but will be overridden by the gradient
+                                        fontSize: 47,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                top: 125,
+                                right: 60,
+                                child: Row(
+                                  children: [
+                                    Image.asset(
+                                      'assets/icons/down-arrow.png',
+                                      scale: 18,
+                                      color: const Color(0xE7F1E9E9),
+                                    ),
+                                    Text(
+                                      '${tempMinCelsius.toStringAsFixed(0)}° / ${tempMaxCelsius.toStringAsFixed(0)}°',
                                       style: GoogleFonts.amaranth(
                                         textStyle: TextStyle(
-                                          color: Colors
-                                              .white, // This color is required but will be overridden by the gradient
-                                          fontSize: 70,
+                                          color: Color(0xE7F1E9E9),
+                                          fontSize: 20,
                                         ),
                                       ),
                                     ),
-                                  )
-                                ],
+                                    Image.asset(
+                                      'assets/icons/up-arrow.png',
+                                      scale: 25,
+                                      color: Color(0xE7F1E9E9),
+                                    )
+                                  ],
+                                ),
                               ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  //'Monday, 12 Feb'
-                                  Text(
-                                    formattedDate,
-                                    style: GoogleFonts.amaranth(
-                                      textStyle: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                      ),
+                              Positioned(
+                                top: 160,
+                                right: 25,
+                                child: Text(
+                                  'Wind speed: ${data.list[0].wind.speed} m/s',
+                                  style: GoogleFonts.amaranth(
+                                    textStyle: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
                                     ),
                                   ),
-                                  Text(
+                                ),
+                              ),
+                              Positioned(
+                                top: 160,
+                                left: 25,
+                                child: Text(
+                                  formattedDate,
+                                  style: GoogleFonts.amaranth(
+                                    textStyle: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                top: 155,
+                                left: 150,
+                                child: Container(
+                                  height: 30, // Adjust the height as needed
+                                  width:
+                                      2, // Adjust the width of the vertical line
+                                  color: Color(0xE7F1E9E9),
+                                ),
+                              ),
+                              Positioned(
+                                top: 120,
+                                left: 25,
+                                child: ShaderMask(
+                                  shaderCallback: (Rect bounds) {
+                                    return LinearGradient(
+                                      colors: [
+                                        Colors.white,
+                                        Colors.white,
+                                        Colors.grey,
+                                      ],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomLeft,
+                                    ).createShader(bounds);
+                                  },
+                                  child: Text(
                                     description,
                                     style: GoogleFonts.amaranth(
                                       textStyle: TextStyle(
@@ -295,17 +395,8 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                     ),
                                   ),
-                                  //      Text(
-                                  //   '${data.list[0].wind.speed} m/s',
-                                  //   style: GoogleFonts.amaranth(
-                                  //     textStyle: TextStyle(
-                                  //       color: Colors.white,
-                                  //       fontSize: 12,
-                                  //     ),
-                                  //   ),
-                                  // ),
-                                ],
-                              ),
+                                ),
+                              )
                             ],
                           ),
                         ),

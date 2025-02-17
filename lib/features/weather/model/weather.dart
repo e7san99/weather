@@ -83,13 +83,19 @@ class ListElement {
 
 class Main {
   double temp;
+  double temp_min;
+  double temp_max;
   Main({
     required this.temp,
+    required this.temp_min,
+    required this.temp_max,
   });
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'temp': temp,
+      'temp_min': temp_min,
+      'temp_max': temp_max,
     };
   }
 
@@ -99,6 +105,12 @@ class Main {
       temp: (map['temp'] is int)
           ? (map['temp'] as int).toDouble()
           : map['temp'] as double,
+      temp_min: (map['temp_min'] is int)
+          ? (map['temp_min'] as int).toDouble()
+          : map['temp_min'] as double,
+      temp_max: (map['temp_max'] is int)
+          ? (map['temp_max'] as int).toDouble()
+          : map['temp_max'] as double,
     );
   }
 
@@ -136,7 +148,7 @@ class Weather {
       Weather.fromMap(json.decode(source) as Map<String, dynamic>);
 }
 
-class Wind{
+class Wind {
   double speed;
   Wind({
     required this.speed,
