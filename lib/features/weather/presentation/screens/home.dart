@@ -269,7 +269,7 @@ class _DisplayWeatherCityState extends State<DisplayWeatherCity> {
                         ),
                         loading: () => const CircularProgressIndicator(),
                       );
-                    }
+                    } 
                   },
                 ),
                 SizedBox(

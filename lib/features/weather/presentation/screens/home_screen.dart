@@ -27,20 +27,19 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this); // Add observer
+    WidgetsBinding.instance.addObserver(this);
     _getCurrentLocation();
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this); // Remove observer
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      // When the app resumes, re-check the location service status
       _getCurrentLocation();
     }
   }
@@ -78,125 +77,90 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Color(0xF5F5F5F5),
-        appBar: AppbarHomePage(
-          currentPosition: _currentPosition,
-          searchController: _searchController,
-        ),
-        body: Consumer(
-          builder: (context, ref, child) {
-            // Use `ref` here as needed
-            // final isLocationServiceEnabled =
-            //     ref.watch(isLocationServiceEnabledProvider);
+      backgroundColor: Color(0xF5F5F5F5),
+      appBar: AppbarHomePage(currentPosition: _currentPosition, searchController: _searchController),
+      body: Consumer(
+        builder: (context, ref, child) {
+          final useCurrentLocation = ref.watch(useCurrentLocationProvider);
 
-            if (!_isLocationDisable) {
-              return _locationServiceDisable();
-            }
+          if (!_isLocationDisable) {
+            return _locationServiceDisable();
+          }
 
-            final weather = ref.watch(
-              locationWeatherProvider(
-                _currentPosition ?? defaultPosition(),
-              ),
-            );
+          final weather = useCurrentLocation
+              ? ref.watch(locationWeatherProvider(_currentPosition ?? defaultPosition()))
+              : ref.watch(weatherProvider(ref.watch(cityProvider)));
 
-            return weather.when(
-              data: (data) {
-                //use in base container
-                //tempCelsius
-                final listElement = data.list[0];
+          return weather.when(
+            data: (data) {
+              final listElement = data.list[0];
+              DateTime dateTime = DateTime.parse(listElement.dt_txt);
+              String description = listElement.weather[0].description;
+              String capitalizedDescription = description[0].toUpperCase() + description.substring(1);
+              double windSpeed = listElement.wind.speed;
+              String iconCode = listElement.weather[0].icon;
+              String imageUrl = getWeatherIcons(iconCode);
+              final nextHours = nextHoursfilteredList(data.list);
+              final fiveDayForecast = fiveDayForecastAt12PM(data.list);
 
-                //date
-                DateTime dateTime = DateTime.parse(listElement.dt_txt);
-
-                //description
-                String description = listElement.weather[0].description;
-                String capitalizedDescription =
-                    description[0].toUpperCase() + description.substring(1);
-
-                //wind speed
-                double windSpeed = listElement.wind.speed;
-
-                String iconCode = listElement.weather[0].icon;
-                String imageUrl = getWeatherIcons(iconCode);
-
-                // Filter data to include only today and tomorrow
-                final nextHours = nextHoursfilteredList(data.list);
-
-                // Filter data to include only today and tomorrow
-                // Filter data to show only 12:00 PM (noon) entries
-                final fiveDayForecast = fiveDayForecastAt12PM(data.list);
-
-                return RefreshIndicator(
-                  color: Colors.blue,
-                  onRefresh: () async {
-                    await Future.wait([_getCurrentLocation()]);
-                  },
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        CurrentWeatherCard(
-                          tempCelsius: listElement.main.temp.toCelsius,
-                          description: capitalizedDescription,
-                          imageUrl: imageUrl,
-                          formattedDate: formattedDate(dateTime),
-                          tempMinCelsius: listElement.main.temp_min.toCelsius,
-                          tempMaxCelsius: listElement.main.temp_max.toCelsius,
-                          windSpeed: windSpeed,
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        TitleCards(title: 'Next Hours'),
-                        //next times Container
-                        NextHoursForecast(nextHoursfilteredList: nextHours),
-
-                        SizedBox(
-                          height: 10,
-                        ),
-                        TitleCards(title: 'Five Day Forecast'),
-                        // Next Days
-                        FiveDayForecast(
-                          fiveDayForecastAt12PM: fiveDayForecast,
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-              error: (error, stackTrace) {
-                return Center(
-                  child: Text(
-                    error.toString().contains('City not found')
-                        ? 'City not found. Please try again.'
-                        : 'An error occurred. Please try again.',
-                    style: GoogleFonts.amaranth(
-                      textStyle: TextStyle(
-                        color: Colors.blue,
-                        fontSize: 18,
+              return RefreshIndicator(
+                color: Colors.blue,
+                onRefresh: () async {
+                  await Future.wait([_getCurrentLocation()]);
+                },
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      CurrentWeatherCard(
+                        tempCelsius: listElement.main.temp.toCelsius,
+                        description: capitalizedDescription,
+                        imageUrl: imageUrl,
+                        formattedDate: formattedDate(dateTime),
+                        tempMinCelsius: listElement.main.temp_min.toCelsius,
+                        tempMaxCelsius: listElement.main.temp_max.toCelsius,
+                        windSpeed: windSpeed,
                       ),
+                      SizedBox(height: 10),
+                      TitleCards(title: 'Next Hours'),
+                      NextHoursForecast(nextHoursfilteredList: nextHours),
+                      SizedBox(height: 10),
+                      TitleCards(title: 'Five Day Forecast'),
+                      FiveDayForecast(fiveDayForecastAt12PM: fiveDayForecast),
+                    ],
+                  ),
+                ),
+              );
+            },
+            error: (error, stackTrace) {
+              return Center(
+                child: Text(
+                  error.toString().contains('City not found')
+                      ? 'City not found. Please try again.'
+                      : 'An error occurred. Please try again.',
+                  style: GoogleFonts.amaranth(
+                    textStyle: TextStyle(
+                      color: Colors.blue,
+                      fontSize: 18,
                     ),
                   ),
-                );
-              },
-              loading: () {
-                return ShimmeringWeatherCards();
-              },
-            );
-          },
-        ));
+                ),
+              );
+            },
+            loading: () {
+              return ShimmeringWeatherCards();
+            },
+          );
+        },
+      ),
+    );
   }
 
   Center _locationServiceDisable() {
     return Center(
       child: Column(
         children: [
-          SizedBox(
-            height: 50,
-          ),
-          Image.asset(
-            'assets/icons/map.png',
-            scale: 3,
-          ),
+          SizedBox(height: 50),
+          Image.asset('assets/icons/map.png', scale: 3),
           Text(
             'Location services are disabled.',
             style: GoogleFonts.amaranth(

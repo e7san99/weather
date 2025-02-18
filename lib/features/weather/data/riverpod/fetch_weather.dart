@@ -16,6 +16,8 @@ final weatherProvider =
 // String city = '';
 final cityProvider = StateProvider<String>((ref) => '');
 
+final useCurrentLocationProvider = StateProvider<bool>((ref) => true);
+
 final locationWeatherProvider =
     FutureProvider.family<WeatherModel, Position>((ref, position) async {
   final weatherRepository = ref.read(weatherRepositoryProvider);
@@ -31,3 +33,4 @@ final nextDaysWeatherProvider =
 });
 
 // final isLocationServiceEnabledProvider = StateProvider<bool>((ref) => true);
+
