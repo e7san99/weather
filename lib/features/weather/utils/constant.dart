@@ -1,26 +1,26 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
+import 'package:weather_pod/features/weather/model/weather.dart';
+
 const String apiKey = '2374fcc35708ce98a9a9c84993a40723';
 const String baseUrl = 'https://api.openweathermap.org/data/2.5/forecast';
 
+Position defaultPosition() {
+  return Position(
+    latitude: 0,
+    longitude: 0,
+    accuracy: 0,
+    altitude: 0,
+    heading: 0,
+    speed: 0,
+    timestamp: DateTime.now(),
+    altitudeAccuracy: 0,
+    headingAccuracy: 0,
+    speedAccuracy: 0,
+    floor: 0,
+  );
+}
 
- Position defaultPosition() {
-    return Position(
-      latitude: 0,
-      longitude: 0,
-      accuracy: 0,
-      altitude: 0,
-      heading: 0,
-      speed: 0,
-      timestamp: DateTime.now(),
-      altitudeAccuracy: 0,
-      headingAccuracy: 0,
-      speedAccuracy: 0,
-      floor: 0,
-    );
-  }
-  
-  
 double tempCelsius(double temp) {
   return temp;
 }
@@ -32,6 +32,23 @@ String formattedDate(DateTime dateTime) {
 DateTime now = DateTime.now();
 DateTime today = DateTime(now.year, now.month, now.day);
 DateTime tomorrow = today.add(Duration(days: 1));
+
+// Function to filter the list to get entries between today and tomorrow
+List<ListElement> nextHoursfilteredList(List<ListElement> list) {
+  return list.where((entry) {
+    DateTime entryDate = DateTime.parse(entry.dt_txt);
+    return entryDate.isAfter(today.subtract(Duration(seconds: 1))) &&
+        entryDate.isBefore(tomorrow.add(Duration(days: 1)));
+  }).toList();
+}
+
+// Function to filter the list to get entries at 12 PM
+List<ListElement> fiveDayForecastAt12PM(List<ListElement> list) {
+  return list.where((entry) {
+    DateTime entryDateTimee = DateTime.parse(entry.dt_txt);
+    return entryDateTimee.hour == 12; // Select only entries at 12 PM
+  }).toList();
+}
 
 String getWeatherIcons(String iconCode) {
   String imageUrl;

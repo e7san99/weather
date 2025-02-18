@@ -92,6 +92,7 @@ class _HomePageState extends State<HomePage> {
 
                 //date
                 DateTime dateTime = DateTime.parse(listElement.dt_txt);
+                
                 //description
                 String description = listElement.weather[0].description;
                 String capitalizedDescription =
@@ -102,24 +103,13 @@ class _HomePageState extends State<HomePage> {
 
                 String iconCode = listElement.weather[0].icon;
                 String imageUrl = getWeatherIcons(iconCode);
-
-                //use next times Container
+                
                 // Filter data to include only today and tomorrow
-                final nextHoursfilteredList = data.list.where((entry) {
-                  DateTime entryDate = DateTime.parse(entry.dt_txt);
-                  return entryDate
-                          .isAfter(today.subtract(Duration(seconds: 1))) &&
-                      entryDate.isBefore(tomorrow.add(Duration(days: 1)));
-                }).toList();
-
-                //use in next days container
+                final nextHours = nextHoursfilteredList(data.list);
+                
                 // Filter data to include only today and tomorrow
                 // Filter data to show only 12:00 PM (noon) entries
-                final fiveDayForecastAt12PM = data.list.where((entry) {
-                  DateTime entryDateTimee = DateTime.parse(entry.dt_txt);
-                  return entryDateTimee.hour ==
-                      12; // Select only entries at 12 PM
-                }).toList();
+                final fiveDayForecast = fiveDayForecastAt12PM(data.list);
 
                 return RefreshIndicator(
                   color: Colors.blue,
@@ -147,7 +137,7 @@ class _HomePageState extends State<HomePage> {
                         TitleCards(title: 'Next Hours'),
                         //next times Container
                         NextHoursForecast(
-                            nextHoursfilteredList: nextHoursfilteredList),
+                            nextHoursfilteredList: nextHours),
 
                         SizedBox(
                           height: 10,
@@ -155,7 +145,7 @@ class _HomePageState extends State<HomePage> {
                         TitleCards(title: 'Five Day Forecast'),
                         // Next Days
                         FiveDayForecast(
-                          fiveDayForecastAt12PM: fiveDayForecastAt12PM,
+                          fiveDayForecastAt12PM: fiveDayForecast,
                         ),
                       ],
                     ),
@@ -187,58 +177,53 @@ class _HomePageState extends State<HomePage> {
 
   RefreshIndicator _locationServiceDisable(WidgetRef ref) {
     return RefreshIndicator(
-              color: Colors.blue,
-              onRefresh: () async => _getCurrentLocation(ref: ref),
-              child: SingleChildScrollView(
-                // Add this
-                physics:
-                    AlwaysScrollableScrollPhysics(), // Ensure it's always scrollable
-                child: Center(
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: 50,
-                      ),
-                      Image.asset(
-                        'assets/icons/map.png',
-                        scale: 3,
-                      ),
-                      Text(
-                        'Location services are disabled.',
-                        style: GoogleFonts.amaranth(
-                          textStyle: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 80),
-                      ElevatedButton(
-                        onPressed: () async {
-                          bool serviceEnabled =
-                              await Geolocator.isLocationServiceEnabled();
-                          if (!serviceEnabled) {
-                            Geolocator.openLocationSettings();
-                          }
-                          await _getCurrentLocation(ref: ref);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                        ),
-                        child: Text(
-                          'Enable Location Services',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ],
+      color: Colors.blue,
+      onRefresh: () async => _getCurrentLocation(ref: ref),
+      child: SingleChildScrollView(
+        // Add this
+        physics:
+            AlwaysScrollableScrollPhysics(), // Ensure it's always scrollable
+        child: Center(
+          child: Column(
+            children: [
+              SizedBox(
+                height: 50,
+              ),
+              Image.asset(
+                'assets/icons/map.png',
+                scale: 3,
+              ),
+              Text(
+                'Location services are disabled.',
+                style: GoogleFonts.amaranth(
+                  textStyle: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18,
                   ),
                 ),
               ),
-            );
+              SizedBox(height: 80),
+              ElevatedButton(
+                onPressed: () async {
+                  bool serviceEnabled =
+                      await Geolocator.isLocationServiceEnabled();
+                  if (!serviceEnabled) {
+                    Geolocator.openLocationSettings();
+                  }
+                  await _getCurrentLocation(ref: ref);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                ),
+                child: Text(
+                  'Enable Location Services',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
-
- 
-
-  
-  
 }
