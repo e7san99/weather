@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:weather_pod/features/weather/model/weather.dart';
 import 'package:weather_pod/features/weather/presentation/widgets/cards/weather_card_container.dart';
-import 'package:weather_pod/features/weather/utils/constant.dart';
+import 'package:weather_pod/features/weather/utils/constants/const.dart';
 import 'package:weather_pod/features/weather/utils/extention.dart';
 import 'package:weather_pod/features/weather/utils/style.dart';
 

@@ -8,9 +8,8 @@ import 'package:weather_pod/features/weather/presentation/widgets/cards/current_
 import 'package:weather_pod/features/weather/presentation/widgets/cards/five_day_forecast.dart';
 import 'package:weather_pod/features/weather/presentation/widgets/cards/next_hours_forecast.dart';
 import 'package:weather_pod/features/weather/presentation/widgets/cards/title_cards.dart';
-import 'package:weather_pod/features/weather/utils/constant.dart';
+import 'package:weather_pod/features/weather/utils/constants/const.dart';
 import 'package:weather_pod/features/weather/utils/extention.dart';
-import 'package:weather_pod/features/weather/utils/shimmers/shimmering_appbar.dart';
 import 'package:weather_pod/features/weather/utils/shimmers/shimmering_weather_cards.dart';
 
 class HomePage extends StatefulWidget {
@@ -92,7 +91,7 @@ class _HomePageState extends State<HomePage> {
 
                 //date
                 DateTime dateTime = DateTime.parse(listElement.dt_txt);
-                
+
                 //description
                 String description = listElement.weather[0].description;
                 String capitalizedDescription =
@@ -103,10 +102,10 @@ class _HomePageState extends State<HomePage> {
 
                 String iconCode = listElement.weather[0].icon;
                 String imageUrl = getWeatherIcons(iconCode);
-                
+
                 // Filter data to include only today and tomorrow
                 final nextHours = nextHoursfilteredList(data.list);
-                
+
                 // Filter data to include only today and tomorrow
                 // Filter data to show only 12:00 PM (noon) entries
                 final fiveDayForecast = fiveDayForecastAt12PM(data.list);
@@ -120,15 +119,12 @@ class _HomePageState extends State<HomePage> {
                     child: Column(
                       children: [
                         CurrentWeatherCard(
-                          tempCelsius:
-                              tempCelsius(listElement.main.temp.toCelsius),
+                          tempCelsius: listElement.main.temp.toCelsius,
                           description: capitalizedDescription,
                           imageUrl: imageUrl,
                           formattedDate: formattedDate(dateTime),
-                          tempMinCelsius:
-                              tempCelsius(listElement.main.temp_min.toCelsius),
-                          tempMaxCelsius:
-                              tempCelsius(listElement.main.temp_max.toCelsius),
+                          tempMinCelsius: listElement.main.temp_min.toCelsius,
+                          tempMaxCelsius: listElement.main.temp_max.toCelsius,
                           windSpeed: windSpeed,
                         ),
                         SizedBox(
@@ -136,8 +132,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         TitleCards(title: 'Next Hours'),
                         //next times Container
-                        NextHoursForecast(
-                            nextHoursfilteredList: nextHours),
+                        NextHoursForecast(nextHoursfilteredList: nextHours),
 
                         SizedBox(
                           height: 10,

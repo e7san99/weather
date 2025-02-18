@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:weather_pod/features/weather/data/repositories/weather_repository.dart';
 import 'package:weather_pod/features/weather/model/weather.dart';
-import 'package:weather_pod/features/weather/utils/constant.dart';
+import 'package:weather_pod/features/weather/utils/constants/http.dart';
 
 class WeatherImplements extends WeatherRepository {
 

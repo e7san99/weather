@@ -9,9 +9,6 @@ class App extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Weather Pod',
-      theme: ThemeData(
-        useMaterial3: true,
-      ),
       home: const HomePage(),
     );
   }

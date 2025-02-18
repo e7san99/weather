@@ -2,9 +2,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:weather_pod/features/weather/model/weather.dart';
 
-const String apiKey = '2374fcc35708ce98a9a9c84993a40723';
-const String baseUrl = 'https://api.openweathermap.org/data/2.5/forecast';
-
 Position defaultPosition() {
   return Position(
     latitude: 0,
@@ -19,10 +16,6 @@ Position defaultPosition() {
     speedAccuracy: 0,
     floor: 0,
   );
-}
-
-double tempCelsius(double temp) {
-  return temp;
 }
 
 String formattedDate(DateTime dateTime) {
@@ -49,6 +42,8 @@ List<ListElement> fiveDayForecastAt12PM(List<ListElement> list) {
     return entryDateTimee.hour == 12; // Select only entries at 12 PM
   }).toList();
 }
+
+
 
 String getWeatherIcons(String iconCode) {
   String imageUrl;
