@@ -298,3 +298,50 @@ class _DisplayWeatherCityState extends State<DisplayWeatherCity> {
     );
   }
 }
+
+/*
+texfield
+TextField(
+              controller: _searchController,
+              autofocus: true,
+              decoration: InputDecoration(
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: Colors.blue,
+                      width: 2,
+                    ),
+                  ),
+                  disabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: Colors.blue,
+                      width: 2,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: Colors.blue,
+                      width: 2,
+                    ),
+                  ),
+                  // fillColor: Colors.blue,
+                  // filled: true,
+                  hintText: 'Search...',
+                  border: InputBorder.none,
+                  hintStyle: TextStyle(color: Colors.blue),
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      _toggleSearch();
+                    },
+                    icon: Icon(Icons.close, color: Colors.blue),
+                  )),
+              style: TextStyle(color: Colors.blue),
+              onSubmitted: (value) {
+                // Handle the search query here
+                print('Search query: $value');
+                _toggleSearch(); // Optionally close the search bar after submission
+              },
+            )
+*/

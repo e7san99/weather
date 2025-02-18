@@ -20,7 +20,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
-   final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
   Position? _currentPosition;
   bool _isLocationDisable = true;
 
@@ -79,7 +79,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Color(0xF5F5F5F5),
-        appBar: AppbarHomePage(currentPosition: _currentPosition),
+        appBar: AppbarHomePage(
+          currentPosition: _currentPosition,
+          searchController: _searchController,
+        ),
         body: Consumer(
           builder: (context, ref, child) {
             // Use `ref` here as needed
