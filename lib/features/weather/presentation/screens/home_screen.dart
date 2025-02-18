@@ -20,9 +20,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
-  final TextEditingController controller = TextEditingController();
+   final TextEditingController _searchController = TextEditingController();
   Position? _currentPosition;
-  bool isLocationDisable = true;
+  bool _isLocationDisable = true;
 
   @override
   void initState() {
@@ -49,12 +49,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       setState(() {
-        isLocationDisable = false;
+        _isLocationDisable = false;
       });
       return;
     }
     setState(() {
-      isLocationDisable = true;
+      _isLocationDisable = true;
     });
 
     LocationPermission permission = await Geolocator.checkPermission();
@@ -86,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             // final isLocationServiceEnabled =
             //     ref.watch(isLocationServiceEnabledProvider);
 
-            if (!isLocationDisable) {
+            if (!_isLocationDisable) {
               return _locationServiceDisable();
             }
 
