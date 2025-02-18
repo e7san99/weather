@@ -12,14 +12,14 @@ import 'package:weather_pod/features/weather/utils/constants/const.dart';
 import 'package:weather_pod/features/weather/utils/extention.dart';
 import 'package:weather_pod/features/weather/utils/shimmers/shimmering_weather_cards.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController controller = TextEditingController();
   Position? _currentPosition;
 

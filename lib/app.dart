@@ -9,7 +9,7 @@ class App extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Weather Pod',
-      home: const HomePage(),
+      home: const HomeScreen(),
     );
   }
 }
