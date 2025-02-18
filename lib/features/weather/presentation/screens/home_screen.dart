@@ -19,30 +19,43 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   final TextEditingController controller = TextEditingController();
   Position? _currentPosition;
+  bool isLocationDisable = true;
 
   @override
   void initState() {
     super.initState();
-    // Use `WidgetsBinding.instance.addPostFrameCallback` to access `ref` after the widget is built
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _getCurrentLocation(); // Pass `ref` to the method
-    });
+    WidgetsBinding.instance.addObserver(this); // Add observer
+    _getCurrentLocation();
   }
 
-  Future<void> _getCurrentLocation({WidgetRef? ref}) async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this); // Remove observer
+    super.dispose();
+  }
 
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // When the app resumes, re-check the location service status
+      _getCurrentLocation();
+    }
+  }
+
+  Future<void> _getCurrentLocation() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      ref?.read(isLocationServiceEnabledProvider.notifier).state =
-          false; // Update state
+      setState(() {
+        isLocationDisable = false;
+      });
       return;
     }
-
-    ref?.read(isLocationServiceEnabledProvider.notifier).state =
-        true; // Update state
+    setState(() {
+      isLocationDisable = true;
+    });
 
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
@@ -70,11 +83,11 @@ class _HomeScreenState extends State<HomeScreen> {
         body: Consumer(
           builder: (context, ref, child) {
             // Use `ref` here as needed
-            final isLocationServiceEnabled =
-                ref.watch(isLocationServiceEnabledProvider);
+            // final isLocationServiceEnabled =
+            //     ref.watch(isLocationServiceEnabledProvider);
 
-            if (!isLocationServiceEnabled) {
-              return _locationServiceDisable(ref);
+            if (!isLocationDisable) {
+              return _locationServiceDisable();
             }
 
             final weather = ref.watch(
@@ -113,7 +126,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 return RefreshIndicator(
                   color: Colors.blue,
                   onRefresh: () async {
-                    await Future.wait([_getCurrentLocation(ref: ref)]);
+                    await Future.wait([_getCurrentLocation()]);
                   },
                   child: SingleChildScrollView(
                     child: Column(
@@ -170,54 +183,44 @@ class _HomeScreenState extends State<HomeScreen> {
         ));
   }
 
-  RefreshIndicator _locationServiceDisable(WidgetRef ref) {
-    return RefreshIndicator(
-      color: Colors.blue,
-      onRefresh: () async => _getCurrentLocation(ref: ref),
-      child: SingleChildScrollView(
-        // Add this
-        physics:
-            AlwaysScrollableScrollPhysics(), // Ensure it's always scrollable
-        child: Center(
-          child: Column(
-            children: [
-              SizedBox(
-                height: 50,
-              ),
-              Image.asset(
-                'assets/icons/map.png',
-                scale: 3,
-              ),
-              Text(
-                'Location services are disabled.',
-                style: GoogleFonts.amaranth(
-                  textStyle: TextStyle(
-                    color: Colors.black,
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-              SizedBox(height: 80),
-              ElevatedButton(
-                onPressed: () async {
-                  bool serviceEnabled =
-                      await Geolocator.isLocationServiceEnabled();
-                  if (!serviceEnabled) {
-                    Geolocator.openLocationSettings();
-                  }
-                  await _getCurrentLocation(ref: ref);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                ),
-                child: Text(
-                  'Enable Location Services',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ],
+  Center _locationServiceDisable() {
+    return Center(
+      child: Column(
+        children: [
+          SizedBox(
+            height: 50,
           ),
-        ),
+          Image.asset(
+            'assets/icons/map.png',
+            scale: 3,
+          ),
+          Text(
+            'Location services are disabled.',
+            style: GoogleFonts.amaranth(
+              textStyle: TextStyle(
+                color: Colors.black,
+                fontSize: 18,
+              ),
+            ),
+          ),
+          SizedBox(height: 80),
+          ElevatedButton(
+            onPressed: () async {
+              bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+              if (!serviceEnabled) {
+                Geolocator.openLocationSettings();
+              }
+              await _getCurrentLocation();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+            ),
+            child: Text(
+              'Enable Location Services',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
       ),
     );
   }

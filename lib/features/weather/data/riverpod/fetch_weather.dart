@@ -30,4 +30,4 @@ final nextDaysWeatherProvider =
   return await weatherRepository.fetchWeatherByCity(city);
 });
 
-final isLocationServiceEnabledProvider = StateProvider<bool>((ref) => true);
+// final isLocationServiceEnabledProvider = StateProvider<bool>((ref) => true);
