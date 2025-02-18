@@ -122,9 +122,9 @@ class _AppbarHomePageState extends State<AppbarHomePage> {
                   ref.read(cityProvider.notifier).state = '';
                 },
               ),
-              SizedBox(
-                width: 5,
-              ),
+              // SizedBox(
+              //   width: 5,
+              // ),
               Consumer(
                 builder: (context, ref, child) {
                   final useCurrentLocation =

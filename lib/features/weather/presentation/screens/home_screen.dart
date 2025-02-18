@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:weather_pod/features/weather/data/riverpod/fetch_weather.dart';
 import 'package:weather_pod/features/weather/presentation/widgets/appbar.dart';
 import 'package:weather_pod/features/weather/presentation/widgets/cards/current_weather_card.dart';
@@ -78,7 +79,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xF5F5F5F5),
-      appBar: AppbarHomePage(currentPosition: _currentPosition, searchController: _searchController),
+      appBar: AppbarHomePage(
+          currentPosition: _currentPosition,
+          searchController: _searchController),
       body: Consumer(
         builder: (context, ref, child) {
           final useCurrentLocation = ref.watch(useCurrentLocationProvider);
@@ -88,7 +91,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           }
 
           final weather = useCurrentLocation
-              ? ref.watch(locationWeatherProvider(_currentPosition ?? defaultPosition()))
+              ? ref.watch(locationWeatherProvider(
+                  _currentPosition ?? defaultPosition()))
               : ref.watch(weatherProvider(ref.watch(cityProvider)));
 
           return weather.when(
@@ -96,7 +100,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               final listElement = data.list[0];
               DateTime dateTime = DateTime.parse(listElement.dt_txt);
               String description = listElement.weather[0].description;
-              String capitalizedDescription = description[0].toUpperCase() + description.substring(1);
+              String capitalizedDescription =
+                  description[0].toUpperCase() + description.substring(1);
               double windSpeed = listElement.wind.speed;
               String iconCode = listElement.weather[0].icon;
               String imageUrl = getWeatherIcons(iconCode);
@@ -133,16 +138,28 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             },
             error: (error, stackTrace) {
               return Center(
-                child: Text(
-                  error.toString().contains('City not found')
-                      ? 'City not found. Please try again.'
-                      : 'An error occurred. Please try again.',
-                  style: GoogleFonts.amaranth(
-                    textStyle: TextStyle(
-                      color: Colors.blue,
-                      fontSize: 18,
+                child: Column(
+                  children: [
+                    Lottie.asset(
+                      'assets/json/city.json', // Path to your JSON file
+                      width: 300, // Adjust width
+                      height: 300, // Adjust height
+                      fit: BoxFit.contain, // Adjust how the animation fits
+                      repeat:
+                          true, // Set to true if you want the animation to loop
                     ),
-                  ),
+                    Text(
+                      error.toString().contains('City not found')
+                          ? 'City not found. Please try again.'
+                          : 'An error occurred. Please try again.',
+                      style: GoogleFonts.amaranth(
+                        textStyle: TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               );
             },
@@ -160,7 +177,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       child: Column(
         children: [
           SizedBox(height: 50),
-          Image.asset('assets/icons/map.png', scale: 3),
+          Lottie.asset(
+            'assets/json/location.json', // Path to your JSON file
+            width: 330, // Adjust width
+            // height: 330, // Adjust height
+            fit: BoxFit.contain, // Adjust how the animation fits
+            repeat: true, // Set to true if you want the animation to loop
+          ),
           Text(
             'Location services are disabled.',
             style: GoogleFonts.amaranth(
