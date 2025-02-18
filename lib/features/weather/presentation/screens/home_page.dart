@@ -3,10 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:weather_pod/features/weather/data/riverpod/fetch_weather.dart';
-import 'package:weather_pod/features/weather/presentation/widgets/current_weather_card.dart';
-import 'package:weather_pod/features/weather/presentation/widgets/five_day_forecast.dart';
-import 'package:weather_pod/features/weather/presentation/widgets/next_hours_forecast.dart';
-import 'package:weather_pod/features/weather/presentation/widgets/title_cards.dart';
+import 'package:weather_pod/features/weather/presentation/widgets/appbar.dart';
+import 'package:weather_pod/features/weather/presentation/widgets/cards/current_weather_card.dart';
+import 'package:weather_pod/features/weather/presentation/widgets/cards/five_day_forecast.dart';
+import 'package:weather_pod/features/weather/presentation/widgets/cards/next_hours_forecast.dart';
+import 'package:weather_pod/features/weather/presentation/widgets/cards/title_cards.dart';
 import 'package:weather_pod/features/weather/utils/constant.dart';
 import 'package:weather_pod/features/weather/utils/extention.dart';
 import 'package:weather_pod/features/weather/utils/shimmers/shimmering_appbar.dart';
@@ -66,7 +67,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Color(0xF5F5F5F5),
-        appBar: _appBar(),
+        appBar: AppbarHomePage(currentPosition: _currentPosition),
         body: Consumer(
           builder: (context, ref, child) {
             // Use `ref` here as needed
@@ -79,7 +80,7 @@ class _HomePageState extends State<HomePage> {
 
             final weather = ref.watch(
               locationWeatherProvider(
-                _currentPosition ?? _defaultPosition(),
+                _currentPosition ?? defaultPosition(),
               ),
             );
 
@@ -206,7 +207,7 @@ class _HomePageState extends State<HomePage> {
                         'Location services are disabled.',
                         style: GoogleFonts.amaranth(
                           textStyle: TextStyle(
-                            color: Colors.red,
+                            color: Colors.black,
                             fontSize: 18,
                           ),
                         ),
@@ -236,84 +237,8 @@ class _HomePageState extends State<HomePage> {
             );
   }
 
-  Position _defaultPosition() {
-    return Position(
-      latitude: 0,
-      longitude: 0,
-      accuracy: 0,
-      altitude: 0,
-      heading: 0,
-      speed: 0,
-      timestamp: DateTime.now(),
-      altitudeAccuracy: 0,
-      headingAccuracy: 0,
-      speedAccuracy: 0,
-      floor: 0,
-    );
-  }
+ 
 
-  AppBar _appBar() {
-    return AppBar(
-      scrolledUnderElevation: 0,
-      backgroundColor: Color(0xF5F5F5F5),
-      title: Row(
-        children: [
-          Image.asset(
-            'assets/icons/appbar/location.png',
-            scale: 14,
-            color: Colors.blue,
-          ),
-          SizedBox(
-            width: 5,
-          ),
-          Consumer(
-            builder: (context, ref, child) {
-              if (_currentPosition == null) {
-                return SizedBox();
-              } else {
-                final weather =
-                    ref.watch(locationWeatherProvider(_currentPosition!));
-                return weather.when(
-                  data: (data) {
-                    return Text(
-                      data.city.name,
-                      style: GoogleFonts.amaranth(
-                        textStyle: TextStyle(
-                          color: Colors.blue,
-                          fontSize: 23,
-                        ),
-                      ),
-                    );
-                  },
-                  error: (error, stackTrace) => Text(
-                    error.toString().contains('City not found')
-                        ? 'City not found. Please try again.'
-                        : 'An error occurred. Please try again.',
-                    style: TextStyle(color: Colors.blue),
-                  ),
-                  loading: () {
-                    return ShimmeringAppbar();
-                  },
-                );
-              }
-            },
-          )
-        ],
-      ),
-      centerTitle: true,
-      actions: [
-        InkWell(
-          onTap: () {},
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Image.asset(
-              'assets/icons/appbar/search.png',
-              scale: 14,
-            ),
-          ),
-        ),
-      ],
-      elevation: 0,
-    );
-  }
+  
+  
 }

@@ -1,7 +1,26 @@
+import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 const String apiKey = '2374fcc35708ce98a9a9c84993a40723';
 const String baseUrl = 'https://api.openweathermap.org/data/2.5/forecast';
 
+
+ Position defaultPosition() {
+    return Position(
+      latitude: 0,
+      longitude: 0,
+      accuracy: 0,
+      altitude: 0,
+      heading: 0,
+      speed: 0,
+      timestamp: DateTime.now(),
+      altitudeAccuracy: 0,
+      headingAccuracy: 0,
+      speedAccuracy: 0,
+      floor: 0,
+    );
+  }
+  
+  
 double tempCelsius(double temp) {
   return temp;
 }
