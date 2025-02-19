@@ -147,12 +147,14 @@ class _AppbarHomePageState extends State<AppbarHomePage> {
                             ),
                           );
                         },
-                        error: (error, stackTrace) => Text(
-                          error.toString().contains('City not found')
-                              ? 'City not found. Please try again.'
-                              : 'An error occurred. Please try again.',
-                          style: TextStyle(color: Colors.blue),
-                        ),
+                        error: (error, stackTrace) => SizedBox(),
+                        //when no internet display this error
+                        // Text(
+                        //   error.toString().contains('City not found')
+                        //       ? 'City not found. Please try again.'
+                        //       : 'An error occurred. Please try again.',
+                        //   style: TextStyle(color: Colors.blue),
+                        // ),
                         loading: () {
                           return ShimmeringAppbar();
                         },
@@ -192,9 +194,10 @@ class _AppbarHomePageState extends State<AppbarHomePage> {
           centerTitle: true,
           actions: [
             InkWell(
+              overlayColor: WidgetStatePropertyAll(Colors.transparent),
               onTap: () => _openSearchModal(context, ref),
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.only(right: 18.0),
                 child: Image.asset(
                   'assets/icons/appbar/search.png',
                   scale: 14,
