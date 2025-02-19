@@ -75,215 +75,116 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     });
   }
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     backgroundColor: Color(0xF5F5F5F5),
-  //     appBar: AppbarHomePage(
-  //         currentPosition: _currentPosition,
-  //         searchController: _searchController),
-  //     body: Consumer(
-  //       builder: (context, ref, child) {
-  //         final internetConnectionStatus =
-  //             ref.watch(internetConnectionProvider);
-
-  //         return internetConnectionStatus.when(
-  //           data: (isConnected) {
-  //             if (!isConnected) {
-  //               return _noInternetConnection();
-  //             }
-
-  //             final useCurrentLocation = ref.watch(useCurrentLocationProvider);
-
-  //             if (!_isLocationDisable) {
-  //               return _locationServiceDisable();
-  //             }
-
-  //             final weather = useCurrentLocation
-  //                 ? ref.watch(locationWeatherProvider(
-  //                     _currentPosition ?? defaultPosition()))
-  //                 : ref.watch(weatherProvider(ref.watch(cityProvider)));
-
-  //             return weather.when(
-  //               data: (data) {
-  //                 final listElement = data.list[0];
-  //                 DateTime dateTime = DateTime.parse(listElement.dt_txt);
-  //                 String description = listElement.weather[0].description;
-  //                 String capitalizedDescription =
-  //                     description[0].toUpperCase() + description.substring(1);
-  //                 double windSpeed = listElement.wind.speed;
-  //                 String iconCode = listElement.weather[0].icon;
-  //                 String imageUrl = getWeatherIcons(iconCode);
-  //                 final nextHours = nextHoursfilteredList(data.list);
-  //                 final fiveDayForecast = fiveDayForecastAt12PM(data.list);
-
-  //                 return RefreshIndicator(
-  //                   color: Colors.blue,
-  //                   onRefresh: () async {
-  //                     await Future.wait([_getCurrentLocation()]);
-  //                   },
-  //                   child: SingleChildScrollView(
-  //                     child: Column(
-  //                       children: [
-  //                         CurrentWeatherCard(
-  //                           tempCelsius: listElement.main.temp.toCelsius,
-  //                           description: capitalizedDescription,
-  //                           imageUrl: imageUrl,
-  //                           formattedDate: formattedDate(dateTime),
-  //                           tempMinCelsius: listElement.main.temp_min.toCelsius,
-  //                           tempMaxCelsius: listElement.main.temp_max.toCelsius,
-  //                           windSpeed: windSpeed,
-  //                         ),
-  //                         SizedBox(height: 10),
-  //                         TitleCards(title: 'Next Hours'),
-  //                         NextHoursForecast(nextHoursfilteredList: nextHours),
-  //                         SizedBox(height: 10),
-  //                         TitleCards(title: 'Five Day Forecast'),
-  //                         FiveDayForecast(
-  //                             fiveDayForecastAt12PM: fiveDayForecast),
-  //                       ],
-  //                     ),
-  //                   ),
-  //                 );
-  //               },
-  //               error: (error, stackTrace) {
-  //                 return _cityNotFound(error);
-  //               },
-  //               loading: () {
-  //                 return ShimmeringWeatherCards();
-  //               },
-  //             );
-  //           },
-  //           error: (error, stackTrace) {
-  //             // Check if the error is a "city not found" error
-  //             if (error.toString().contains('City not found')) {
-  //               return _cityNotFound(error);
-  //             } else {
-  //               // Handle other errors differently
-  //               return Center(
-  //                 child: Text(
-  //                   'An error occurred: ${error.toString()}',
-  //                   style: TextStyle(color: Colors.red),
-  //                 ),
-  //               );
-  //             }
-  //           },
-  //           loading: () {
-  //             return Center(child: CircularProgressIndicator());
-  //           },
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
   @override
-Widget build(BuildContext context) {
-  return Scaffold(
-    backgroundColor: Color(0xF5F5F5F5),
-    appBar: AppbarHomePage(
-        currentPosition: _currentPosition,
-        searchController: _searchController),
-    body: Consumer(
-      builder: (context, ref, child) {
-        final internetConnectionStatus = ref.watch(internetConnectionProvider);
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Color(0xF5F5F5F5),
+      appBar: AppbarHomePage(
+          currentPosition: _currentPosition,
+          searchController: _searchController),
+      body: Consumer(
+        builder: (context, ref, child) {
+          final internetConnectionStatus =
+              ref.watch(internetConnectionProvider);
 
-        return internetConnectionStatus.when(
-          data: (isConnected) {
-            if (!isConnected) {
-              return _noInternetConnection();
-            }
+          return internetConnectionStatus.when(
+            data: (isConnected) {
+              if (!isConnected) {
+                return _noInternetConnection();
+              }
 
-            // Refetch weather data when internet is restored
-            ref.refresh(weatherProvider(ref.watch(cityProvider)));
+              final useCurrentLocation = ref.watch(useCurrentLocationProvider);
 
-            final useCurrentLocation = ref.watch(useCurrentLocationProvider);
+              if (!_isLocationDisable) {
+                return _locationServiceDisable();
+              }
 
-            if (!_isLocationDisable) {
-              return _locationServiceDisable();
-            }
+              final weather = useCurrentLocation
+                  ? ref.watch(locationWeatherProvider(
+                      _currentPosition ?? defaultPosition()))
+                  : ref.watch(weatherProvider(ref.watch(cityProvider)));
 
-            final weather = useCurrentLocation
-                ? ref.watch(locationWeatherProvider(
-                    _currentPosition ?? defaultPosition()))
-                : ref.watch(weatherProvider(ref.watch(cityProvider)));
+              return weather.when(
+                data: (data) {
+                  final listElement = data.list[0];
+                  DateTime dateTime = DateTime.parse(listElement.dt_txt);
+                  String description = listElement.weather[0].description;
+                  String capitalizedDescription =
+                      description[0].toUpperCase() + description.substring(1);
+                  double windSpeed = listElement.wind.speed;
+                  String iconCode = listElement.weather[0].icon;
+                  String imageUrl = getWeatherIcons(iconCode);
+                  final nextHours = nextHoursfilteredList(data.list);
+                  final fiveDayForecast = fiveDayForecastAt12PM(data.list);
 
-            return weather.when(
-              data: (data) {
-                final listElement = data.list[0];
-                DateTime dateTime = DateTime.parse(listElement.dt_txt);
-                String description = listElement.weather[0].description;
-                String capitalizedDescription =
-                    description[0].toUpperCase() + description.substring(1);
-                double windSpeed = listElement.wind.speed;
-                String iconCode = listElement.weather[0].icon;
-                String imageUrl = getWeatherIcons(iconCode);
-                final nextHours = nextHoursfilteredList(data.list);
-                final fiveDayForecast = fiveDayForecastAt12PM(data.list);
-
-                return RefreshIndicator(
-                  color: Colors.blue,
-                  onRefresh: () async {
-                    await Future.wait([_getCurrentLocation()]);
-                  },
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        CurrentWeatherCard(
-                          tempCelsius: listElement.main.temp.toCelsius,
-                          description: capitalizedDescription,
-                          imageUrl: imageUrl,
-                          formattedDate: formattedDate(dateTime),
-                          tempMinCelsius: listElement.main.temp_min.toCelsius,
-                          tempMaxCelsius: listElement.main.temp_max.toCelsius,
-                          windSpeed: windSpeed,
-                        ),
-                        SizedBox(height: 10),
-                        TitleCards(title: 'Next Hours'),
-                        NextHoursForecast(nextHoursfilteredList: nextHours),
-                        SizedBox(height: 10),
-                        TitleCards(title: 'Five Day Forecast'),
-                        FiveDayForecast(
-                            fiveDayForecastAt12PM: fiveDayForecast),
-                      ],
-                    ),
-                  ),
-                );
-              },
-              error: (error, stackTrace) {
-                // Check if the error is a "city not found" error
-                if (error.toString().contains('City not found')) {
-                  return _cityNotFound(error);
-                } else {
-                  // Handle other errors differently
-                  return Center(
-                    child: Text(
-                      'An error occurred: ${error.toString()}',
-                      style: TextStyle(color: Colors.red),
+                  return RefreshIndicator(
+                    color: Colors.blue,
+                    onRefresh: () async {
+                      await Future.wait([_getCurrentLocation()]);
+                    },
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          CurrentWeatherCard(
+                            tempCelsius: listElement.main.temp.toCelsius,
+                            description: capitalizedDescription,
+                            imageUrl: imageUrl,
+                            formattedDate: formattedDate(dateTime),
+                            tempMinCelsius: listElement.main.temp_min.toCelsius,
+                            tempMaxCelsius: listElement.main.temp_max.toCelsius,
+                            windSpeed: windSpeed,
+                          ),
+                          SizedBox(height: 10),
+                          TitleCards(title: 'Next Hours'),
+                          NextHoursForecast(nextHoursfilteredList: nextHours),
+                          SizedBox(height: 10),
+                          TitleCards(title: 'Five Day Forecast'),
+                          FiveDayForecast(
+                              fiveDayForecastAt12PM: fiveDayForecast),
+                        ],
+                      ),
                     ),
                   );
-                }
-              },
-              loading: () {
-                return ShimmeringWeatherCards();
-              },
-            );
-          },
-          error: (error, stackTrace) {
-            return Center(
-              child: Text(
-                'An error occurred: ${error.toString()}',
-                style: TextStyle(color: Colors.red),
-              ),
-            );
-          },
-          loading: () {
-            return Center(child: CircularProgressIndicator());
-          },
-        );
-      },
-    ),
-  );
-}
+                },
+                error: (error, stackTrace) {
+                  // Check if the error is a "city not found" error
+                  if (error.toString().contains('City not found')) {
+                    return _cityNotFound(error);
+                  } else if (error.toString().contains(
+                      'Failed to load data: The connection errored')) {
+                    // Handle connection error (e.g., no internet)
+                    return _noInternetConnection();
+                  } else {
+                    // Handle other errors
+                    return Center(
+                      child: Text(
+                        'An error occurred: ${error.toString()}',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    );
+                  }
+                },
+                loading: () {
+                  return ShimmeringWeatherCards();
+                },
+              );
+            },
+            error: (error, stackTrace) {
+              return Center(
+                child: Text(
+                  'An error occurred: ${error.toString()}',
+                  style: TextStyle(color: Colors.red),
+                ),
+              );
+            },
+            loading: () {
+              return Center(child: CircularProgressIndicator());
+            },
+          );
+        },
+      ),
+    );
+  }
 
   Center _noInternetConnection() {
     return Center(
