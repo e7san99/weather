@@ -88,6 +88,7 @@ class _AppbarHomePageState extends State<AppbarHomePage> {
                         widget.searchController.text;
                     ref.read(useCurrentLocationProvider.notifier).state = false;
                     Navigator.pop(context);
+                    // widget.searchController.clear();
                   },
                   child: Text(
                     'Search',

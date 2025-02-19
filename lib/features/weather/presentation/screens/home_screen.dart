@@ -137,37 +137,67 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               );
             },
             error: (error, stackTrace) {
-              return Center(
-                child: Column(
-                  children: [
-                    Lottie.asset(
-                      'assets/json/city.json', // Path to your JSON file
-                      width: 300, // Adjust width
-                      height: 300, // Adjust height
-                      fit: BoxFit.contain, // Adjust how the animation fits
-                      repeat:
-                          true, // Set to true if you want the animation to loop
-                    ),
-                    Text(
-                      error.toString().contains('City not found')
-                          ? 'City not found. Please try again.'
-                          : 'An error occurred. Please try again.',
-                      style: GoogleFonts.amaranth(
-                        textStyle: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
+              return _cityNotFound(error);
             },
             loading: () {
               return ShimmeringWeatherCards();
             },
           );
         },
+      ),
+    );
+  }
+
+  Center _cityNotFound(Object error) {
+    return Center(
+      child: Column(
+        children: [
+          Lottie.asset(
+            'assets/json/city.json', // Path to your JSON file
+            width: 300, // Adjust width
+            height: 300, // Adjust height
+            fit: BoxFit.contain, // Adjust how the animation fits
+            repeat: true, // Set to true if you want the animation to loop
+          ),
+          Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: '${_searchController.text} ', // City name
+                  style: GoogleFonts.amaranth(
+                    textStyle: TextStyle(
+                      color: Colors.blue, // Blue for city name
+                      fontSize: 18,
+                    ),
+                  ),
+                ),
+                TextSpan(
+                  text: 'not found.', // Error message
+                  style: GoogleFonts.amaranth(
+                    textStyle: TextStyle(
+                      color: Colors.black, // Red for "not found."
+                      fontSize: 18,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          Text(
+            error.toString().contains('City not found')
+                ? ' Check the name and try again!'
+                : 'An error occurred. Please try again.',
+            style: GoogleFonts.amaranth(
+              textStyle: TextStyle(
+                color: Colors.black, // Black color for the rest of the text
+                fontSize: 18,
+              ),
+            ),
+          ),
+
+          // _cityNotFound(error),
+        ],
       ),
     );
   }

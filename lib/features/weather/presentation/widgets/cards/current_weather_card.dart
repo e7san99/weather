@@ -133,10 +133,10 @@ class CurrentWeatherCard extends StatelessWidget {
           ),
           //vertical line
           Positioned(
-            top: height * 0.21,
-            left: width * 0.42,
+            top: height * 0.22,
+            left: width * 0.451,
             child: Container(
-              height: 30, // Adjust the height as needed
+              height: 20, // Adjust the height as needed
               width: 2, // Adjust the width of the vertical line
               color: Color(0xE7F1E9E9),
             ),
