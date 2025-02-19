@@ -178,7 +178,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               );
             },
             loading: () {
-              return Center(child: CircularProgressIndicator());
+              return SizedBox();
+              //return Center(child: CircularProgressIndicator(color: Colors.green,));
             },
           );
         },
