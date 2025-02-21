@@ -1,31 +1,61 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:intl/intl.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:weather_pod/features/weather/data/riverpod/fetch_weather.dart';
+import 'package:weather_pod/features/weather/presentation/widgets/appbar.dart';
+import 'package:weather_pod/features/weather/presentation/widgets/cards/current_weather_card.dart';
+import 'package:weather_pod/features/weather/presentation/widgets/cards/five_day_forecast.dart';
+import 'package:weather_pod/features/weather/presentation/widgets/cards/next_hours_forecast.dart';
+import 'package:weather_pod/features/weather/presentation/widgets/cards/title_cards.dart';
+import 'package:weather_pod/features/weather/utils/constants/const.dart';
+import 'package:weather_pod/features/weather/utils/extention.dart';
+import 'package:weather_pod/features/weather/utils/shimmers/shimmering_weather_cards.dart';
 
-class DisplayWeatherCity extends StatefulWidget {
-  const DisplayWeatherCity({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<DisplayWeatherCity> createState() => _DisplayWeatherCityState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _DisplayWeatherCityState extends State<DisplayWeatherCity> {
-  final TextEditingController controller = TextEditingController();
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
+  final TextEditingController _searchController = TextEditingController();
   Position? _currentPosition;
+  bool _isLocationDisable = true;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _getCurrentLocation();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _getCurrentLocation();
+    }
   }
 
   Future<void> _getCurrentLocation() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
+      setState(() {
+        _isLocationDisable = false;
+      });
       return;
     }
+    setState(() {
+      _isLocationDisable = true;
+    });
 
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
@@ -47,301 +77,253 @@ class _DisplayWeatherCityState extends State<DisplayWeatherCity> {
 
   @override
   Widget build(BuildContext context) {
-    void displayThirtyDayWeather(BuildContext context, String city) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text('Weather Forecast for $city'),
-            ),
-            body: Consumer(
-              builder: (context, ref, child) {
-                final thirtyDayWeather =
-                    ref.watch(nextDaysWeatherProvider(city));
-                return thirtyDayWeather.when(
-                  data: (data) {
-                    return ListView.builder(
-                      itemCount: data.list.length,
-                      itemBuilder: (context, index) {
-                        String iconCode = data.list[index].weather[0].icon;
-                        String imageUrl;
-
-                        switch (iconCode) {
-                          //days
-                          case '01d':
-                            imageUrl = 'assets/icons/01d.png';
-                            break;
-                          case '02d':
-                            imageUrl = 'assets/icons/02d.png';
-                            break;
-                          case '03d':
-                            imageUrl = 'assets/icons/03d.png';
-                            break;
-                          case '04d':
-                            imageUrl = 'assets/icons/04d.png';
-                            break;
-                          case '09d':
-                            imageUrl = 'assets/icons/09d.png';
-                            break;
-                          case '10d':
-                            imageUrl = 'assets/icons/10d.png';
-                            break;
-                          case '11d':
-                            imageUrl = 'assets/icons/11d.png';
-                            break;
-                          case '13d':
-                            imageUrl = 'assets/icons/13d.png';
-                            break;
-                          case '50d':
-                            imageUrl = 'assets/icons/50d.png';
-                            break;
-                          //nights
-                          case '01n':
-                            imageUrl = 'assets/icons/01n.png';
-                            break;
-                          case '02n':
-                            imageUrl = 'assets/icons/02n.png';
-                            break;
-                          case '03n':
-                            imageUrl = 'assets/icons/03n.png';
-                            break;
-                          case '04n':
-                            imageUrl = 'assets/icons/04n.png';
-                            break;
-                          case '09n':
-                            imageUrl = 'assets/icons/09n.png';
-                            break;
-                          case '10n':
-                            imageUrl = 'assets/icons/10n.png';
-                            break;
-                          case '11n':
-                            imageUrl = 'assets/icons/11n.png';
-                            break;
-                          case '13n':
-                            imageUrl = 'assets/icons/13n.png';
-                            break;
-                          case '50n':
-                            imageUrl = 'assets/icons/50n.png';
-                            break;
-                          default:
-                            imageUrl = 'assets/icons/moon.png';
-                            break;
-                        }
-
-                        double tempCelsius =
-                            data.list[index].main.temp - 273.15;
-                        DateTime dateTime =
-                            DateTime.parse(data.list[index].dt_txt);
-                        String formattedTime =
-                            DateFormat.yMd().add_jm().format(dateTime);
-
-                        return ListTile(
-                          // title: Text('${data.city.name} - Day ${index + 1}'),
-                          title: Text('${tempCelsius.toStringAsFixed(2)}°C'),
-                          leading: Image.asset(
-                            imageUrl,
-                            height: 35,
-                            fit: BoxFit.fill,
-                            // color: whiteColor,
-                          ),
-                          trailing: Text(formattedTime),
-                        );
-                      },
-                    );
-                  },
-                  error: (error, stackTrace) => Text(
-                    error.toString().contains('City not found')
-                        ? 'City not found. Please try again.'
-                        : 'An error occurred. Please try again.',
-                    style: TextStyle(color: Colors.purple),
-                  ),
-                  loading: () => const CircularProgressIndicator(),
-                );
-              },
-            ),
-          );
-        }),
-      );
-    }
-
     return Scaffold(
-      backgroundColor: Colors.grey[400],
-      appBar: AppBar(
-        title: const Text('Weather'),
-        centerTitle: true,
-      ),
+      backgroundColor: Color(0xF5F5F5F5),
+      appBar: AppbarHomePage(
+          currentPosition: _currentPosition,
+          searchController: _searchController),
       body: Consumer(
         builder: (context, ref, child) {
-          return Center(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: TextField(
-                    controller: controller,
-                    decoration: const InputDecoration(
-                      disabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                        color: Colors.blue,
-                      )),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.blue,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                        color: Colors.blue,
-                      )),
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.blue,
-                        ),
-                      ),
-                      labelText: 'City',
-                    ),
-                  ),
-                ),
-                TextButton(
-                  style: ButtonStyle(
-                    backgroundColor: WidgetStateProperty.all(Colors.blue),
-                  ),
-                  onPressed: () {
-                    ref.read(cityProvider.notifier).state = controller.text;
-                  },
-                  child: Text(
-                    'Search',
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                Consumer(
-                  builder: (context, ref, child) {
-                    final city = ref.watch(cityProvider);
-                    if (city.isEmpty && _currentPosition == null) {
-                      return const Text('Please enter a city');
-                    }
+          final internetConnectionStatus =
+              ref.watch(internetConnectionProvider);
 
-                    if (city.isEmpty) {
-                      final weather =
-                          ref.watch(locationWeatherProvider(_currentPosition!));
-                      return weather.when(
-                        data: (data) {
-                          double tempCelsius = data.list[0].main.temp - 273.15;
-                          return Column(
-                            children: [
-                              Text(
-                                  '${data.city.name} ${tempCelsius.toStringAsFixed(2)}°C'),
-                              Image.network(
-                                  'https://openweathermap.org/img/wn/${data.list[0].weather[0].icon}@2x.png'),
-                            ],
-                          );
-                        },
-                        error: (error, stackTrace) => Text(
-                          error.toString().contains('City not found')
-                              ? 'City not found. Please try again.'
-                              : 'An error occurred. Please try again.',
-                          style: TextStyle(color: Colors.purple),
-                        ),
-                        loading: () => const CircularProgressIndicator(),
-                      );
-                    } else {
-                      final weather = ref.watch(weatherProvider(city));
-                      return weather.when(
-                        data: (data) {
-                          double tempCelsius = data.list[0].main.temp - 273.15;
-                          return Column(
-                            children: [
-                              Text(
-                                  '${data.city.name} ${tempCelsius.toStringAsFixed(2)}°C'),
-                              Image.network(
-                                  'https://openweathermap.org/img/wn/${data.list[0].weather[0].icon}@2x.png'),
-                            ],
-                          );
-                        },
-                        error: (error, stackTrace) => Text(
-                          error.toString().contains('City not found')
-                              ? 'City not found. Please try again.'
-                              : 'An error occurred. Please try again.',
-                          style: TextStyle(color: Colors.purple),
-                        ),
-                        loading: () => const CircularProgressIndicator(),
-                      );
-                    } 
-                  },
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                TextButton(
-                  style: ButtonStyle(
-                    backgroundColor: WidgetStateProperty.all(Colors.blue),
-                  ),
-                  onPressed: () {
-                    ref.read(cityProvider.notifier).state = controller.text;
-                    displayThirtyDayWeather(context, controller.text);
-                  },
-                  child: Text(
-                    'Search',
-                    style: TextStyle(
-                      color: Colors.white,
+          return internetConnectionStatus.when(
+            data: (isConnected) {
+              if (!isConnected) {
+                return _noInternetConnection();
+              }
+
+              final useCurrentLocation = ref.watch(useCurrentLocationProvider);
+
+              if (!_isLocationDisable) {
+                return _locationServiceDisable();
+              }
+
+              final weather = useCurrentLocation
+                  ? ref.watch(locationWeatherProvider(
+                      _currentPosition ?? defaultPosition()))
+                  : ref.watch(weatherProvider(ref.watch(cityProvider)));
+
+              return weather.when(
+                data: (data) {
+                  final listElement = data.list[0];
+                  DateTime dateTime = DateTime.parse(listElement.dt_txt);
+                  String description = listElement.weather[0].description;
+                  String capitalizedDescription =
+                      description[0].toUpperCase() + description.substring(1);
+                  double windSpeed = listElement.wind.speed;
+                  String iconCode = listElement.weather[0].icon;
+                  String imageUrl = getWeatherIcons(iconCode);
+                  final nextHours = nextHoursfilteredList(data.list);
+                  final fiveDayForecast = fiveDayForecastAt12PM(data.list);
+
+                  return RefreshIndicator(
+                    color: Colors.blue,
+                    onRefresh: () async {
+                      await Future.wait([_getCurrentLocation()]);
+                    },
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          CurrentWeatherCard(
+                            tempCelsius: listElement.main.temp.toCelsius,
+                            description: capitalizedDescription,
+                            imageUrl: imageUrl,
+                            formattedDate: formattedDate(dateTime),
+                            tempMinCelsius: listElement.main.temp_min.toCelsius,
+                            tempMaxCelsius: listElement.main.temp_max.toCelsius,
+                            windSpeed: windSpeed,
+                          ),
+                          SizedBox(height: 10),
+                          TitleCards(title: 'Next Hours'),
+                          NextHoursForecast(nextHoursfilteredList: nextHours),
+                          SizedBox(height: 10),
+                          TitleCards(title: 'Five Day Forecast'),
+                          FiveDayForecast(
+                              fiveDayForecastAt12PM: fiveDayForecast),
+                        ],
+                      ),
                     ),
-                  ),
-                )
-              ],
-            ),
+                  );
+                },
+                error: (error, stackTrace) {
+                  // Check if the error is a "city not found" error
+                  if (error.toString().contains('City not found')) {
+                    return _cityNotFound(error);
+                  } else if (error.toString().contains(
+                      'Failed to load data: The connection errored')) {
+                    // Handle connection error (e.g., no internet)
+                    return _noInternetConnection();
+                  } else {
+                    // Handle other errors
+                    return Center(
+                      child: Text(
+                        'An error occurred: ${error.toString()}',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    );
+                  }
+                },
+                loading: () {
+                  return ShimmeringWeatherCards();
+                },
+              );
+            },
+            error: (error, stackTrace) {
+              return Center(
+                child: Text(
+                  'An error occurred: ${error.toString()}',
+                  style: TextStyle(color: Colors.red),
+                ),
+              );
+            },
+            loading: () {
+              return SizedBox();
+              //return Center(child: CircularProgressIndicator(color: Colors.green,));
+            },
           );
         },
       ),
     );
   }
-}
 
-/*
-texfield
-TextField(
-              controller: _searchController,
-              autofocus: true,
-              decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(
-                      color: Colors.blue,
-                      width: 2,
+  Center _noInternetConnection() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: 80,
+          ),
+          Lottie.asset(
+            'assets/json/no-internet.json', // Path to your JSON file
+            width: 150, // Adjust width
+            height: 150, // Adjust height
+            fit: BoxFit.contain, // Adjust how the animation fits
+            repeat: true, // Set to true if you want the animation to loop
+          ),
+          SizedBox(
+            height: 50,
+          ),
+          Text(
+            'No Internet Connection',
+            style: GoogleFonts.amaranth(
+              textStyle: TextStyle(
+                color: Colors.black,
+                fontSize: 18,
+              ),
+            ),
+          ),
+          SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () async {
+              // You can add logic to retry checking the internet connection
+              _getCurrentLocation();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+            ),
+            child: Text(
+              'Retry',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Center _cityNotFound(Object error) {
+    return Center(
+      child: Column(
+        children: [
+          Lottie.asset(
+            'assets/json/city.json', // Path to your JSON file
+            width: 300, // Adjust width
+            height: 300, // Adjust height
+            fit: BoxFit.contain, // Adjust how the animation fits
+            repeat: true, // Set to true if you want the animation to loop
+          ),
+          Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: '${_searchController.text} ', // City name
+                  style: GoogleFonts.amaranth(
+                    textStyle: TextStyle(
+                      color: Colors.blue, // Blue for city name
+                      fontSize: 18,
                     ),
                   ),
-                  disabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(
-                      color: Colors.blue,
-                      width: 2,
+                ),
+                TextSpan(
+                  text: 'not found.', // Error message
+                  style: GoogleFonts.amaranth(
+                    textStyle: TextStyle(
+                      color: Colors.black, // Red for "not found."
+                      fontSize: 18,
                     ),
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(
-                      color: Colors.blue,
-                      width: 2,
-                    ),
-                  ),
-                  // fillColor: Colors.blue,
-                  // filled: true,
-                  hintText: 'Search...',
-                  border: InputBorder.none,
-                  hintStyle: TextStyle(color: Colors.blue),
-                  suffixIcon: IconButton(
-                    onPressed: () {
-                      _toggleSearch();
-                    },
-                    icon: Icon(Icons.close, color: Colors.blue),
-                  )),
-              style: TextStyle(color: Colors.blue),
-              onSubmitted: (value) {
-                // Handle the search query here
-                print('Search query: $value');
-                _toggleSearch(); // Optionally close the search bar after submission
-              },
-            )
-*/
+                ),
+              ],
+            ),
+          ),
+          Text(
+            error.toString().contains('City not found')
+                ? ' Check the name and try again!'
+                : 'An error occurred. Please try again.',
+            style: GoogleFonts.amaranth(
+              textStyle: TextStyle(
+                color: Colors.black, // Black color for the rest of the text
+                fontSize: 18,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Center _locationServiceDisable() {
+    return Center(
+      child: Column(
+        children: [
+          SizedBox(height: 50),
+          Lottie.asset(
+            'assets/json/location.json', // Path to your JSON file
+            width: 330, // Adjust width
+            // height: 330, // Adjust height
+            fit: BoxFit.contain, // Adjust how the animation fits
+            repeat: true, // Set to true if you want the animation to loop
+          ),
+          Text(
+            'Location services are disabled.',
+            style: GoogleFonts.amaranth(
+              textStyle: TextStyle(
+                color: Colors.black,
+                fontSize: 18,
+              ),
+            ),
+          ),
+          SizedBox(height: 80),
+          ElevatedButton(
+            onPressed: () async {
+              bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+              if (!serviceEnabled) {
+                Geolocator.openLocationSettings();
+              }
+              await _getCurrentLocation();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+            ),
+            child: Text(
+              'Enable Location Services',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
