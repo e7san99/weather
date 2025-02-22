@@ -19,7 +19,7 @@ class WeatherCardContainer extends StatelessWidget {
       margin: EdgeInsets.all(8),
       width: width,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(18),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           tileMode: TileMode.mirror,
