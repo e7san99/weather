@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:lottie/lottie.dart';
 import 'package:weather_pod/features/weather/data/riverpod/fetch_weather.dart';
+import 'package:weather_pod/features/weather/presentation/widgets/alters/city_not_found.dart';
+import 'package:weather_pod/features/weather/presentation/widgets/alters/location_service_disable.dart';
+import 'package:weather_pod/features/weather/presentation/widgets/alters/no_internet_connection.dart';
 import 'package:weather_pod/features/weather/presentation/widgets/appbar.dart';
 import 'package:weather_pod/features/weather/presentation/widgets/cards/main_weather_card.dart';
 import 'package:weather_pod/features/weather/presentation/widgets/five_day_forecast.dart';
 import 'package:weather_pod/features/weather/presentation/widgets/next_hours_forecast.dart';
-import 'package:weather_pod/features/weather/presentation/widgets/no_internet_connection.dart';
 import 'package:weather_pod/features/weather/utils/constants/const.dart';
 import 'package:weather_pod/features/weather/utils/extention.dart';
 import 'package:weather_pod/features/weather/utils/shimmers/shimmering_weather_cards.dart';
@@ -90,13 +91,17 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           return internetConnectionStatus.when(
             data: (isConnected) {
               if (!isConnected) {
-                return NoInternetConnection(getCurrentLocation: _getCurrentLocation());
+                return NoInternetConnection(
+                  getCurrentLocation: _getCurrentLocation(),
+                );
               }
 
               final useCurrentLocation = ref.watch(useCurrentLocationProvider);
 
               if (!_isLocationDisable) {
-                return _locationServiceDisable();
+                return LocationServiceDisable(
+                  getCurrentLocation: _getCurrentLocation(),
+                );
               }
 
               final weather = useCurrentLocation
@@ -149,11 +154,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 error: (error, stackTrace) {
                   // Check if the error is a "city not found" error
                   if (error.toString().contains('City not found')) {
-                    return _cityNotFound(error);
+                    return CityNotFound(
+                        searchController: _searchController, error: error);
                   } else if (error.toString().contains(
                       'Failed to load data: The connection errored')) {
                     // Handle connection error (e.g., no internet)
-                    return NoInternetConnection(getCurrentLocation: _getCurrentLocation());
+                    return NoInternetConnection(
+                        getCurrentLocation: _getCurrentLocation());
                   } else {
                     // Handle other errors
                     return Center(
@@ -195,81 +202,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           Text(
             title,
             style: textStyle(blueColor, 20),
-          ),
-        ],
-      ),
-    );
-  }
-
-
-  Center _cityNotFound(Object error) {
-    return Center(
-      child: Column(
-        children: [
-          Lottie.asset(
-            'assets/json/city.json', // Path to your JSON file
-            width: 300, // Adjust width
-            height: 300, // Adjust height
-            fit: BoxFit.contain, // Adjust how the animation fits
-            repeat: true, // Set to true if you want the animation to loop
-          ),
-          Text.rich(
-            TextSpan(
-              children: [
-                TextSpan(
-                  text: '${_searchController.text} ', // City name
-                  style: textStyle(blueColor, 18),
-                ),
-                TextSpan(
-                  text: 'not found.', // Error message
-                  style: textStyle(blackColor, 18),
-                ),
-              ],
-            ),
-          ),
-          Text(
-            error.toString().contains('City not found')
-                ? ' Check the name and try again!'
-                : 'An error occurred. Please try again.',
-            style: textStyle(blackColor, 18),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Center _locationServiceDisable() {
-    return Center(
-      child: Column(
-        children: [
-          SizedBox(height: 50),
-          Lottie.asset(
-            'assets/json/location.json', // Path to your JSON file
-            width: 330, // Adjust width
-            // height: 330, // Adjust height
-            fit: BoxFit.contain, // Adjust how the animation fits
-            repeat: true, // Set to true if you want the animation to loop
-          ),
-          Text(
-            'Location services are disabled.',
-            style: textStyle(blackColor, 18),
-          ),
-          SizedBox(height: 80),
-          ElevatedButton(
-            onPressed: () async {
-              bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-              if (!serviceEnabled) {
-                Geolocator.openLocationSettings();
-              }
-              await _getCurrentLocation();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: blueColor,
-            ),
-            child: Text(
-              'Enable Location Services',
-              style: TextStyle(color: whiteColor),
-            ),
           ),
         ],
       ),
