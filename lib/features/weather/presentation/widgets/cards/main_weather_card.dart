@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:weather_pod/features/weather/presentation/widgets/cards/weather_card_container.dart';
 import 'package:weather_pod/features/weather/utils/style.dart';
 
-class CurrentWeatherCard extends StatelessWidget {
+class MainWeatherCard extends StatelessWidget {
   final double tempCelsius;
   final String description;
   final String imageUrl;
@@ -12,7 +11,7 @@ class CurrentWeatherCard extends StatelessWidget {
   final double tempMaxCelsius;
   final double windSpeed;
 
-  const CurrentWeatherCard({
+  const MainWeatherCard({
     super.key,
     required this.tempCelsius,
     required this.description,
@@ -50,7 +49,7 @@ class CurrentWeatherCard extends StatelessWidget {
             child: shadeMask(
               widget: Text(
                 description,
-                style: textStyle(25),
+                style: textStyle(whiteColor, 25),
               ),
             ),
           ),
@@ -60,7 +59,7 @@ class CurrentWeatherCard extends StatelessWidget {
             left: width * 0.07,
             child: Text(
               formattedDate,
-              style: textStyle(16),
+              style: textStyle(whiteColor, 16),
             ),
           ),
           //Base Temperature
@@ -73,11 +72,11 @@ class CurrentWeatherCard extends StatelessWidget {
                     children: [
                       TextSpan(
                         text: '${tempCelsius.round()}',
-                        style: textStyle(72),
+                        style: textStyle(whiteColor, 72),
                       ),
                       TextSpan(
                         text: 'C',
-                        style: textStyle(60),
+                        style: textStyle(whiteColor, 60),
                       ),
                     ],
                   ),
@@ -90,7 +89,7 @@ class CurrentWeatherCard extends StatelessWidget {
             child: shadeMask(
               widget: Text(
                 '°',
-                style: textStyle(47),
+                style: textStyle(whiteColor, 47),
               ),
             ),
           ),
@@ -105,15 +104,8 @@ class CurrentWeatherCard extends StatelessWidget {
                   scale: 18,
                   color: const Color(0xE7F1E9E9),
                 ),
-                Text(
-                  '${tempMinCelsius.round()}° / ${tempMaxCelsius.round()}°',
-                  style: GoogleFonts.amaranth(
-                    textStyle: TextStyle(
-                      color: Color(0xE7F1E9E9),
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
+                Text('${tempMinCelsius.round()}° / ${tempMaxCelsius.round()}°',
+                    style: textStyle(Color(0xE7F1E9E9), 20)),
                 Image.asset(
                   'assets/icons/up-arrow.png',
                   scale: 25,
@@ -128,7 +120,7 @@ class CurrentWeatherCard extends StatelessWidget {
             right: width * 0.07,
             child: Text(
               'Wind speed: $windSpeed m/s',
-              style: textStyle(16),
+              style: textStyle(whiteColor, 16),
             ),
           ),
           //vertical line

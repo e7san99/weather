@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:weather_pod/features/weather/data/riverpod/fetch_weather.dart';
 import 'package:weather_pod/features/weather/presentation/widgets/appbar.dart';
-import 'package:weather_pod/features/weather/presentation/widgets/cards/current_weather_card.dart';
-import 'package:weather_pod/features/weather/presentation/widgets/cards/five_day_forecast.dart';
-import 'package:weather_pod/features/weather/presentation/widgets/cards/next_hours_forecast.dart';
-import 'package:weather_pod/features/weather/presentation/widgets/cards/title_cards.dart';
+import 'package:weather_pod/features/weather/presentation/widgets/cards/main_weather_card.dart';
+import 'package:weather_pod/features/weather/presentation/widgets/five_day_forecast.dart';
+import 'package:weather_pod/features/weather/presentation/widgets/next_hours_forecast.dart';
+import 'package:weather_pod/features/weather/presentation/widgets/no_internet_connection.dart';
 import 'package:weather_pod/features/weather/utils/constants/const.dart';
 import 'package:weather_pod/features/weather/utils/extention.dart';
 import 'package:weather_pod/features/weather/utils/shimmers/shimmering_weather_cards.dart';
+import 'package:weather_pod/features/weather/utils/style.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -90,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           return internetConnectionStatus.when(
             data: (isConnected) {
               if (!isConnected) {
-                return _noInternetConnection();
+                return NoInternetConnection(getCurrentLocation: _getCurrentLocation());
               }
 
               final useCurrentLocation = ref.watch(useCurrentLocationProvider);
@@ -118,14 +118,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   final fiveDayForecast = fiveDayForecastAt12PM(data.list);
 
                   return RefreshIndicator(
-                    color: Colors.blue,
+                    color: blueColor,
                     onRefresh: () async {
                       await Future.wait([_getCurrentLocation()]);
                     },
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          CurrentWeatherCard(
+                          MainWeatherCard(
                             tempCelsius: listElement.main.temp.toCelsius,
                             description: capitalizedDescription,
                             imageUrl: imageUrl,
@@ -135,10 +135,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                             windSpeed: windSpeed,
                           ),
                           SizedBox(height: 10),
-                          TitleCards(title: 'Next Hours'),
+                          _titleCard('Next Hours'),
                           NextHoursForecast(nextHoursfilteredList: nextHours),
                           SizedBox(height: 10),
-                          TitleCards(title: 'Five Day Forecast'),
+                          _titleCard('Five Day Forecast'),
                           FiveDayForecast(
                               fiveDayForecastAt12PM: fiveDayForecast),
                         ],
@@ -153,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   } else if (error.toString().contains(
                       'Failed to load data: The connection errored')) {
                     // Handle connection error (e.g., no internet)
-                    return _noInternetConnection();
+                    return NoInternetConnection(getCurrentLocation: _getCurrentLocation());
                   } else {
                     // Handle other errors
                     return Center(
@@ -187,51 +187,20 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
-  Center _noInternetConnection() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
+  Padding _titleCard(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 10.0),
+      child: Row(
         children: [
-          SizedBox(
-            height: 80,
-          ),
-          Lottie.asset(
-            'assets/json/no-internet.json', // Path to your JSON file
-            width: 150, // Adjust width
-            height: 150, // Adjust height
-            fit: BoxFit.contain, // Adjust how the animation fits
-            repeat: true, // Set to true if you want the animation to loop
-          ),
-          SizedBox(
-            height: 50,
-          ),
           Text(
-            'No Internet Connection',
-            style: GoogleFonts.amaranth(
-              textStyle: TextStyle(
-                color: Colors.black,
-                fontSize: 18,
-              ),
-            ),
-          ),
-          SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () async {
-              // You can add logic to retry checking the internet connection
-              _getCurrentLocation();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
-            ),
-            child: Text(
-              'Retry',
-              style: TextStyle(color: Colors.white),
-            ),
+            title,
+            style: textStyle(blueColor, 20),
           ),
         ],
       ),
     );
   }
+
 
   Center _cityNotFound(Object error) {
     return Center(
@@ -249,21 +218,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               children: [
                 TextSpan(
                   text: '${_searchController.text} ', // City name
-                  style: GoogleFonts.amaranth(
-                    textStyle: TextStyle(
-                      color: Colors.blue, // Blue for city name
-                      fontSize: 18,
-                    ),
-                  ),
+                  style: textStyle(blueColor, 18),
                 ),
                 TextSpan(
                   text: 'not found.', // Error message
-                  style: GoogleFonts.amaranth(
-                    textStyle: TextStyle(
-                      color: Colors.black, // Red for "not found."
-                      fontSize: 18,
-                    ),
-                  ),
+                  style: textStyle(blackColor, 18),
                 ),
               ],
             ),
@@ -272,12 +231,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             error.toString().contains('City not found')
                 ? ' Check the name and try again!'
                 : 'An error occurred. Please try again.',
-            style: GoogleFonts.amaranth(
-              textStyle: TextStyle(
-                color: Colors.black, // Black color for the rest of the text
-                fontSize: 18,
-              ),
-            ),
+            style: textStyle(blackColor, 18),
           ),
         ],
       ),
@@ -298,12 +252,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           ),
           Text(
             'Location services are disabled.',
-            style: GoogleFonts.amaranth(
-              textStyle: TextStyle(
-                color: Colors.black,
-                fontSize: 18,
-              ),
-            ),
+            style: textStyle(blackColor, 18),
           ),
           SizedBox(height: 80),
           ElevatedButton(
@@ -315,11 +264,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               await _getCurrentLocation();
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
+              backgroundColor: blueColor,
             ),
             child: Text(
               'Enable Location Services',
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: whiteColor),
             ),
           ),
         ],

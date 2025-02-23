@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-TextStyle textStyle(double? fontSize) {
+Color blueColor = Colors.blue;
+Color whiteColor = Colors.white;
+Color blackColor = Colors.black;
+
+
+TextStyle textStyle(Color color,double? fontSize) {
 return  GoogleFonts.amaranth(
   textStyle: TextStyle(
-    color: Colors.white,
+    color: color,
     fontSize: fontSize,
   ),
 );

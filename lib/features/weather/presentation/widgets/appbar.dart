@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:weather_pod/features/weather/data/riverpod/fetch_weather.dart';
 import 'package:weather_pod/features/weather/utils/shimmers/shimmering_appbar.dart';
 import 'package:weather_pod/features/weather/utils/style.dart';
@@ -43,34 +42,34 @@ class _AppbarHomePageState extends State<AppbarHomePage> {
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: BorderSide(
-                          color: Colors.blue,
+                          color: blueColor,
                           width: 2,
                         ),
                       ),
                       disabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: BorderSide(
-                          color: Colors.blue,
+                          color: blueColor,
                           width: 2,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: BorderSide(
-                          color: Colors.blue,
+                          color: blueColor,
                           width: 2,
                         ),
                       ),
                       hintText: 'Search...',
                       border: InputBorder.none,
-                      hintStyle: TextStyle(color: Colors.blue),
+                      hintStyle: TextStyle(color: blueColor),
                       suffixIcon: IconButton(
                         onPressed: () {
                           widget.searchController.clear();
                         },
-                        icon: Icon(Icons.close, color: Colors.blue),
+                        icon: Icon(Icons.close, color: blueColor),
                       )),
-                  style: TextStyle(color: Colors.blue),
+                  style: TextStyle(color: blueColor),
                   onSubmitted: (value) {
                     ref.read(cityProvider.notifier).state = value;
                     ref.read(useCurrentLocationProvider.notifier).state = false;
@@ -81,7 +80,7 @@ class _AppbarHomePageState extends State<AppbarHomePage> {
                 ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor:
-                        WidgetStateProperty.all<Color>(Colors.blue),
+                        WidgetStateProperty.all<Color>(blueColor),
                   ),
                   onPressed: () {
                     ref.read(cityProvider.notifier).state =
@@ -92,7 +91,7 @@ class _AppbarHomePageState extends State<AppbarHomePage> {
                   },
                   child: Text(
                     'Search',
-                    style: textStyle(16),
+                    style: textStyle(whiteColor, 16),
                   ),
                 ),
               ],
@@ -116,7 +115,7 @@ class _AppbarHomePageState extends State<AppbarHomePage> {
                 icon: Image.asset(
                   'assets/icons/appbar/location.png',
                   scale: 14,
-                  color: Colors.blue,
+                  color: blueColor,
                 ),
                 onPressed: () {
                   ref.read(useCurrentLocationProvider.notifier).state = true;
@@ -140,12 +139,7 @@ class _AppbarHomePageState extends State<AppbarHomePage> {
                         data: (data) {
                           return Text(
                             data.city.name,
-                            style: GoogleFonts.amaranth(
-                              textStyle: TextStyle(
-                                color: Colors.blue,
-                                fontSize: 23,
-                              ),
-                            ),
+                            style: textStyle(blueColor, 23),
                           );
                         },
                         error: (error, stackTrace) => SizedBox(),
@@ -154,7 +148,7 @@ class _AppbarHomePageState extends State<AppbarHomePage> {
                         //   error.toString().contains('City not found')
                         //       ? 'City not found. Please try again.'
                         //       : 'An error occurred. Please try again.',
-                        //   style: TextStyle(color: Colors.blue),
+                        //   style: TextStyle(color: blueColor),
                         // ),
                         loading: () {
                           return ShimmeringAppbar();
@@ -168,12 +162,7 @@ class _AppbarHomePageState extends State<AppbarHomePage> {
                       data: (data) {
                         return Text(
                           data.city.name,
-                          style: GoogleFonts.amaranth(
-                            textStyle: TextStyle(
-                              color: Colors.blue,
-                              fontSize: 23,
-                            ),
-                          ),
+                          style: textStyle(blueColor, 23),
                         );
                       },
                       error: (error, stackTrace) => SizedBox(),
@@ -181,7 +170,7 @@ class _AppbarHomePageState extends State<AppbarHomePage> {
                       //   error.toString().contains('City not found')
                       //       ? 'City not found. Please try again.'
                       //       : 'An error occurred. Please try again.',
-                      //   style: TextStyle(color: Colors.blue),
+                      //   style: TextStyle(color: blueColor),
                       // ),
                       loading: () {
                         return ShimmeringAppbar();

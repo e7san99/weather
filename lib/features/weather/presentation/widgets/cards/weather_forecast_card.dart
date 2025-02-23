@@ -57,7 +57,7 @@ class WeatherForecastCard extends StatelessWidget {
               right: 0,
               child: Text(
                 formattedDate,
-                style: textStyle(14),
+                style: textStyle(whiteColor, 14),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -93,7 +93,7 @@ class WeatherForecastCard extends StatelessWidget {
               right: 0,
               child: Text(
                 description,
-                style: textStyle(16),
+                style: textStyle(whiteColor, 16),
                 textAlign: TextAlign.center,
                 maxLines: 1,
               ),
@@ -111,11 +111,11 @@ class WeatherForecastCard extends StatelessWidget {
                       children: [
                         TextSpan(
                           text: '${tempCelsius.toCelsius.round()}',
-                          style: textStyle(16),
+                          style:textStyle(whiteColor, 16),
                         ),
                         TextSpan(
                           text: 'C',
-                          style: textStyle(14),
+                          style: textStyle(whiteColor, 14),
                         ),
                       ],
                     ),
@@ -130,7 +130,7 @@ class WeatherForecastCard extends StatelessWidget {
               child: shadeMask(
                 widget: Text(
                   '°',
-                  style: textStyle(16),
+                  style: textStyle(whiteColor, 16),
                 ),
               ),
             ),
