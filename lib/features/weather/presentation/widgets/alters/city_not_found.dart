@@ -35,9 +35,9 @@ class CityNotFound extends StatelessWidget {
           ),
           Text(
             error.toString().contains('City not found')
-                ? ' Check the name and try again!'
+                ? ' Check the city name and try again!'
                 : 'An error occurred. Please try again.',
-            style: textStyle(blackColor, 18),
+            style: textStyle(blackColor, 17),
           ),
         ],
       ),

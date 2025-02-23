@@ -36,6 +36,7 @@ class _AppbarHomePageState extends State<AppbarHomePage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextField(
+                  
                   controller: widget.searchController,
                   autofocus: true,
                   decoration: InputDecoration(
@@ -71,7 +72,7 @@ class _AppbarHomePageState extends State<AppbarHomePage> {
                       )),
                   style: TextStyle(color: blueColor),
                   onSubmitted: (value) {
-                    ref.read(cityProvider.notifier).state = value;
+                    ref.read(cityProvider.notifier).state = value.trim();
                     ref.read(useCurrentLocationProvider.notifier).state = false;
                     Navigator.pop(context);
                   },
@@ -83,7 +84,7 @@ class _AppbarHomePageState extends State<AppbarHomePage> {
                   ),
                   onPressed: () {
                     ref.read(cityProvider.notifier).state =
-                        widget.searchController.text;
+                        widget.searchController.text.trim();
                     ref.read(useCurrentLocationProvider.notifier).state = false;
                     Navigator.pop(context);
                     // widget.searchController.clear();
