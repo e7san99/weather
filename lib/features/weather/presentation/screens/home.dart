@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
@@ -25,6 +27,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   final TextEditingController _searchController = TextEditingController();
   Position? _currentPosition;
   bool _isLocationDisable = true;
+DateTime? _lastRefreshTime;
+
 
   @override
   void initState() {
@@ -40,11 +44,20 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
+  // void didChangeAppLifecycleState(AppLifecycleState state) {
+  //   if (state == AppLifecycleState.resumed) {
+  //     _getCurrentLocation();
+  //   }
+  // }
+void didChangeAppLifecycleState(AppLifecycleState state) {
+  if (state == AppLifecycleState.resumed) {
+    final now = DateTime.now();
+    if (_lastRefreshTime == null || now.difference(_lastRefreshTime!) > Duration(minutes: 5)) {
       _getCurrentLocation();
+      _lastRefreshTime = now;
     }
   }
+}
 
   Future<void> _getCurrentLocation() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();

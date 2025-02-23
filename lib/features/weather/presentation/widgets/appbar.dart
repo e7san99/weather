@@ -79,8 +79,7 @@ class _AppbarHomePageState extends State<AppbarHomePage> {
                 SizedBox(height: 16),
                 ElevatedButton(
                   style: ButtonStyle(
-                    backgroundColor:
-                        WidgetStateProperty.all<Color>(blueColor),
+                    backgroundColor: WidgetStateProperty.all<Color>(blueColor),
                   ),
                   onPressed: () {
                     ref.read(cityProvider.notifier).state =
@@ -131,7 +130,7 @@ class _AppbarHomePageState extends State<AppbarHomePage> {
                       ref.watch(useCurrentLocationProvider);
                   if (useCurrentLocation) {
                     if (widget.currentPosition == null) {
-                      return SizedBox();
+                      return ShimmeringAppbar();
                     } else {
                       final weather = ref.watch(
                           locationWeatherProvider(widget.currentPosition!));
@@ -142,13 +141,15 @@ class _AppbarHomePageState extends State<AppbarHomePage> {
                             style: textStyle(blueColor, 23),
                           );
                         },
-                        error: (error, stackTrace) => SizedBox(),
-                        //when no internet display this error
-                        // Text(
-                        //   error.toString().contains('City not found')
-                        //       ? 'City not found. Please try again.'
+                        // No internet connection
+                        error: (error, stackTrace) =>SizedBox(),
+                            //when no internet display this error
+                        //     Text(
+                          
+                        //   error.toString().contains('Failed to load data')
+                        //       ? 'No internet connection'
                         //       : 'An error occurred. Please try again.',
-                        //   style: TextStyle(color: blueColor),
+                        //   style: TextStyle(color: Colors.green),
                         // ),
                         loading: () {
                           return ShimmeringAppbar();
@@ -165,13 +166,9 @@ class _AppbarHomePageState extends State<AppbarHomePage> {
                           style: textStyle(blueColor, 23),
                         );
                       },
+                      //City not found
                       error: (error, stackTrace) => SizedBox(),
-                      //  Text(
-                      //   error.toString().contains('City not found')
-                      //       ? 'City not found. Please try again.'
-                      //       : 'An error occurred. Please try again.',
-                      //   style: TextStyle(color: blueColor),
-                      // ),
+                          
                       loading: () {
                         return ShimmeringAppbar();
                       },

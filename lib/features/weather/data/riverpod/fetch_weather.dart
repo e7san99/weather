@@ -4,8 +4,9 @@ import 'package:weather_pod/features/weather/data/repositories/weather_implement
 import 'package:weather_pod/features/weather/data/repositories/weather_repository.dart';
 import 'package:weather_pod/features/weather/model/weather.dart';
 
-import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+// import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 final weatherRepositoryProvider =
     Provider<WeatherRepository>((ref) => WeatherImplements());
@@ -38,8 +39,13 @@ final nextDaysWeatherProvider =
 // final isLocationServiceEnabledProvider = StateProvider<bool>((ref) => true);
 
 
-final internetConnectionProvider = StreamProvider<bool>((ref) {
-  return InternetConnection().onStatusChange.map(
-        (status) => status == InternetStatus.connected,
-      );
+// final internetConnectionProvider = StreamProvider<bool>((ref) {
+//   return InternetConnection().onStatusChange.map(
+//         (status) => status == InternetStatus.connected,
+//       );
+// });
+
+final internetConnectionProvider = FutureProvider<bool>((ref) async {
+  var connectivityResult = await Connectivity().checkConnectivity();
+  return connectivityResult != ConnectivityResult.none;
 });
