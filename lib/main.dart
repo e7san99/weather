@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:weather_pod/app.dart';
 import 'package:weather_pod/features/weather/model/weather.dart';
@@ -39,52 +40,71 @@ void main() async {
 
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
-  // Test notification immediately
-  await _fetchWeatherAndNotify();
-
-  // Start periodic weather fetching
-  Timer.periodic(Duration(seconds: 10), (timer) async {
-    await _fetchWeatherAndNotify();
-  });
+  // Schedule the notification at 9:00 PM
+  scheduleDailyNinePMNotification();
 
   runApp(ProviderScope(child: App()));
 }
 
+void scheduleDailyNinePMNotification() {
+  final now = DateTime.now();
+  var scheduledTime = DateTime(now.year, now.month, now.day, 14, 20);
+
+  if (scheduledTime.isBefore(now)) {
+    scheduledTime = scheduledTime.add(Duration(days: 1));
+  }
+
+  final durationUntilNinePM = scheduledTime.difference(now);
+
+  Timer(durationUntilNinePM, () async {
+    print('Scheduled time reached, fetching weather data...');
+    await _fetchWeatherAndNotify();
+    scheduleDailyNinePMNotification();
+  });
+}
+
 Future<void> _fetchWeatherAndNotify() async {
   final dio = Dio();
+
+  Position position;
+  try {
+    position = await Geolocator.getCurrentPosition(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 100,
+      ),
+    );
+  } catch (e) {
+    print('Error getting location: $e');
+    return;
+  }
+
   try {
     var response = await dio.get(
-      '$baseUrl?q=Sulaymaniyah&appid=$apiKey', // Replace with your city name
-      options: Options(
-        method: 'GET',
-      ),
+      '$baseUrl?lat=${position.latitude}&lon=${position.longitude}&appid=$apiKey',
+      options: Options(method: 'GET'),
     );
 
     if (response.statusCode == 200) {
       final data = response.data as Map<String, dynamic>;
       final weatherModel = WeatherModel.fromMap(data);
 
-      // Find the temperature at 6:00 PM
       final sixPmWeather = weatherModel.list.firstWhere(
-        (element) => element.dt_txt.contains('21:00:00'),
-        orElse: () => throw StateError(
-            'No element found with dt_txt containing "21:00:00"'),
+        (element) => element.dt_txt.contains('12:00:00'),
+        orElse: () => throw StateError('No element found with dt_txt containing "12:00:00"'),
       );
 
       final tempCelsius = sixPmWeather.main.temp.toCelsius;
 
-      // Send notification
-      AndroidNotificationDetails androidPlatformChannelSpecifics =
-          AndroidNotificationDetails(
-        'weather_updates_channel', // Channel ID (must be unique)
-        'Weather Updates', // Channel name (visible to the user)
+      AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'weather_updates_channel',
+        'Weather Updates',
         channelDescription: 'Notifications for weather updates at 9:00 PM',
         importance: Importance.max,
         priority: Priority.high,
       );
 
-      const DarwinNotificationDetails darwinPlatformChannelSpecifics =
-          DarwinNotificationDetails();
+      const DarwinNotificationDetails darwinPlatformChannelSpecifics = DarwinNotificationDetails();
 
       NotificationDetails platformChannelSpecifics = NotificationDetails(
         android: androidPlatformChannelSpecifics,
@@ -94,10 +114,10 @@ Future<void> _fetchWeatherAndNotify() async {
       await flutterLocalNotificationsPlugin.show(
         0,
         'Weather Update',
-        'Temperature at 9:00 PM: ${tempCelsius.toCelsius.round()}°C',
+        'Temperature at 12:00 PM: ${tempCelsius.round()}°C',
         platformChannelSpecifics,
       );
-      print('Notification sent: Temperature at 9:00 PM: $tempCelsius°C');
+      print('Notification sent: Temperature at 12:00 PM: ${tempCelsius.round()}°C');
     }
   } catch (e) {
     print('Error fetching weather data: $e');
