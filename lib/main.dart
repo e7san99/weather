@@ -1,18 +1,18 @@
 import 'dart:async'; // Import Timer
 
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:weather/app.dart';
 import 'package:weather/features/weather/model/weather.dart';
+import 'package:weather/features/weather/utils/constants/const.dart';
 import 'package:weather/features/weather/utils/constants/http.dart';
 import 'package:weather/features/weather/utils/extention.dart';
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+
 
 Future<void> requestNotificationPermission() async {
   if (await Permission.notification.isDenied) {
@@ -20,50 +20,46 @@ Future<void> requestNotificationPermission() async {
   }
 }
 
+Future<void> requestPermissions() async {
+  await [
+    Permission.location,
+    Permission.notification,
+    Permission.scheduleExactAlarm,
+  ].request();
+}
+
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Request notification permission
+  await requestPermissions();
   await requestNotificationPermission();
 
-  // Initialize notifications
-  const AndroidInitializationSettings initializationSettingsAndroid =
-      AndroidInitializationSettings('@mipmap/ic_launcher');
-
-  const DarwinInitializationSettings initializationSettingsDarwin =
-      DarwinInitializationSettings();
-
-  final InitializationSettings initializationSettings = InitializationSettings(
-    android: initializationSettingsAndroid,
-    iOS: initializationSettingsDarwin,
+  // Initialize Awesome Notifications
+  await AwesomeNotifications().initialize(
+    null, // Use the default icon
+    [
+      NotificationChannel(
+        channelKey: 'basic_channel',
+        channelName: 'Basic Notifications',
+        channelDescription: 'Notification channel for basic tests',
+        importance: NotificationImportance.High,
+        defaultColor: Colors.blue,
+        ledColor: Colors.white,
+      ),
+    ],
   );
 
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  // Request permission to send notifications
+  await AwesomeNotifications().requestPermissionToSendNotifications();
 
-  // Schedule the notification at 9:00 PM
-  scheduleDailyNinePMNotification();
+  // Schedule a daily notification at 9 PM
+  await _scheduleDailyNotification();
 
   runApp(ProviderScope(child: App()));
 }
 
-void scheduleDailyNinePMNotification() {
-  final now = DateTime.now();
-  var scheduledTime = DateTime(now.year, now.month, now.day, 14, 20);
-
-  if (scheduledTime.isBefore(now)) {
-    scheduledTime = scheduledTime.add(Duration(days: 1));
-  }
-
-  final durationUntilNinePM = scheduledTime.difference(now);
-
-  Timer(durationUntilNinePM, () async {
-    print('Scheduled time reached, fetching weather data...');
-    await _fetchWeatherAndNotify();
-    scheduleDailyNinePMNotification();
-  });
-}
-
-Future<void> _fetchWeatherAndNotify() async {
+Future<void> _scheduleDailyNotification() async {
   final dio = Dio();
 
   Position position;
@@ -78,48 +74,48 @@ Future<void> _fetchWeatherAndNotify() async {
     print('Error getting location: $e');
     return;
   }
-
   try {
     var response = await dio.get(
       '$baseUrl?lat=${position.latitude}&lon=${position.longitude}&appid=$apiKey',
       options: Options(method: 'GET'),
     );
-
     if (response.statusCode == 200) {
       final data = response.data as Map<String, dynamic>;
       final weatherModel = WeatherModel.fromMap(data);
 
       final sixPmWeather = weatherModel.list.firstWhere(
         (element) => element.dt_txt.contains('12:00:00'),
-        orElse: () => throw StateError('No element found with dt_txt containing "12:00:00"'),
+        orElse:
+            () =>
+                throw StateError(
+                  'No element found with dt_txt containing "12:00:00"',
+                ),
       );
 
       final tempCelsius = sixPmWeather.main.temp.toCelsius;
+      String iconCode = sixPmWeather.weather[0].icon;
+      String imageUrl = getWeatherIcons(iconCode);
 
-      AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'weather_updates_channel',
-        'Weather Updates',
-        channelDescription: 'Notifications for weather updates at 9:00 PM',
-        importance: Importance.max,
-        priority: Priority.high,
+      await AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: 1,
+          channelKey: 'basic_channel',
+          title: 'Daily Notification',
+          body: 'Temperature at 12:00 PM: ${tempCelsius.round()}°C',
+        ),
+        schedule: NotificationCalendar(
+          hour: 23, // 9 PM
+          minute: 42,
+          second: 0,
+          repeats: true, // Repeat daily
+        ),
       );
 
-      const DarwinNotificationDetails darwinPlatformChannelSpecifics = DarwinNotificationDetails();
-
-      NotificationDetails platformChannelSpecifics = NotificationDetails(
-        android: androidPlatformChannelSpecifics,
-        iOS: darwinPlatformChannelSpecifics,
+      print(
+        'Notification sent: Temperature at 12:00 PM: ${tempCelsius.round()}°C',
       );
-
-      await flutterLocalNotificationsPlugin.show(
-        0,
-        'Weather Update',
-        'Temperature at 12:00 PM: ${tempCelsius.round()}°C',
-        platformChannelSpecifics,
-      );
-      print('Notification sent: Temperature at 12:00 PM: ${tempCelsius.round()}°C');
     }
   } catch (e) {
-    print('Error fetching weather data: $e');
+    print(e);
   }
 }

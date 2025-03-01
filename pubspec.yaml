@@ -44,10 +44,9 @@ dependencies:
   shimmer: any
   lottie: any
   internet_connection_checker_plus: any
-  flutter_local_notifications: any
   permission_handler: any
-  rxdart: any
   flutter_timezone: any
+  awesome_notifications: ^0.10.1
 
 dev_dependencies:
   flutter_test:
