@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:permission_handler/permission_handler.dart';
+// import 'package:permission_handler/permission_handler.dart';
 import 'package:weather/app.dart';
 import 'package:weather/features/weather/model/weather.dart';
 import 'package:weather/features/weather/utils/constants/const.dart';
@@ -14,19 +14,19 @@ import 'package:weather/features/weather/utils/extention.dart';
 
 
 
-Future<void> requestNotificationPermission() async {
-  if (await Permission.notification.isDenied) {
-    await Permission.notification.request();
-  }
-}
+// Future<void> requestNotificationPermission() async {
+//   if (await Permission.notification.isDenied) {
+//     await Permission.notification.request();
+//   }
+// }
 
-Future<void> requestPermissions() async {
-  await [
-    Permission.location,
-    Permission.notification,
-    Permission.scheduleExactAlarm,
-  ].request();
-}
+// Future<void> requestPermissions() async {
+//   await [
+//     Permission.location,
+//     Permission.notification,
+//     Permission.scheduleExactAlarm,
+//   ].request();
+// }
 
 
 void main() async {
@@ -83,47 +83,21 @@ Future<void> _scheduleDailyNotification() async {
       final data = response.data as Map<String, dynamic>;
       final weatherModel = WeatherModel.fromMap(data);
 
-      final sixPmWeather = weatherModel.list.firstWhere(
-        (element) => element.dt_txt.contains('12:00:00'),
-        orElse:
-            () =>
-                throw StateError(
-                  'No element found with dt_txt containing "12:00:00"',
-                ),
-      );
 
-      final tempCelsius = sixPmWeather.main.temp.toCelsius;
-      String iconCode = sixPmWeather.weather[0].icon;
-      String imageUrl = getWeatherIcons(iconCode);
+      // Get the current weather data (first element in the list)
+      final currentWeather = weatherModel.list[0];
 
-      await AwesomeNotifications().createNotification(
-        content: NotificationContent(
-          id: 1,
-          channelKey: 'basic_channel',
-          title: '${tempCelsius.round()}° in ${weatherModel.city.name}',
-          body: '${weatherModel.list.first.weather[0].description} ~ See full forecast',
-        ),
-        schedule: NotificationCalendar(
-          hour: 9, // 9 PM
-          minute: 00,
-          second: 0,
-          repeats: true, // Repeat daily
-        ),
-      );
-      await AwesomeNotifications().createNotification(
-        content: NotificationContent(
-          id: 2,
-          channelKey: 'basic_channel',
-          title: '${tempCelsius.round()} in ${weatherModel.city.name}',
-          body: '${weatherModel.list.first.weather[0].description} See full forecast',
-        ),
-        schedule: NotificationCalendar(
-          hour: 21, // 9 PM
-          minute: 0,
-          second: 0,
-          repeats: true, // Repeat daily
-        ),
-      );
+      final tempCelsius = currentWeather.main.temp.toCelsius;
+      // String iconCode = currentWeather.weather[0].icon;
+      // String imageUrl = getWeatherIcons(iconCode);
+
+      await _showNotifications(1,0,tempCelsius, weatherModel); //0AM
+      await _showNotifications(2,9,tempCelsius, weatherModel); //9AM
+      await _showNotifications(3,12,tempCelsius, weatherModel); //12 PM
+      await _showNotifications(4,15,tempCelsius, weatherModel); //3 PM
+      await _showNotifications(5,18,tempCelsius, weatherModel); //6 PM
+      await _showNotifications(6,21,tempCelsius, weatherModel); //9 PM
+      
 
       print(
         'Notification sent: Temperature at 12:00 PM: ${tempCelsius.round()}°C',
@@ -132,4 +106,23 @@ Future<void> _scheduleDailyNotification() async {
   } catch (e) {
     print(e);
   }
+}
+
+Future<void> _showNotifications(
+  int id, int hour,double tempCelsius, WeatherModel weatherModel,
+) async {
+  await AwesomeNotifications().createNotification(
+    content: NotificationContent(
+      id: id,
+      channelKey: 'basic_channel',
+      title: '${tempCelsius.round()}° in ${weatherModel.city.name}',
+      body: '${weatherModel.list.first.weather[0].description} ~ See full forecast',
+    ),
+    schedule: NotificationCalendar(
+      hour: hour, // 10AM
+      minute: 0,
+      second: 0,
+      repeats: true, // Repeat daily
+    ),
+  );
 }
