@@ -39,9 +39,7 @@ class WeatherForecastCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.3),
-        ),
+        border: Border.all(color: Colors.white.withOpacity(0.3)),
       ),
       padding: const EdgeInsets.all(8.0),
       margin: const EdgeInsets.all(8.0),
@@ -79,11 +77,7 @@ class WeatherForecastCard extends StatelessWidget {
               top: height * 0.0455,
               left: 0,
               right: 0,
-              child: Image.asset(
-                imageUrl,
-                height: 60,
-                fit: BoxFit.contain,
-              ),
+              child: Image.asset(imageUrl, height: 60, fit: BoxFit.contain),
             ),
 
             // Position the description text
@@ -111,26 +105,22 @@ class WeatherForecastCard extends StatelessWidget {
                       children: [
                         TextSpan(
                           text: '${tempCelsius.toCelsius.round()}',
-                          style:textStyle(whiteColor, 16),
+                          style: textStyle(whiteColor, 16),
                         ),
-                        TextSpan(
-                          text: 'C',
-                          style: textStyle(whiteColor, 14),
+
+                        TextSpan(text: 'C', style: textStyle(whiteColor, 14)),
+                        WidgetSpan(
+                          child: Transform.translate(
+                            offset: const Offset(
+                              -3.3,
+                              0.9,
+                            ), // Adjust the offset to your preference
+                            child: Text('°', style: textStyle(whiteColor, 16)),
+                          ),
                         ),
                       ],
                     ),
                   ),
-                ),
-              ),
-            ),
-
-            Positioned(
-              top: height * 0.177,
-              left: width * 0.15,
-              child: shadeMask(
-                widget: Text(
-                  '°',
-                  style: textStyle(whiteColor, 16),
                 ),
               ),
             ),

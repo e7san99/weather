@@ -32,8 +32,8 @@ Future<void> requestPermissions() async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await requestPermissions();
-  await requestNotificationPermission();
+  // await requestPermissions();
+  // await requestNotificationPermission();
 
   // Initialize Awesome Notifications
   await AwesomeNotifications().initialize(
@@ -100,12 +100,26 @@ Future<void> _scheduleDailyNotification() async {
         content: NotificationContent(
           id: 1,
           channelKey: 'basic_channel',
-          title: 'Daily Notification',
-          body: 'Temperature at 12:00 PM: ${tempCelsius.round()}°C',
+          title: '${tempCelsius.round()}° in ${weatherModel.city.name}',
+          body: '${weatherModel.list.first.weather[0].description} ~ See full forecast',
         ),
         schedule: NotificationCalendar(
-          hour: 23, // 9 PM
-          minute: 42,
+          hour: 9, // 9 PM
+          minute: 00,
+          second: 0,
+          repeats: true, // Repeat daily
+        ),
+      );
+      await AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: 2,
+          channelKey: 'basic_channel',
+          title: '${tempCelsius.round()} in ${weatherModel.city.name}',
+          body: '${weatherModel.list.first.weather[0].description} See full forecast',
+        ),
+        schedule: NotificationCalendar(
+          hour: 21, // 9 PM
+          minute: 0,
           second: 0,
           repeats: true, // Repeat daily
         ),
