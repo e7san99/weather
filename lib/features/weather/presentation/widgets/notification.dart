@@ -48,6 +48,9 @@ class NotificationScheduler {
       await _showNotifications(6, 15, tempCelsius, weatherModel); // 3 PM
       await _showNotifications(7, 18, tempCelsius, weatherModel); // 6 PM
       await _showNotifications(8, 21, tempCelsius, weatherModel); // 9 PM
+
+      //test
+      // await _showNotifications(9, 23, tempCelsius, weatherModel); // 9 PM
       
 
       print(
@@ -80,7 +83,7 @@ class NotificationScheduler {
       schedule: NotificationCalendar(
         timeZone: localTimeZone,
         hour: hour,
-        minute: 25,
+        minute: 0,//0
         second: 0,
         repeats: true,
       ),

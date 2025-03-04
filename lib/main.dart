@@ -28,10 +28,10 @@ void main() async {
   // await requestPermissions();
   // await requestNotificationPermission();
 
-  await Permission.notification.request();
+  // await Permission.notification.request();
   
-   // Request notification permissions
-  await requestNotificationPermission();
+  //  // Request notification permissions
+  // await requestNotificationPermission();
 
   await AwesomeNotifications().requestPermissionToSendNotifications();
 
