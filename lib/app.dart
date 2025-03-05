@@ -10,7 +10,7 @@ class App extends StatelessWidget {
       theme: ThemeData(useMaterial3: true),
 
       debugShowCheckedModeBanner: false,
-      title: 'Weather Pod',
+      title: 'Weather',
       home: const HomeScreen(),
     );
   }

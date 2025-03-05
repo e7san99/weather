@@ -3,7 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:weather/features/weather/data/riverpod/fetch_weather.dart';
+import 'package:weather/features/weather/data/riverpod/fetch_weather_provider.dart';
+import 'package:weather/features/weather/data/riverpod/internet_connection_provider.dart';
 import 'package:weather/features/weather/presentation/widgets/alters/city_not_found.dart';
 import 'package:weather/features/weather/presentation/widgets/alters/location_service_disable.dart';
 import 'package:weather/features/weather/presentation/widgets/alters/no_internet_connection.dart';
@@ -109,7 +110,7 @@ void didChangeAppLifecycleState(AppLifecycleState state) {
                 );
               }
 
-              final useCurrentLocation = ref.watch(useCurrentLocationProvider);
+              final currentLocation = ref.watch(useCurrentLocationProvider);
 
               if (!_isLocationDisable) {
                 return LocationServiceDisable(
@@ -117,7 +118,7 @@ void didChangeAppLifecycleState(AppLifecycleState state) {
                 );
               }
 
-              final weather = useCurrentLocation
+              final weather = currentLocation
                   ? ref.watch(locationWeatherProvider(
                       _currentPosition ?? defaultPosition()))
                   : ref.watch(weatherProvider(ref.watch(cityProvider)));
