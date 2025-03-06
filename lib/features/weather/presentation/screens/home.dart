@@ -24,9 +24,11 @@ class HomeScreen extends ConsumerStatefulWidget {
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObserver {
+class _HomeScreenState extends ConsumerState<HomeScreen>
+    with WidgetsBindingObserver {
+  
   final TextEditingController _searchController = TextEditingController();
-  Position? _currentPosition;
+
   @override
   void initState() {
     super.initState();
@@ -68,20 +70,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
     }
 
     Position position = await Geolocator.getCurrentPosition();
-    setState(() {
-      _currentPosition = position;
-    });
+    ref.read(currentPositionProvider.notifier).state = position;
   }
 
   @override
   Widget build(BuildContext context) {
     final internetConnectionStatus = ref.watch(internetConnectionProvider);
+    final currentPosition = ref.watch(currentPositionProvider);
 
     return Scaffold(
       backgroundColor: Color(0xF5F5F5F5),
       appBar: AppbarHomePage(
-          currentPosition: _currentPosition,
-          searchController: _searchController),
+        currentPosition: currentPosition,
+        searchController: _searchController,
+      ),
       body: internetConnectionStatus.when(
         data: (isConnected) {
           if (!isConnected) {
@@ -98,10 +100,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
             );
           }
 
-          final weather = currentLocation
-              ? ref.watch(locationWeatherProvider(
-                  _currentPosition ?? defaultPosition()))
-              : ref.watch(weatherProvider(ref.watch(cityProvider)));
+          final weather =
+              currentLocation
+                  ? ref.watch(
+                    locationWeatherProvider(
+                      currentPosition ?? defaultPosition(),
+                    ),
+                  )
+                  : ref.watch(weatherProvider(ref.watch(cityProvider)));
 
           return weather.when(
             data: (data) {
@@ -138,8 +144,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
                       NextHoursForecast(nextHoursfilteredList: nextHours),
                       SizedBox(height: 10),
                       _titleCard('Five Day Forecast'),
-                      FiveDayForecast(
-                          fiveDayForecastAt12PM: fiveDayForecast),
+                      FiveDayForecast(fiveDayForecastAt12PM: fiveDayForecast),
                     ],
                   ),
                 ),
@@ -149,12 +154,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
               // Check if the error is a "city not found" error
               if (error.toString().contains('City not found')) {
                 return CityNotFound(
-                    searchController: _searchController, error: error);
+                  searchController: _searchController,
+                  error: error,
+                );
               } else if (error.toString().contains(
-                  'Failed to load data: The connection errored')) {
+                'Failed to load data: The connection errored',
+              )) {
                 // Handle connection error (e.g., no internet)
                 return NoInternetConnection(
-                    getCurrentLocation: _getCurrentLocation());
+                  getCurrentLocation: _getCurrentLocation(),
+                );
               } else {
                 // Handle other errors
                 return Center(
@@ -189,14 +198,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
   Padding _titleCard(String title) {
     return Padding(
       padding: const EdgeInsets.only(left: 10.0),
-      child: Row(
-        children: [
-          Text(
-            title,
-            style: textStyle(blueColor, 20),
-          ),
-        ],
-      ),
+      child: Row(children: [Text(title, style: textStyle(blueColor, 20))]),
     );
   }
 }

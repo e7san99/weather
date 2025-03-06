@@ -3,7 +3,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:weather/features/weather/data/repositories/weather_implements.dart';
 import 'package:weather/features/weather/data/repositories/weather_repository.dart';
 import 'package:weather/features/weather/model/weather.dart';
-import 'package:weather/features/weather/utils/constants/const.dart';
 
 final weatherRepositoryProvider = Provider<WeatherRepository>(
   (ref) => WeatherImplements(),
@@ -37,7 +36,6 @@ final locationServiceStatusProvider = StateProvider<bool>((ref) => false);
 
 //Position? _currentPosition;
 
-final positionProvider = StateProvider<Position?>((ref) => null);
-
+final currentPositionProvider = StateProvider<Position?>((ref) => null);
 
 final isTextfieldEmptyProvider = StateProvider<bool>((ref) => false);
