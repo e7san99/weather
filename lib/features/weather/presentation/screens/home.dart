@@ -27,9 +27,6 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObserver {
   final TextEditingController _searchController = TextEditingController();
   Position? _currentPosition;
-  bool _isLocationDisable = true;
-  DateTime? _lastRefreshTime;
-
   @override
   void initState() {
     super.initState();
@@ -46,25 +43,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      final now = DateTime.now();
-      if (_lastRefreshTime == null || now.difference(_lastRefreshTime!) > Duration(minutes: 5)) {
-        _getCurrentLocation();
-        _lastRefreshTime = now;
-      }
+      _getCurrentLocation();
     }
   }
 
   Future<void> _getCurrentLocation() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      setState(() {
-        _isLocationDisable = false;
-      });
+      ref.read(locationServiceStatusProvider.notifier).state = true;
       return;
     }
-    setState(() {
-      _isLocationDisable = true;
-    });
+    ref.read(locationServiceStatusProvider.notifier).state = false;
 
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
@@ -103,7 +92,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
 
           final currentLocation = ref.watch(useCurrentLocationProvider);
 
-          if (!_isLocationDisable) {
+          if (ref.watch(locationServiceStatusProvider)) {
             return LocationServiceDisable(
               getCurrentLocation: _getCurrentLocation(),
             );

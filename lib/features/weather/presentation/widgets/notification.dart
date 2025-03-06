@@ -3,7 +3,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:weather/features/weather/data/repositories/weather_implements.dart';
 import 'package:weather/features/weather/data/repositories/weather_repository.dart';
 import 'package:weather/features/weather/model/weather.dart';
-import 'package:weather/features/weather/utils/constants/http.dart';
 import 'package:weather/features/weather/utils/extention.dart';
 
 class NotificationScheduler {
