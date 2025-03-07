@@ -1,15 +1,15 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:weather/features/weather/data/repositories/repositories.dart';
 import 'package:weather/features/weather/model/weather.dart';
 import 'package:weather/features/weather/utils/utils.dart';
-import 'package:weather/features/weather/data/repositories/repositories.dart';
 
 class NotificationScheduler {
   final WeatherRepository _weatherRepository;
 
   NotificationScheduler(this._weatherRepository);
 
-  static Future<void> initializeAndSchedule() async {
+  static Future<void> scheduleNotifications() async {
     // Initialize Weather Repository
     final weatherRepository = WeatherImplements();
 
@@ -17,10 +17,10 @@ class NotificationScheduler {
     final notificationScheduler = NotificationScheduler(weatherRepository);
 
     // Schedule Daily Notifications
-    await notificationScheduler.scheduleDailyNotification();
+    await notificationScheduler._scheduleDailyNotification();
   }
 
-  Future<void> scheduleDailyNotification() async {
+  Future<void> _scheduleDailyNotification() async {
     try {
       final position = await Geolocator.getCurrentPosition(
         locationSettings: const LocationSettings(
@@ -49,7 +49,6 @@ class NotificationScheduler {
 
       //test
       // await _showNotifications(9, 23, tempCelsius, weatherModel); // 9 PM
-      
 
       print(
         'Notification sent: Temperature at 12:00 PM: ${tempCelsius.round()}°C',
@@ -81,10 +80,36 @@ class NotificationScheduler {
       schedule: NotificationCalendar(
         timeZone: localTimeZone,
         hour: hour,
-        minute: 0,//0
+        minute: 0, //0
         second: 0,
         repeats: true,
       ),
     );
+  }
+
+  static Future<void> initialize() async {
+    await AwesomeNotifications().initialize(
+    null, // Use the default icon
+    [
+      NotificationChannel(
+        channelKey: 'alerts',
+        channelName: 'Alerts',
+        channelDescription: 'Notification tests as alerts',
+        playSound: true,
+        onlyAlertOnce: true,
+        groupAlertBehavior: GroupAlertBehavior.Children,
+        importance: NotificationImportance.High,
+        defaultPrivacy: NotificationPrivacy.Private,
+        defaultColor: blueColor,
+        ledColor: whiteColor,
+      ),
+    ],
+    channelGroups: [
+      NotificationChannelGroup(
+        channelGroupKey: 'basic_channel_group',
+        channelGroupName: 'Basic group',
+      ),
+    ],
+  );
   }
 }

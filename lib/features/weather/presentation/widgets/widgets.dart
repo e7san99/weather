@@ -3,7 +3,6 @@
 export 'appbar.dart';
 export 'five_day_forecast.dart';
 export 'next_hours_forecast.dart';
-export 'notification.dart';
 
 //alters
 export 'alters/city_not_found.dart';

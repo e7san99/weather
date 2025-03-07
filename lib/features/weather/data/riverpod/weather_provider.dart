@@ -33,8 +33,6 @@ final locationWeatherProvider = FutureProvider.family<WeatherModel, Position>((
 
 final locationServiceStatusProvider = StateProvider<bool>((ref) => false);
 
-//Position? _currentPosition;
-
 final currentPositionProvider = StateProvider<Position?>((ref) => null);
 
 final isTextfieldEmptyProvider = StateProvider<bool>((ref) => false);
