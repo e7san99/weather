@@ -1,6 +1,5 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
-import 'package:weather/features/weather/utils/style.dart';
+import 'package:weather/features/weather/utils/utils.dart';
 
 class WeatherCardContainer extends StatelessWidget {
   final double height;

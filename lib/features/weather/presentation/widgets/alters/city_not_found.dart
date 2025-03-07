@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:weather/features/weather/utils/style.dart';
+import 'package:weather/features/weather/utils/utils.dart';
 
 class CityNotFound extends StatelessWidget {
   final Object error;

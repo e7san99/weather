@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:weather/features/weather/data/riverpod/fetch_weather_provider.dart';
-import 'package:weather/features/weather/utils/shimmers/shimmering_appbar.dart';
-import 'package:weather/features/weather/utils/style.dart';
+import 'package:weather/features/weather/data/riverpod/riverpod.dart';
+import 'package:weather/features/weather/utils/utils.dart';
 
 class AppbarHomePage extends StatefulWidget implements PreferredSizeWidget {
   final Position? currentPosition;
   final TextEditingController searchController;
-  const AppbarHomePage(
-      {super.key,
-      required this.currentPosition,
-      required this.searchController});
+  const AppbarHomePage({
+    super.key,
+    required this.currentPosition,
+    required this.searchController,
+  });
 
   @override
   State<AppbarHomePage> createState() => _AppbarHomePageState();
@@ -22,108 +22,101 @@ class AppbarHomePage extends StatefulWidget implements PreferredSizeWidget {
 
 class _AppbarHomePageState extends State<AppbarHomePage> {
   void _openSearchModal(BuildContext context, WidgetRef ref) {
-  // Clear the text field and reset isEmpty state when opening the modal
-  widget.searchController.clear();
-  ref.read(isTextfieldEmptyProvider.notifier).state = false;
+    // Clear the text field and reset isEmpty state when opening the modal
+    widget.searchController.clear();
+    ref.read(isTextfieldEmptyProvider.notifier).state = false;
 
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    builder: (context) {
-      return Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
-        child: Container(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: widget.searchController,
-                autofocus: true,
-                decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(
-                      color: blueColor,
-                      width: 2,
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Container(
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: widget.searchController,
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: blueColor, width: 2),
+                    ),
+                    disabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: blueColor, width: 2),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: blueColor, width: 2),
+                    ),
+                    hintText: 'Search...',
+                    border: InputBorder.none,
+                    hintStyle: TextStyle(color: blueColor),
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        widget.searchController.clear();
+                        ref.read(isTextfieldEmptyProvider.notifier).state =
+                            false; // Reset isEmpty state
+                      },
+                      icon: Icon(Icons.close, color: blueColor),
                     ),
                   ),
-                  disabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(
-                      color: blueColor,
-                      width: 2,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(
-                      color: blueColor,
-                      width: 2,
-                    ),
-                  ),
-                  hintText: 'Search...',
-                  border: InputBorder.none,
-                  hintStyle: TextStyle(color: blueColor),
-                  suffixIcon: IconButton(
-                    onPressed: () {
-                      widget.searchController.clear();
-                      ref.read(isTextfieldEmptyProvider.notifier).state = false; // Reset isEmpty state
-                    },
-                    icon: Icon(Icons.close, color: blueColor),
-                  ),
+                  style: TextStyle(color: blueColor),
+                  onSubmitted: (value) {
+                    if (value.trim().isEmpty) {
+                      ref.read(isTextfieldEmptyProvider.notifier).state =
+                          true; // Set isEmpty to true
+                    } else {
+                      ref.read(cityProvider.notifier).state = value.trim();
+                      ref.read(useCurrentLocationProvider.notifier).state =
+                          false;
+                      Navigator.pop(context);
+                    }
+                  },
                 ),
-                style: TextStyle(color: blueColor),
-                onSubmitted: (value) {
-                  if (value.trim().isEmpty) {
-                    ref.read(isTextfieldEmptyProvider.notifier).state = true; // Set isEmpty to true
-                  } else {
-                    ref.read(cityProvider.notifier).state = value.trim();
-                    ref.read(useCurrentLocationProvider.notifier).state = false;
-                    Navigator.pop(context);
-                  }
-                },
-              ),
-              Consumer(
-                builder: (context, ref, child) {
-                  final isEmpty = ref.watch(isTextfieldEmptyProvider);
-                  return isEmpty
-                      ? Text(
+                Consumer(
+                  builder: (context, ref, child) {
+                    final isEmpty = ref.watch(isTextfieldEmptyProvider);
+                    return isEmpty
+                        ? Text(
                           'Please enter a city name',
                           style: textStyle(Colors.red, 14),
                         )
-                      : SizedBox();
-                },
-              ),
-              SizedBox(height: 16),
-              ElevatedButton(
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.all<Color>(blueColor),
+                        : SizedBox();
+                  },
                 ),
-                onPressed: () {
-                  if (widget.searchController.text.trim().isEmpty) {
-                    ref.read(isTextfieldEmptyProvider.notifier).state = true; // Set isEmpty to true
-                  } else {
-                    ref.read(cityProvider.notifier).state =
-                        widget.searchController.text.trim();
-                    ref.read(useCurrentLocationProvider.notifier).state = false;
-                    Navigator.pop(context);
-                  }
-                },
-                child: Text(
-                  'Search',
-                  style: textStyle(whiteColor, 16),
+                SizedBox(height: 16),
+                ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.all<Color>(blueColor),
+                  ),
+                  onPressed: () {
+                    if (widget.searchController.text.trim().isEmpty) {
+                      ref.read(isTextfieldEmptyProvider.notifier).state =
+                          true; // Set isEmpty to true
+                    } else {
+                      ref.read(cityProvider.notifier).state =
+                          widget.searchController.text.trim();
+                      ref.read(useCurrentLocationProvider.notifier).state =
+                          false;
+                      Navigator.pop(context);
+                    }
+                  },
+                  child: Text('Search', style: textStyle(whiteColor, 16)),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      );
-    },
-  );
-}
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -150,14 +143,16 @@ class _AppbarHomePageState extends State<AppbarHomePage> {
               // ),
               Consumer(
                 builder: (context, ref, child) {
-                  final useCurrentLocation =
-                      ref.watch(useCurrentLocationProvider);
+                  final useCurrentLocation = ref.watch(
+                    useCurrentLocationProvider,
+                  );
                   if (useCurrentLocation) {
                     if (widget.currentPosition == null) {
                       return ShimmeringAppbar();
                     } else {
                       final weather = ref.watch(
-                          locationWeatherProvider(widget.currentPosition!));
+                        locationWeatherProvider(widget.currentPosition!),
+                      );
                       return weather.when(
                         data: (data) {
                           return Text(
@@ -166,10 +161,10 @@ class _AppbarHomePageState extends State<AppbarHomePage> {
                           );
                         },
                         // No internet connection
-                        error: (error, stackTrace) =>SizedBox(),
-                            //when no internet display this error
+                        error: (error, stackTrace) => SizedBox(),
+                        //when no internet display this error
                         //     Text(
-                          
+
                         //   error.toString().contains('Failed to load data')
                         //       ? 'No internet connection'
                         //       : 'An error occurred. Please try again.',
@@ -192,14 +187,14 @@ class _AppbarHomePageState extends State<AppbarHomePage> {
                       },
                       //City not found
                       error: (error, stackTrace) => SizedBox(),
-                          
+
                       loading: () {
                         return ShimmeringAppbar();
                       },
                     );
                   }
                 },
-              )
+              ),
             ],
           ),
           centerTitle: true,
@@ -209,10 +204,7 @@ class _AppbarHomePageState extends State<AppbarHomePage> {
               onTap: () => _openSearchModal(context, ref),
               child: Padding(
                 padding: const EdgeInsets.only(right: 18.0),
-                child: Image.asset(
-                  'assets/icons/appbar/search.png',
-                  scale: 14,
-                ),
+                child: Image.asset('assets/icons/appbar/search.png', scale: 14),
               ),
             ),
           ],

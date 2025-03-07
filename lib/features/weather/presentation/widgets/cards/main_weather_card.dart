@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:weather/features/weather/presentation/widgets/cards/weather_card_container.dart';
-import 'package:weather/features/weather/utils/style.dart';
+import 'package:weather/features/weather/utils/utils.dart';
 
 class MainWeatherCard extends StatelessWidget {
   final double tempCelsius;

@@ -1,8 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:weather/features/weather/data/repositories/weather_implements.dart';
-import 'package:weather/features/weather/data/repositories/weather_repository.dart';
 import 'package:weather/features/weather/model/weather.dart';
+import 'package:weather/features/weather/data/repositories/repositories.dart';
 
 final weatherRepositoryProvider = Provider<WeatherRepository>(
   (ref) => WeatherImplements(),

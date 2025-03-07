@@ -3,19 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:weather/features/weather/data/riverpod/fetch_weather_provider.dart';
-import 'package:weather/features/weather/data/riverpod/internet_connection_provider.dart';
-import 'package:weather/features/weather/presentation/widgets/alters/city_not_found.dart';
-import 'package:weather/features/weather/presentation/widgets/alters/location_service_disable.dart';
-import 'package:weather/features/weather/presentation/widgets/alters/no_internet_connection.dart';
-import 'package:weather/features/weather/presentation/widgets/appbar.dart';
-import 'package:weather/features/weather/presentation/widgets/cards/main_weather_card.dart';
-import 'package:weather/features/weather/presentation/widgets/five_day_forecast.dart';
-import 'package:weather/features/weather/presentation/widgets/next_hours_forecast.dart';
-import 'package:weather/features/weather/utils/constants/const.dart';
-import 'package:weather/features/weather/utils/extention.dart';
-import 'package:weather/features/weather/utils/shimmers/shimmering_weather_cards.dart';
-import 'package:weather/features/weather/utils/style.dart';
+import 'package:weather/features/weather/data/riverpod/riverpod.dart';
+import 'package:weather/features/weather/presentation/widgets/widgets.dart';
+import 'package:weather/features/weather/utils/utils.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -26,7 +16,6 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen>
     with WidgetsBindingObserver {
-  
   final TextEditingController _searchController = TextEditingController();
 
   @override
