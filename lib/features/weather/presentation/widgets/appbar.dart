@@ -21,6 +21,7 @@ class AppbarHomePage extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _AppbarHomePageState extends State<AppbarHomePage> {
+  TextStyle cityNameStyle = textStyle(blueColor, 23);
   void _openSearchModal(BuildContext context, WidgetRef ref) {
     // Clear the text field and reset isEmpty state when opening the modal
     widget.searchController.clear();
@@ -155,10 +156,7 @@ class _AppbarHomePageState extends State<AppbarHomePage> {
                       );
                       return weather.when(
                         data: (data) {
-                          return Text(
-                            data.city.name,
-                            style: textStyle(blueColor, 23),
-                          );
+                          return Text(data.city.name, style: cityNameStyle);
                         },
                         // No internet connection
                         error: (error, stackTrace) => SizedBox(),
