@@ -65,7 +65,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   @override
   Widget build(BuildContext context) {
     final internetConnectionStatus = ref.watch(internetConnectionProvider);
-    final currentPosition = ref.watch(currentPositionProvider);
+    //the current position should be ref.read , becuase it will be updated
+    final currentPosition = ref.read(currentPositionProvider);
 
     return Scaffold(
       backgroundColor: Color(0xF5F5F5F5),
