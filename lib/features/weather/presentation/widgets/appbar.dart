@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:weather/features/weather/data/riverpod/riverpod.dart';
-import 'package:weather/features/weather/utils/utils.dart';
+import 'package:weather/utils/utils.dart';
 
 class AppbarHomePage extends StatefulWidget implements PreferredSizeWidget {
   final Position? currentPosition;

@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:weather/features/weather/model/weather.dart';
-import 'package:weather/features/weather/utils/utils.dart';
+import 'package:weather/utils/utils.dart';
 import 'package:weather/features/weather/data/repositories/repositories.dart';
 
 class WeatherImplements extends WeatherRepository {

@@ -2,7 +2,7 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:weather/features/weather/data/repositories/repositories.dart';
 import 'package:weather/features/weather/model/weather.dart';
-import 'package:weather/features/weather/utils/utils.dart';
+import 'package:weather/utils/utils.dart';
 
 class NotificationScheduler {
   final WeatherRepository _weatherRepository;

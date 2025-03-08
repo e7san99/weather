@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:weather/features/weather/utils/constants/const.dart';
+import 'package:weather/utils/constants/const.dart';
 import 'package:weather/features/weather/presentation/widgets/widgets.dart';
 class NextHoursForecast extends StatelessWidget {
   final List nextHoursfilteredList;

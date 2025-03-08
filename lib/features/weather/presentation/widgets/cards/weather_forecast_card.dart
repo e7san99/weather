@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:weather/features/weather/utils/utils.dart';
+import 'package:weather/utils/utils.dart';
 
 class WeatherForecastCard extends StatelessWidget {
   final String formattedDate;

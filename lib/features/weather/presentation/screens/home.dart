@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:weather/features/weather/data/riverpod/riverpod.dart';
 import 'package:weather/features/weather/presentation/widgets/widgets.dart';
-import 'package:weather/features/weather/utils/utils.dart';
+import 'package:weather/utils/utils.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
