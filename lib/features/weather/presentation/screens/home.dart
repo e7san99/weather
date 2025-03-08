@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:weather/features/weather/data/riverpod/riverpod.dart';
 import 'package:weather/features/weather/presentation/widgets/widgets.dart';
 import 'package:weather/utils/utils.dart';
@@ -22,7 +21,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _getCurrentLocation();
+    getCurrentLocation(ref);
   }
 
   @override
@@ -34,32 +33,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      _getCurrentLocation();
+      getCurrentLocation(ref);
     }
-  }
-
-  Future<void> _getCurrentLocation() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      ref.read(locationServiceStatusProvider.notifier).state = true;
-      return;
-    }
-    ref.read(locationServiceStatusProvider.notifier).state = false;
-
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return;
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      return;
-    }
-
-    Position position = await Geolocator.getCurrentPosition();
-    ref.read(currentPositionProvider.notifier).state = position;
   }
 
   @override
@@ -67,6 +42,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     final internetConnectionStatus = ref.watch(internetConnectionProvider);
     //the current position should be ref.read , becuase it will be updated
     final currentPosition = ref.read(currentPositionProvider);
+
+    final currentLocation = ref.watch(useCurrentLocationProvider);
+
+    if (ref.watch(locationServiceStatusProvider)) {
+      return LocationServiceDisable(
+        getCurrentLocation: getCurrentLocation(ref),
+      );
+    }
+
+    final weather =
+        currentLocation
+            ? ref.watch(
+              locationWeatherProvider(currentPosition ?? defaultPosition()),
+            )
+            : ref.watch(weatherProvider(ref.watch(cityProvider)));
 
     return Scaffold(
       backgroundColor: Color(0xF5F5F5F5),
@@ -78,26 +68,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         data: (isConnected) {
           if (!isConnected) {
             return NoInternetConnection(
-              getCurrentLocation: _getCurrentLocation(),
+              getCurrentLocation: getCurrentLocation(ref),
             );
           }
-
-          final currentLocation = ref.watch(useCurrentLocationProvider);
-
-          if (ref.watch(locationServiceStatusProvider)) {
-            return LocationServiceDisable(
-              getCurrentLocation: _getCurrentLocation(),
-            );
-          }
-
-          final weather =
-              currentLocation
-                  ? ref.watch(
-                    locationWeatherProvider(
-                      currentPosition ?? defaultPosition(),
-                    ),
-                  )
-                  : ref.watch(weatherProvider(ref.watch(cityProvider)));
 
           return weather.when(
             data: (data) {
@@ -115,7 +88,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               return RefreshIndicator(
                 color: blueColor,
                 onRefresh: () async {
-                  await Future.wait([_getCurrentLocation()]);
+                  await Future.wait([getCurrentLocation(ref)]);
                 },
                 child: SingleChildScrollView(
                   child: Column(
@@ -152,7 +125,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               )) {
                 // Handle connection error (e.g., no internet)
                 return NoInternetConnection(
-                  getCurrentLocation: _getCurrentLocation(),
+                  getCurrentLocation: getCurrentLocation(ref),
                 );
               } else {
                 // Handle other errors

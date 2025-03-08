@@ -13,10 +13,12 @@ void main() async {
   //it is necessary to request notification permissions like this:
   await requestNotificationPermission();
 
-  bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
-  if (!isAllowed) {
-    await AwesomeNotifications().requestPermissionToSendNotifications();
-  }
+  // bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
+  // if (!isAllowed) {
+  //   await AwesomeNotifications().requestPermissionToSendNotifications();
+  // }
+
+  await AwesomeNotifications().requestPermissionToSendNotifications();
 
   // Initialize Awesome Notifications
   await NotificationScheduler.initialize();
