@@ -68,14 +68,8 @@ class _AppState extends ConsumerState<App> {
           title: 'Weather',
           home: Scaffold(
             body: Center(
-              child: Lottie.asset(
-            'assets/json/loading.json', // Path to your JSON file
-            width: 300, // Adjust width
-            height: 300, // Adjust height
-            fit: BoxFit.contain, // Adjust how the animation fits
-            repeat: true, // Set to true if you want the animation to loop
+            child: Lottie.asset('assets/json/loading.json'),
           ),
-            ),
           ),
         );
       },
