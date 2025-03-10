@@ -58,7 +58,7 @@ class NotificationScheduler {
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: id,
-        channelKey: 'alerts',
+        channelKey: 'basic_channel',
         title: '${tempCelsius.round()}° in ${weatherModel.city.name}',
         body:
             '${weatherModel.list.first.weather[0].description} ~ See full forecast',
@@ -77,11 +77,12 @@ class NotificationScheduler {
 
   static Future<void> initialize() async {
     await AwesomeNotifications().initialize(
+    
     null, // Use the default icon
     [
       NotificationChannel(
-        channelKey: 'alerts',
-        channelName: 'Alerts',
+        channelKey: 'basic_channel',
+        channelName: 'Basic Notifications',
         channelDescription: 'Notification weather as alerts',
         playSound: true,
         onlyAlertOnce: true,
@@ -90,12 +91,6 @@ class NotificationScheduler {
         defaultPrivacy: NotificationPrivacy.Public,
         defaultColor: blueColor,
         ledColor: whiteColor,
-      ),
-    ],
-    channelGroups: [
-      NotificationChannelGroup(
-        channelGroupKey: 'basic_channel_group',
-        channelGroupName: 'Basic group',
       ),
     ],
   );
