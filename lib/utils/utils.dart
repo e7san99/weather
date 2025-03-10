@@ -9,5 +9,3 @@ export 'shimmers/shimmering_weather_cards.dart';
 export 'extention.dart';
 
 export 'style.dart';
-
-export 'current_location.dart';

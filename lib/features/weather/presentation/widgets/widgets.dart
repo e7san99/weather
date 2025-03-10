@@ -13,3 +13,5 @@ export 'alters/no_internet_connection.dart';
 export 'cards/main_weather_card.dart';
 export 'cards/weather_card_container.dart';
 export 'cards/weather_forecast_card.dart';
+
+export 'current_location.dart';

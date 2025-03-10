@@ -37,24 +37,12 @@ class NotificationScheduler {
       final tempCelsius = weatherModel.list.first.main.temp.toCelsius;
 
       //AM Notifications
-      await _showNotifications(1, 0, tempCelsius, weatherModel); // 0 AM
-      await _showNotifications(2, 3, tempCelsius, weatherModel); // 3 AM
-      await _showNotifications(3, 6, tempCelsius, weatherModel); // 6 AM
-      await _showNotifications(4, 9, tempCelsius, weatherModel); // 9 AM
+      await _showNotifications(1, 12, tempCelsius, weatherModel); // 9 AM
       //PM Notifications
-      await _showNotifications(5, 12, tempCelsius, weatherModel); // 12 PM
-      await _showNotifications(6, 15, tempCelsius, weatherModel); // 3 PM
-      await _showNotifications(7, 18, tempCelsius, weatherModel); // 6 PM
-      await _showNotifications(8, 21, tempCelsius, weatherModel); // 9 PM
-
-      //test
-      // await _showNotifications(9, 23, tempCelsius, weatherModel); // 9 PM
-
-      print(
-        'Notification sent: Temperature at 12:00 PM: ${tempCelsius.round()}°C',
-      );
+      await _showNotifications(2, 21, tempCelsius, weatherModel); // 9 PM
+    
     } catch (e) {
-      print('Error: $e');
+      print('Failed to schedule notifications: $e');
     }
   }
 
@@ -80,7 +68,7 @@ class NotificationScheduler {
       schedule: NotificationCalendar(
         timeZone: localTimeZone,
         hour: hour,
-        minute: 0, //0
+        minute: 15, //0
         second: 0,
         repeats: true,
       ),
@@ -94,12 +82,12 @@ class NotificationScheduler {
       NotificationChannel(
         channelKey: 'alerts',
         channelName: 'Alerts',
-        channelDescription: 'Notification tests as alerts',
+        channelDescription: 'Notification weather as alerts',
         playSound: true,
         onlyAlertOnce: true,
         groupAlertBehavior: GroupAlertBehavior.Children,
-        importance: NotificationImportance.High,
-        defaultPrivacy: NotificationPrivacy.Private,
+        importance: NotificationImportance.Max,
+        defaultPrivacy: NotificationPrivacy.Public,
         defaultColor: blueColor,
         ledColor: whiteColor,
       ),
