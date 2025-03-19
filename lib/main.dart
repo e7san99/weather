@@ -28,3 +28,5 @@ void main() async {
 
   runApp(ProviderScope(child: App()));
 }
+
+//new work is sharedPreferences
