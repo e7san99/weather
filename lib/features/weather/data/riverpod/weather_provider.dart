@@ -1,7 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:weather/features/weather/model/weather.dart';
+import 'package:weather/features/weather/data/preferences/shared_preferences.dart';
 import 'package:weather/features/weather/data/repositories/repositories.dart';
+import 'package:weather/features/weather/model/weather.dart';
+
+SharedPreferencesHelper sharedPreferencesHelper = SharedPreferencesHelper();
+
+final sharedPreferencesProvider = Provider<SharedPreferencesHelper>((ref) {
+  return SharedPreferencesHelper();
+});
 
 final weatherRepositoryProvider = Provider<WeatherRepository>(
   (ref) => WeatherImplements(),
@@ -12,8 +19,15 @@ final weatherProvider = FutureProvider.family<WeatherModel, String>((
   city,
 ) async {
   final weatherRepository = ref.read(weatherRepositoryProvider);
+  final sharedPreferences = ref.read(sharedPreferencesProvider);
+  await sharedPreferences.setCityName(city);
   return await weatherRepository.fetchWeatherByCity(city);
 });
+
+
+
+
+
 
 // String city = '';
 final cityProvider = StateProvider<String>((ref) => '');

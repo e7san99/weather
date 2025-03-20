@@ -21,7 +21,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _initializeCityName();
     getCurrentLocation(ref);
+  }
+
+  Future<void> _initializeCityName() async {
+    final sharedPreferences = ref.read(sharedPreferencesProvider);
+    final cityName = await sharedPreferences.getCityName();
+    ref.read(cityProvider.notifier).state = cityName;
   }
 
   @override
