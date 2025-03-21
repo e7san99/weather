@@ -1,0 +1,9 @@
+{
+    "weather_description_clear": "Clear sky",
+    "weather_description_few_clouds": "Few clouds",
+    "weather_description_light_rain": "Light rain",
+    "weather_description_clouds": "Clouds",
+    "weather_description_rain": "Rain",
+    "city_name": "City Name",
+    "wind_speed": "Wind Speed"
+  }

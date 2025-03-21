@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weather/app.dart';
 import 'package:weather/shared/notification.dart';
 import 'package:weather/utils/notification_permission.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +26,19 @@ void main() async {
   // Schedule notifications
   await NotificationScheduler.scheduleNotifications();
 
-  runApp(ProviderScope(child: App()));
+  
+  // Initialize EasyLocalization
+  await EasyLocalization.ensureInitialized();
+
+
+  runApp(
+    EasyLocalization(
+      supportedLocales: [Locale('en'), Locale('ar')],
+      path: 'assets/translations',
+      fallbackLocale: Locale('en'),
+      child: ProviderScope(child: App()),
+    ),
+  );
 }
 
 //new work is sharedPreferences

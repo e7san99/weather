@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:weather/features/weather/presentation/widgets/cards/weather_card_container.dart';
 import 'package:weather/utils/utils.dart';
@@ -24,76 +25,65 @@ class MainWeatherCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double width = MediaQuery.sizeOf(context).width;
-    final double height = MediaQuery.sizeOf(context).height;
-
+    final double width = MediaQuery.of(context).size.width;
+    final double height = MediaQuery.of(context).size.height;
+    String windSpeedText = 'wind_speed'.tr(
+      namedArgs: {'windSpeed': windSpeed.toLocalized(context)},
+    );
     return WeatherCardContainer(
       height: height,
       width: width,
       child: Stack(
         children: [
-          //Base Icon
+          // Base Icon
           Positioned(
             top: height * 0.02,
             left: width * 0.07,
-            child: Image.asset(
-              imageUrl,
-              height: 100,
-              fit: BoxFit.fill,
-            ),
+            child: Image.asset(imageUrl, height: 100, fit: BoxFit.fill),
           ),
-          //Description
+          // Description
           Positioned(
             top: height * 0.166,
             left: width * 0.07,
             child: shadeMask(
-              widget: Text(
-                description,
-                style: textStyle(whiteColor, 25),
-              ),
+              widget: Text(description.tr(), style: textStyle(whiteColor, 25)),
             ),
           ),
-          //date
+          // Date
           Positioned(
             top: height * 0.22,
             left: width * 0.07,
-            child: Text(
-              formattedDate,
-              style: textStyle(whiteColor, 16),
+            child: Text(formattedDate.tr(), style: textStyle(whiteColor, 16)),
+          ),
+          // Base Temperature
+          Positioned(
+            top: height * 0.013,
+            right: width * 0.14,
+            child: shadeMask(
+              widget: Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: tempCelsius.round().toLocalized(
+                        context,
+                      ), // Use toLocalized
+                      style: textStyle(whiteColor, 72),
+                    ),
+                    TextSpan(text: 'C', style: textStyle(whiteColor, 60)),
+                  ],
+                ),
+              ),
             ),
           ),
-          //Base Temperature
-          Positioned(
-              top: height * 0.013,
-              right: width * 0.14,
-              child: shadeMask(
-                widget: Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(
-                        text: '${tempCelsius.round()}',
-                        style: textStyle(whiteColor, 72),
-                      ),
-                      TextSpan(
-                        text: 'C',
-                        style: textStyle(whiteColor, 60),
-                      ),
-                    ],
-                  ),
-                ),
-              )),
-          //temp dgree °
+          // Temp degree °
           Positioned(
             top: height * 0.02,
             right: width * 0.14,
             child: shadeMask(
-              widget: Text(
-                '°',
-                style: textStyle(whiteColor, 47),
-              ),
+              widget: Text('°', style: textStyle(whiteColor, 47)),
             ),
           ),
-          //min max temp
+          // Min Max Temp
           Positioned(
             top: height * 0.17,
             right: width * 0.06,
@@ -104,26 +94,28 @@ class MainWeatherCard extends StatelessWidget {
                   scale: 18,
                   color: const Color(0xE7F1E9E9),
                 ),
-                Text('${tempMinCelsius.round()}° / ${tempMaxCelsius.round()}°',
-                    style: textStyle(Color(0xE7F1E9E9), 20)),
+                Text(
+                  '${tempMinCelsius.round().toLocalized(context)}° / ${tempMaxCelsius.round().toLocalized(context)}°', // Use toLocalized
+                  style: textStyle(Color(0xE7F1E9E9), 20),
+                ),
                 Image.asset(
                   'assets/icons/up-arrow.png',
                   scale: 25,
                   color: Color(0xE7F1E9E9),
-                )
+                ),
               ],
             ),
           ),
-          //wind speed
+          // Wind Speed
           Positioned(
             top: height * 0.22,
             right: width * 0.07,
             child: Text(
-              'Wind speed: $windSpeed m/s',
+              '$windSpeedText: ${windSpeed.toLocalized(context)} m/s',
               style: textStyle(whiteColor, 16),
             ),
           ),
-          //vertical line
+          // Vertical Line
           Positioned(
             top: height * 0.22,
             left: width * 0.451,
@@ -136,5 +128,73 @@ class MainWeatherCard extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+extension NumberExtension on num {
+  String toLocalized(BuildContext context) {
+    final int roundedValue = round(); // Round the number to the nearest integer
+    if (context.locale.languageCode == 'ar') {
+      return roundedValue
+          .toString()
+          .replaceAll('0', '٠')
+          .replaceAll('1', '١')
+          .replaceAll('2', '٢')
+          .replaceAll('3', '٣')
+          .replaceAll('4', '٤')
+          .replaceAll('5', '٥')
+          .replaceAll('6', '٦')
+          .replaceAll('7', '٧')
+          .replaceAll('8', '٨')
+          .replaceAll('9', '٩');
+    } else {
+      return roundedValue
+          .toString(); // Return English numbers for other locales
+    }
+  }
+}
+
+String translateDescription(String description, BuildContext context) {
+  if (context.locale.languageCode == 'ar') {
+    switch (description.toLowerCase()) {
+      case 'clear sky':
+        return 'ئاسمانی ڕوناک';
+      case 'few clouds':
+        return 'هەندێک هەور';
+      case 'scattered clouds':
+        return 'هەورە بڵاوەکان';
+      case 'thunderstorm':
+        return 'تۆفان'; // Thunderstorm
+      case 'broken clouds':
+        return 'هەوری شکاو'; // Thunderstorm
+      case 'snow':
+        return 'بەفر'; // Snow
+      case 'mist':
+        return 'تەم'; // Mist
+      case 'light rain':
+        return 'بارانی سوک'; // Light rain
+      case 'heavy rain':
+        return 'بارانی قورس'; // Heavy rain
+      case 'freezing rain':
+        return 'بارانی سەهۆڵ'; // Freezing rain
+      case 'hail':
+        return 'تەڵەبەفر'; // Hail
+      case 'fog':
+        return 'تەم'; // Fog
+      case 'dust':
+        return 'خۆڵ'; // Dust
+      case 'sand':
+        return 'خۆڵەمەشی'; // Sand
+      case 'ash':
+        return 'خۆڵەپاش'; // Ash
+      case 'squalls':
+        return 'باڵەسەبا'; // Squalls
+      case 'tornado':
+        return 'تۆڕنادۆ'; // Tornado
+      default:
+        return description; // ئەگەر وەرگێڕان نەدۆزرایەوە، بەهەمان زاراوەی ڕەسەن بمێنێتەوە
+    }
+  } else {
+    return description; // بۆ زمانەکانی تر، زاراوەی ڕەسەن بمێنێتەوە
   }
 }

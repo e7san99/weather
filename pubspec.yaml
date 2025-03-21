@@ -45,6 +45,7 @@ dependencies:
   google_fonts: any
   permission_handler: any
   shared_preferences: ^2.5.2
+  easy_localization: ^3.0.7+1
 
 dev_dependencies:
   flutter_test:
@@ -73,6 +74,7 @@ flutter:
     - assets/icons/
     - assets/icons/appbar/
     - assets/json/
+    - assets/translations/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

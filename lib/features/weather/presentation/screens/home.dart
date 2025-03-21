@@ -84,8 +84,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               final listElement = data.list[0];
               DateTime dateTime = DateTime.parse(listElement.dt_txt);
               String description = listElement.weather[0].description;
+              
               String capitalizedDescription =
                   description[0].toUpperCase() + description.substring(1);
+                  
+String translatedDescription = translateDescription(capitalizedDescription, context);
               double windSpeed = listElement.wind.speed;
               String iconCode = listElement.weather[0].icon;
               String imageUrl = getWeatherIcons(iconCode);
@@ -102,7 +105,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     children: [
                       MainWeatherCard(
                         tempCelsius: listElement.main.temp.toCelsius,
-                        description: capitalizedDescription,
+                        description: translatedDescription,
                         imageUrl: imageUrl,
                         formattedDate: formattedDate(dateTime),
                         tempMinCelsius: listElement.main.temp_min.toCelsius,

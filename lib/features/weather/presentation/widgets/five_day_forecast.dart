@@ -32,11 +32,12 @@ class FiveDayForecast extends StatelessWidget {
           final imageUrl = getWeatherIcons(iconCode);
           String description = fiveDayForecastAt12PM[index].weather[0].description;
           String capitalizedDescription = description[0].toUpperCase() + description.substring(1);
+          String translatedDescription = translateDescription(capitalizedDescription, context);
 
           return WeatherForecastCard(
             formattedDate: formattedDate,
             imageUrl: imageUrl,
-            description: capitalizedDescription,
+            description: translatedDescription,
             tempCelsius: tempCelsius,
           );
         },

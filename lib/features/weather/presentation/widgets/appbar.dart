@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
@@ -22,6 +23,110 @@ class AppbarHomePage extends StatefulWidget implements PreferredSizeWidget {
 
 class _AppbarHomePageState extends State<AppbarHomePage> {
   TextStyle cityNameStyle = textStyle(blueColor, 23);
+
+  void _changeLanguage(BuildContext context, String languageCode) {
+    context.setLocale(Locale(languageCode));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer(
+      builder: (context, ref, child) {
+        return AppBar(
+          scrolledUnderElevation: 0,
+          backgroundColor: Color(0xF5F5F5F5),
+          title: Row(
+            children: [
+              PopupMenuButton<String>(
+                child: Row(
+                  children: [
+                    // Spacing
+                    Icon(Icons.public, color: blueColor),
+                    Icon(Icons.arrow_drop_down_rounded, color: blueColor),
+                  ],
+                ),
+                onSelected: (String languageCode) {
+                  _changeLanguage(context, languageCode);
+                },
+                itemBuilder: (BuildContext context) {
+                  return {'en', 'ar'}.map((String languageCode) {
+                    return PopupMenuItem<String>(
+                      value: languageCode,
+                      child: Text(languageCode == 'en' ? 'English' : 'Kurdish'),
+                    );
+                  }).toList();
+                },
+              ),
+              IconButton(
+                icon: Image.asset(
+                  'assets/icons/appbar/location.png',
+                  scale: 14,
+                  color: blueColor,
+                ),
+                onPressed: () {
+                  ref.read(useCurrentLocationProvider.notifier).state = true;
+                  ref.read(cityProvider.notifier).state = '';
+                },
+              ),
+              Consumer(
+                builder: (context, ref, child) {
+                  final useCurrentLocation = ref.watch(
+                    useCurrentLocationProvider,
+                  );
+                  if (useCurrentLocation) {
+                    if (widget.currentPosition == null) {
+                      return ShimmeringAppbar();
+                    } else {
+                      final weather = ref.watch(
+                        locationWeatherProvider(widget.currentPosition!),
+                      );
+                      return weather.when(
+                        data: (data) {
+                          return Text(data.city.name, style: cityNameStyle);
+                        },
+                        error: (error, stackTrace) => SizedBox(),
+                        loading: () {
+                          return ShimmeringAppbar();
+                        },
+                      );
+                    }
+                  } else {
+                    final city = ref.watch(cityProvider);
+                    final weather = ref.watch(weatherProvider(city));
+                    return weather.when(
+                      data: (data) {
+                        return Text(
+                          data.city.name,
+                          style: textStyle(blueColor, 23),
+                        );
+                      },
+                      error: (error, stackTrace) => SizedBox(),
+                      loading: () {
+                        return ShimmeringAppbar();
+                      },
+                    );
+                  }
+                },
+              ),
+            ],
+          ),
+          centerTitle: true,
+          actions: [
+            InkWell(
+              overlayColor: WidgetStatePropertyAll(Colors.transparent),
+              onTap: () => _openSearchModal(context, ref),
+              child: Padding(
+                padding: const EdgeInsets.only(right: 18.0),
+                child: Image.asset('assets/icons/appbar/search.png', scale: 14),
+              ),
+            ),
+          ],
+          elevation: 0,
+        );
+      },
+    );
+  }
+
   void _openSearchModal(BuildContext context, WidgetRef ref) {
     // Clear the text field and reset isEmpty state when opening the modal
     widget.searchController.clear();
@@ -114,99 +219,6 @@ class _AppbarHomePageState extends State<AppbarHomePage> {
               ],
             ),
           ),
-        );
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Consumer(
-      builder: (context, ref, child) {
-        return AppBar(
-          scrolledUnderElevation: 0,
-          backgroundColor: Color(0xF5F5F5F5),
-          title: Row(
-            children: [
-              IconButton(
-                icon: Image.asset(
-                  'assets/icons/appbar/location.png',
-                  scale: 14,
-                  color: blueColor,
-                ),
-                onPressed: () {
-                  ref.read(useCurrentLocationProvider.notifier).state = true;
-                  ref.read(cityProvider.notifier).state = '';
-                },
-              ),
-              // SizedBox(
-              //   width: 5,
-              // ),
-              Consumer(
-                builder: (context, ref, child) {
-                  final useCurrentLocation = ref.watch(
-                    useCurrentLocationProvider,
-                  );
-                  if (useCurrentLocation) {
-                    if (widget.currentPosition == null) {
-                      return ShimmeringAppbar();
-                    } else {
-                      final weather = ref.watch(
-                        locationWeatherProvider(widget.currentPosition!),
-                      );
-                      return weather.when(
-                        data: (data) {
-                          return Text(data.city.name, style: cityNameStyle);
-                        },
-                        // No internet connection
-                        error: (error, stackTrace) => SizedBox(),
-                        //when no internet display this error
-                        //     Text(
-
-                        //   error.toString().contains('Failed to load data')
-                        //       ? 'No internet connection'
-                        //       : 'An error occurred. Please try again.',
-                        //   style: TextStyle(color: Colors.green),
-                        // ),
-                        loading: () {
-                          return ShimmeringAppbar();
-                        },
-                      );
-                    }
-                  } else {
-                    final city = ref.watch(cityProvider);
-                    final weather = ref.watch(weatherProvider(city));
-                    return weather.when(
-                      data: (data) {
-                        return Text(
-                          data.city.name,
-                          style: textStyle(blueColor, 23),
-                        );
-                      },
-                      //City not found
-                      error: (error, stackTrace) => SizedBox(),
-
-                      loading: () {
-                        return ShimmeringAppbar();
-                      },
-                    );
-                  }
-                },
-              ),
-            ],
-          ),
-          centerTitle: true,
-          actions: [
-            InkWell(
-              overlayColor: WidgetStatePropertyAll(Colors.transparent),
-              onTap: () => _openSearchModal(context, ref),
-              child: Padding(
-                padding: const EdgeInsets.only(right: 18.0),
-                child: Image.asset('assets/icons/appbar/search.png', scale: 14),
-              ),
-            ),
-          ],
-          elevation: 0,
         );
       },
     );

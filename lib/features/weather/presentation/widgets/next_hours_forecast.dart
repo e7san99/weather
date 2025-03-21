@@ -25,11 +25,12 @@ class NextHoursForecast extends StatelessWidget {
           String formattedDate = DateFormat.jm().format(dateTime);
           String description = nextHoursfilteredList[index].weather[0].description;
           String capitalizedDescription = description[0].toUpperCase() + description.substring(1);
+          String translatedDescription = translateDescription(capitalizedDescription, context);
 
           return WeatherForecastCard(
             formattedDate: formattedDate,
             imageUrl: getWeatherIcons(item.weather[0].icon),
-            description: capitalizedDescription,
+            description: translatedDescription,
             tempCelsius: tempCelsius,
           );
         },
