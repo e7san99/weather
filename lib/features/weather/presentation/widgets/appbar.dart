@@ -39,26 +39,37 @@ class _AppbarHomePageState extends State<AppbarHomePage> {
             children: [
               PopupMenuButton<String>(
                 child: Tooltip(
-         message: 'change_language'.tr(), 
-        child: Row(
-                  children: [
-                    
-                    // Spacing
-                    Icon(Icons.public, color: blueColor),
-                    Icon(Icons.arrow_drop_down_rounded, color: blueColor),
-                  ],
+                  message: 'change_language'.tr(),
+                  child: Row(
+                    children: [
+                      Icon(Icons.public, color: blueColor),
+                      Icon(Icons.arrow_drop_down_rounded, color: blueColor),
+                    ],
+                  ),
                 ),
-      ),
-                
-                
                 onSelected: (String languageCode) {
                   _changeLanguage(context, languageCode);
                 },
                 itemBuilder: (BuildContext context) {
+                  final currentLocale =
+                      context.locale; // Get the current locale
+
                   return {'en', 'ar'}.map((String languageCode) {
+                    final isSelected =
+                        currentLocale.languageCode == languageCode;
                     return PopupMenuItem<String>(
                       value: languageCode,
-                      child: Text(languageCode == 'en' ? 'English' : 'Kurdish'),
+                      child: Text(
+                        languageCode == 'en' ? 'English' : 'کوردی',
+                        style: languageTextStyle(
+                          context: context,
+                          color:
+                              isSelected
+                                  ? blueColor
+                                  : blackColor, // Set color based on selection
+                          fontSize: 15,
+                        ),
+                      ),
                     );
                   }).toList();
                 },
@@ -66,7 +77,7 @@ class _AppbarHomePageState extends State<AppbarHomePage> {
               IconButton(
                 icon: Image.asset(
                   'assets/icons/appbar/location.png',
-                  scale: 14,
+                  scale: 16,
                   color: blueColor,
                 ),
                 onPressed: () {
@@ -122,8 +133,8 @@ class _AppbarHomePageState extends State<AppbarHomePage> {
               overlayColor: WidgetStatePropertyAll(Colors.transparent),
               onTap: () => _openSearchModal(context, ref),
               child: Padding(
-                padding: const EdgeInsets.only(right: 18.0),
-                child: Image.asset('assets/icons/appbar/search.png', scale: 14),
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                child: Image.asset('assets/icons/appbar/search.png', scale: 16),
               ),
             ),
           ],

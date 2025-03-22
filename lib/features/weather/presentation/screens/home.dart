@@ -85,11 +85,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               final listElement = data.list[0];
               DateTime dateTime = DateTime.parse(listElement.dt_txt);
               String description = listElement.weather[0].description;
-              
+
               String capitalizedDescription =
                   description[0].toUpperCase() + description.substring(1);
-                  
-String translatedDescription = translateDescription(capitalizedDescription, context);
+
+              String translatedDescription = translateDescription(
+                capitalizedDescription,
+                context,
+              );
               double windSpeed = listElement.wind.speed;
               String iconCode = listElement.weather[0].icon;
               String imageUrl = getWeatherIcons(iconCode);
@@ -171,8 +174,21 @@ String translatedDescription = translateDescription(capitalizedDescription, cont
 
   Padding _titleCard(String title) {
     return Padding(
-      padding: const EdgeInsets.only(left: 10.0),
-      child: Row(children: [Text(title, style: textStyle(blueColor, 20))]),
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      child: Row(
+        children: [
+          Text(
+            title,
+            style: languageTextStyle(
+              context: context,
+              color: blueColor,
+              fontSize: isKurdish(context) ? 18 : 20,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
+
+// textStyle(blueColor, 20)

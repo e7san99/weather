@@ -53,13 +53,20 @@ class MainWeatherCard extends StatelessWidget {
             top: height * 0.166,
             left: width * 0.07,
             child: shadeMask(
-              widget: Text(description.tr(), style: textStyle(whiteColor, 25)),
+              widget: Text(
+                description.tr(),
+                style: languageTextStyle(
+                  context: context,
+                  color: whiteColor,
+                  fontSize: 25,
+                ),
+              ),
             ),
           ),
           // Date
           Positioned(
             top: height * 0.22,
-            left: width * 0.07,
+            left: isKurdish(context) ? width * 0.14 : width * 0.07,
             child: Text(arFormattedDate, style: textStyle(whiteColor, 16)),
           ),
           // Base Temperature
@@ -84,7 +91,7 @@ class MainWeatherCard extends StatelessWidget {
           ),
           // Temp degree °
           Positioned(
-            top: height * 0.02,
+            top: isKurdish(context) ? height * 0.016 : height * 0.02,
             right: width * 0.14,
             child: shadeMask(
               widget: Text('°', style: textStyle(whiteColor, 47)),
@@ -103,7 +110,12 @@ class MainWeatherCard extends StatelessWidget {
                 ),
                 Text(
                   '${tempMinCelsius.round().toLocalized(context)}° / ${tempMaxCelsius.round().toLocalized(context)}°', // Use toLocalized
-                  style: textStyle(Color(0xE7F1E9E9), 20),
+                  style: languageTextStyle(
+                    context: context,
+                    color: Color(0xE7F1E9E9),
+                    fontSize: 20,
+                  ),
+                  // textStyle(Color(0xE7F1E9E9), 20),
                 ),
                 Image.asset(
                   'assets/icons/up-arrow.png',
@@ -119,13 +131,19 @@ class MainWeatherCard extends StatelessWidget {
             right: width * 0.07,
             child: Text(
               '$windSpeedText: ${windSpeed.toLocalized(context)} ${'meter_second'.tr()}',
-              style: textStyle(whiteColor, 16),
+              style: languageTextStyle(
+                context: context,
+                color: whiteColor,
+                fontSize: 16,
+              ),
+
+              // textStyle(whiteColor, 16),
             ),
           ),
           // Vertical Line
           Positioned(
             top: height * 0.22,
-            left: width * 0.451,
+            left: isKurdish(context) ? width * 0.50 : width * 0.451,
             child: Container(
               height: 20, // Adjust the height as needed
               width: 2, // Adjust the width of the vertical line
@@ -154,7 +172,7 @@ getCustomKurdishDate(DateTime date, BuildContext context) {
       'نوفمبر': 'سەرماوەز',
       'ديسمبر': 'بەفرانبار',
     };
-      final Map<String, String> customWeekdays = {
+    final Map<String, String> customWeekdays = {
       'السبت': 'شەممە',
       'الأحد': '١ شەممە',
       'الاثنين': '٢ شەممە',
