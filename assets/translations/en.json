@@ -5,5 +5,10 @@
     "weather_description_clouds": "Clouds",
     "weather_description_rain": "Rain",
     "city_name": "City Name",
-    "wind_speed": "Wind Speed"
+    "wind_speed": "Wind Speed",
+    "change_language": "Change Language",
+    "meter_second": "m/s",
+    "date_format": "MMMM d, y",
+    "next_hours": "Next Hours",
+    "next_days": "Next Days"
   }

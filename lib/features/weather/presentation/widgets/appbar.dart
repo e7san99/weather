@@ -38,13 +38,19 @@ class _AppbarHomePageState extends State<AppbarHomePage> {
           title: Row(
             children: [
               PopupMenuButton<String>(
-                child: Row(
+                child: Tooltip(
+         message: 'change_language'.tr(), 
+        child: Row(
                   children: [
+                    
                     // Spacing
                     Icon(Icons.public, color: blueColor),
                     Icon(Icons.arrow_drop_down_rounded, color: blueColor),
                   ],
                 ),
+      ),
+                
+                
                 onSelected: (String languageCode) {
                   _changeLanguage(context, languageCode);
                 },

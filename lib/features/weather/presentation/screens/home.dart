@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weather/features/weather/data/riverpod/riverpod.dart';
@@ -113,10 +114,10 @@ String translatedDescription = translateDescription(capitalizedDescription, cont
                         windSpeed: windSpeed,
                       ),
                       SizedBox(height: 10),
-                      _titleCard('Next Hours'),
+                      _titleCard('next_hours'.tr()),
                       NextHoursForecast(nextHoursfilteredList: nextHours),
                       SizedBox(height: 10),
-                      _titleCard('Five Day Forecast'),
+                      _titleCard('next_days'.tr()),
                       FiveDayForecast(fiveDayForecastAt12PM: fiveDayForecast),
                     ],
                   ),

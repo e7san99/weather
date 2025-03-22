@@ -5,5 +5,10 @@
   "weather_description_clouds": "هەور",
   "weather_description_rain": "باران",
   "city_name": "ناوی شار",
-  "wind_speed": "خێرایی با"
+  "wind_speed": "خێرایی با",
+  "change_language": "گۆڕینی زمان",
+  "meter_second": "م/چ",
+  "date_format": "d MMMM y",
+  "next_hours": "کاتژمێرەکانی داهاتوو",
+  "next_days": "ڕۆژانی داهاتوو"
 }

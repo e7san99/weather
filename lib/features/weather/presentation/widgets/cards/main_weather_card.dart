@@ -27,6 +27,13 @@ class MainWeatherCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
     final double height = MediaQuery.of(context).size.height;
+
+    final DateTime date = DateTime.now();
+    final String arFormattedDate = getCustomKurdishDate(
+      date,
+      context,
+    ); // Use the custom function here
+
     String windSpeedText = 'wind_speed'.tr(
       namedArgs: {'windSpeed': windSpeed.toLocalized(context)},
     );
@@ -53,7 +60,7 @@ class MainWeatherCard extends StatelessWidget {
           Positioned(
             top: height * 0.22,
             left: width * 0.07,
-            child: Text(formattedDate.tr(), style: textStyle(whiteColor, 16)),
+            child: Text(arFormattedDate, style: textStyle(whiteColor, 16)),
           ),
           // Base Temperature
           Positioned(
@@ -111,7 +118,7 @@ class MainWeatherCard extends StatelessWidget {
             top: height * 0.22,
             right: width * 0.07,
             child: Text(
-              '$windSpeedText: ${windSpeed.toLocalized(context)} m/s',
+              '$windSpeedText: ${windSpeed.toLocalized(context)} ${'meter_second'.tr()}',
               style: textStyle(whiteColor, 16),
             ),
           ),
@@ -128,6 +135,52 @@ class MainWeatherCard extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+getCustomKurdishDate(DateTime date, BuildContext context) {
+  if (context.locale.languageCode == 'ar') {
+    final Map<String, String> customMonths = {
+      'يناير': 'ڕێبەندان',
+      'فبراير': 'ڕەشەمێ',
+      'مارس': 'نەورۆز',
+      'أبريل': 'گوڵان',
+      'مايو': 'جۆزەردان',
+      'يونيو': 'پووشپەڕ',
+      'يوليو': 'خەرمانان',
+      'أغسطس': 'گەلاوێژ',
+      'سبتمبر': 'ڕەزبەر',
+      'أكتوبر': 'گەڵاڕێزان',
+      'نوفمبر': 'سەرماوەز',
+      'ديسمبر': 'بەفرانبار',
+    };
+      final Map<String, String> customWeekdays = {
+      'السبت': 'شەممە',
+      'الأحد': '١ شەممە',
+      'الاثنين': '٢ شەممە',
+      'الثلاثاء': '٣ شەممە',
+      'الأربعاء': '٤ شەممە',
+      'الخميس': '٥ شەممە',
+      'الجمعة': 'هەینی',
+    };
+
+    final String formattedDate = DateFormat('EEEE, dd MMM', 'ar').format(date);
+    String customDate = formattedDate;
+
+    // Replace months
+    customMonths.forEach((defaultMonth, customMonth) {
+      customDate = customDate.replaceAll(defaultMonth, customMonth);
+    });
+
+    // Replace weekdays
+    customWeekdays.forEach((defaultWeekday, customWeekday) {
+      customDate = customDate.replaceAll(defaultWeekday, customWeekday);
+    });
+
+    return customDate;
+  } else {
+    // Format the date in English (e.g., "Saturday, 22 Mar")
+    return DateFormat('EEEE, dd MMM', 'en').format(date);
   }
 }
 
