@@ -29,9 +29,10 @@ class MainWeatherCard extends StatelessWidget {
     final double height = MediaQuery.of(context).size.height;
 
     final DateTime date = DateTime.now();
-    final String arFormattedDate = getCustomKurdishDate(
+    final String kuFormattedDate = getCustomKurdishDate(
       date,
       context,
+      false, //isNextDay
     ); // Use the custom function here
 
     String windSpeedText = 'wind_speed'.tr(
@@ -67,7 +68,7 @@ class MainWeatherCard extends StatelessWidget {
           Positioned(
             top: height * 0.22,
             left: isKurdish(context) ? width * 0.14 : width * 0.07,
-            child: Text(arFormattedDate, style: textStyle(whiteColor, 16)),
+            child: Text(kuFormattedDate, style: textStyle(whiteColor, 16)),
           ),
           // Base Temperature
           Positioned(
@@ -156,7 +157,7 @@ class MainWeatherCard extends StatelessWidget {
   }
 }
 
-getCustomKurdishDate(DateTime date, BuildContext context) {
+getCustomKurdishDate(DateTime date, BuildContext context, bool isNextDay) {
   if (context.locale.languageCode == 'ar') {
     final Map<String, String> customMonths = {
       'يناير': 'ڕێبەندان',
@@ -182,7 +183,10 @@ getCustomKurdishDate(DateTime date, BuildContext context) {
       'الجمعة': 'هەینی',
     };
 
-    final String formattedDate = DateFormat('EEEE, dd MMM', 'ar').format(date);
+    final String formattedDate = DateFormat(
+      isNextDay ? 'EEEE' : 'EEEE, dd MMM',
+      'ar',
+    ).format(date);
     String customDate = formattedDate;
 
     // Replace months
@@ -198,7 +202,7 @@ getCustomKurdishDate(DateTime date, BuildContext context) {
     return customDate;
   } else {
     // Format the date in English (e.g., "Saturday, 22 Mar")
-    return DateFormat('EEEE, dd MMM', 'en').format(date);
+    return DateFormat(isNextDay ? 'EEEE' : 'EEEE, dd MMM', 'en').format(date);
   }
 }
 
@@ -270,36 +274,35 @@ String translateDescription(String description, BuildContext context) {
   }
 }
 
-
 String formatTimeWithCustomAmPm(DateTime dateTime, BuildContext context) {
-    final locale = context.locale.toString();
-    final hour = dateTime.hour;
-    final minute = dateTime.minute;
+  final locale = context.locale.toString();
+  final hour = dateTime.hour;
+  final minute = dateTime.minute;
 
-    // Format hour and minute with leading zeros if needed
-    final formattedTime = '${hour % 12}:${minute.toString().padLeft(2, '0')}';
+  // Format hour and minute with leading zeros if needed
+  final formattedTime = '${hour % 12}:${minute.toString().padLeft(2, '0')}';
 
-    // Determine if it's AM or PM
-    final isAm = hour < 12;
+  // Determine if it's AM or PM
+  final isAm = hour < 12;
 
-    // Use custom AM/PM strings based on locale
-    String customAmPm;
-    if (locale == 'ar') {
-      customAmPm = isAm ? 'پ.ن' : 'د.ن';
-    } else {
-      customAmPm = isAm ? 'AM' : 'PM';
-    }
-
-    // Combine the formatted time with the custom AM/PM string
-    if (locale == 'ar') {
-      // Convert English numerals to Arabic numerals
-      final arabicNumerals = formattedTime.replaceAllMapped(RegExp(r'\d'), (
-        match,
-      ) {
-        return String.fromCharCode(match.group(0)!.codeUnitAt(0) + 1584);
-      });
-      return '$arabicNumerals $customAmPm';
-    } else {
-      return '$formattedTime $customAmPm';
-    }
+  // Use custom AM/PM strings based on locale
+  String customAmPm;
+  if (locale == 'ar') {
+    customAmPm = isAm ? 'پ.ن' : 'د.ن';
+  } else {
+    customAmPm = isAm ? 'AM' : 'PM';
   }
+
+  // Combine the formatted time with the custom AM/PM string
+  if (locale == 'ar') {
+    // Convert English numerals to Arabic numerals
+    final arabicNumerals = formattedTime.replaceAllMapped(RegExp(r'\d'), (
+      match,
+    ) {
+      return String.fromCharCode(match.group(0)!.codeUnitAt(0) + 1584);
+    });
+    return '$arabicNumerals $customAmPm';
+  } else {
+    return '$formattedTime $customAmPm';
+  }
+}
