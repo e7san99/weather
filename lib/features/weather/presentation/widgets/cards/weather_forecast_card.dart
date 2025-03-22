@@ -86,7 +86,11 @@ class WeatherForecastCard extends StatelessWidget {
               right: 0,
               child: Text(
                 description,
-                style: textStyle(whiteColor, 16),
+                style: languageTextStyle(
+                  context: context,
+                  color: whiteColor,
+                  fontSize: isKurdish(context) ? 14 : 16,
+                ), //textStyle(whiteColor, 16),
                 textAlign: TextAlign.center,
                 maxLines: 1,
               ),

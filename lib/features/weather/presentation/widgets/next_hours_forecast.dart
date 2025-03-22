@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:weather/utils/constants/const.dart';
 import 'package:weather/features/weather/presentation/widgets/widgets.dart';
+import 'package:weather/utils/constants/const.dart';
+
 class NextHoursForecast extends StatelessWidget {
   final List nextHoursfilteredList;
 
   const NextHoursForecast({super.key, required this.nextHoursfilteredList});
+
+  // Function to format time with custom AM/PM strings
 
   @override
   Widget build(BuildContext context) {
@@ -21,11 +23,21 @@ class NextHoursForecast extends StatelessWidget {
         itemBuilder: (context, index) {
           final item = nextHoursfilteredList[index];
           final double tempCelsius = nextHoursfilteredList[index].main.temp;
-          DateTime dateTime = DateTime.parse(nextHoursfilteredList[index].dt_txt);
-          String formattedDate = DateFormat.jm().format(dateTime);
-          String description = nextHoursfilteredList[index].weather[0].description;
-          String capitalizedDescription = description[0].toUpperCase() + description.substring(1);
-          String translatedDescription = translateDescription(capitalizedDescription, context);
+          DateTime dateTime = DateTime.parse(
+            nextHoursfilteredList[index].dt_txt,
+          );
+
+          // Format the time with custom AM/PM strings
+          String formattedDate = formatTimeWithCustomAmPm(dateTime, context);
+
+          String description =
+              nextHoursfilteredList[index].weather[0].description;
+          String capitalizedDescription =
+              description[0].toUpperCase() + description.substring(1);
+          String translatedDescription = translateDescription(
+            capitalizedDescription,
+            context,
+          );
 
           return WeatherForecastCard(
             formattedDate: formattedDate,

@@ -269,3 +269,37 @@ String translateDescription(String description, BuildContext context) {
     return description; // بۆ زمانەکانی تر، زاراوەی ڕەسەن بمێنێتەوە
   }
 }
+
+
+String formatTimeWithCustomAmPm(DateTime dateTime, BuildContext context) {
+    final locale = context.locale.toString();
+    final hour = dateTime.hour;
+    final minute = dateTime.minute;
+
+    // Format hour and minute with leading zeros if needed
+    final formattedTime = '${hour % 12}:${minute.toString().padLeft(2, '0')}';
+
+    // Determine if it's AM or PM
+    final isAm = hour < 12;
+
+    // Use custom AM/PM strings based on locale
+    String customAmPm;
+    if (locale == 'ar') {
+      customAmPm = isAm ? 'پ.ن' : 'د.ن';
+    } else {
+      customAmPm = isAm ? 'AM' : 'PM';
+    }
+
+    // Combine the formatted time with the custom AM/PM string
+    if (locale == 'ar') {
+      // Convert English numerals to Arabic numerals
+      final arabicNumerals = formattedTime.replaceAllMapped(RegExp(r'\d'), (
+        match,
+      ) {
+        return String.fromCharCode(match.group(0)!.codeUnitAt(0) + 1584);
+      });
+      return '$arabicNumerals $customAmPm';
+    } else {
+      return '$formattedTime $customAmPm';
+    }
+  }
